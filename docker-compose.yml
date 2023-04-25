@@ -1,0 +1,10 @@
+version: "3.0"
+
+services:
+  app:
+    container_name: app
+    image: whereqr:v1
+    user: root
+    ports:
+      - 8080:8080
+    restart: always
