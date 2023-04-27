@@ -1,8 +1,6 @@
 package whereQR.project.entity.member;
 
 import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Embeddable
 public class Address {
@@ -11,7 +9,7 @@ public class Address {
     private String street;
     private String zipcode;
 
-    public Address(){
+    public Address(String city, String s){
 
     }
 

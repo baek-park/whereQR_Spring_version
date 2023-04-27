@@ -25,6 +25,15 @@ public class Qrcode {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public Qrcode(String title, String memo){
+        this.title = title;
+        this.memo = memo;
+    }
+
+    public Qrcode() {
+
+    }
+
     //연관관계 편의 메서드
     public void changeQrcode(Member member){
         this.member = member;
