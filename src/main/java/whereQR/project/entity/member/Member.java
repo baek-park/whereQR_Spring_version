@@ -2,7 +2,6 @@ package whereQR.project.entity.member;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
-import org.apache.tomcat.jni.Address;
 import whereQR.project.entity.Qrcode;
 
 import javax.persistence.*;
@@ -48,5 +47,11 @@ public class Member {
         this.age = age;
     }
 
+    public void updateMember(String username, int age, Address address, PhoneNumber phoneNumber){
+        this.username = username;
+        this.age = age;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 
 }
