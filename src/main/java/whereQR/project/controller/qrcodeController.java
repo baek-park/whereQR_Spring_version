@@ -9,10 +9,7 @@ import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Qrcode;
 
 import java.io.ByteArrayOutputStream;
@@ -24,7 +21,7 @@ import java.sql.Timestamp;
 @Slf4j
 public class qrcodeController {
 
-    @GetMapping("/makeQR")
+    @PostMapping("/makeQR")
     public Object makeQr() throws WriterException {
         //qrcode를 생성할 때는 모두 null값으로 설정한다.
         int width = 200;
