@@ -23,6 +23,12 @@ services:
     secrets:
       - db_password
 
+  react-app:
+    image: baeksujin/frontend:v1
+    ports:
+      - 3000:80
+    networks:
+      - application
 
 #  app:
 #    container_name: app
