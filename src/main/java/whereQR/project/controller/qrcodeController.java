@@ -7,6 +7,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/qrcode")
 @Slf4j
 public class qrcodeController {
+
+    public static String savePath = "src/main/resources/static/qrcode";
 
     @PostMapping("/makeQR")
     public Object makeQr() throws WriterException, IOException {
@@ -39,10 +43,14 @@ public class qrcodeController {
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
             MatrixToImageWriter.writeToStream(matrix, "PNG", out);
-            log.info("makeQR-qrcode-out/ out.toByteArray() => {}", out.toByteArray());
+            log.info("makeQR-qrcode-out/ out.toByteArray() => {}\n", out.toByteArray());
 
             //make image file
-            makeImageFile(key, matrix);
+            File qrImageFile = makeImageFile(key, matrix);
+
+            //convert image file to Base64 encoded string
+            String qrImageUrl = imageToStringConverter(qrImageFile);
+            log.info("makeQR-qrcode-out/ qrImageUrl => {}\n",qrImageUrl);
 
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG)
@@ -52,8 +60,17 @@ public class qrcodeController {
         }
     }
 
-    private static void makeImageFile(String key, BitMatrix matrix) throws IOException {
-        String savePath = "src/main/java/whereQR/qrcode";
+    private String imageToStringConverter(File qrImageFile) throws IOException {
+
+        //image to byte -> encoding
+        byte[] fileContent = FileUtils.readFileToByteArray(qrImageFile);
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+
+        return encodedString;
+    }
+
+    private File makeImageFile(String key, BitMatrix matrix) throws IOException {
+
         File file = new File(savePath);
         if (!file.exists()) {
             file.mkdirs();
@@ -62,6 +79,8 @@ public class qrcodeController {
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         File temp = new File(savePath + "/" + key + "qr" + ".png");
         ImageIO.write(bufferedImage, "png", temp);
+
+        return temp;
     }
 
 }
