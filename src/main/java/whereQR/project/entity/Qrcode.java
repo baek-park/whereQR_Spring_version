@@ -20,6 +20,8 @@ public class Qrcode {
     Address address;
     @Embedded
     PhoneNumber phoneNumber;
+    @Column(name="url", columnDefinition = "MEDIUMBLOB")
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -32,6 +34,10 @@ public class Qrcode {
 
     public Qrcode() {
 
+    }
+
+    public Qrcode(String url){
+        this.url = url;
     }
 
     //연관관계 편의 메서드
