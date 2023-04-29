@@ -1,4 +1,4 @@
-package whereQR.project.Repository;
+package whereQR.project.repository;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

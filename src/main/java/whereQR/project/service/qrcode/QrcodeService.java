@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import whereQR.project.Repository.QrcodeRepository;
+import whereQR.project.repository.QrcodeRepository;
 import whereQR.project.entity.qrcode.Qrcode;
 
 import javax.imageio.ImageIO;

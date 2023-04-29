@@ -1,4 +1,4 @@
-package whereQR.project.Repository;
+package whereQR.project.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import whereQR.project.entity.member.Member;
