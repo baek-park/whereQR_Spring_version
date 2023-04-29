@@ -2,7 +2,9 @@ package whereQR.project.entity.member;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
-import whereQR.project.entity.Qrcode;
+import whereQR.project.entity.Address;
+import whereQR.project.entity.PhoneNumber;
+import whereQR.project.entity.qrcode.Qrcode;
 
 import javax.persistence.*;
 import java.util.ArrayList;

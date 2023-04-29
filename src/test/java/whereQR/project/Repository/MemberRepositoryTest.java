@@ -7,13 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
-import whereQR.project.entity.member.Address;
+import whereQR.project.entity.Address;
 import whereQR.project.entity.member.Member;
-import whereQR.project.entity.member.PhoneNumber;
+import whereQR.project.entity.PhoneNumber;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional

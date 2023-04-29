@@ -2,7 +2,7 @@ package whereQR.project.entity.dto;
 
 import lombok.Data;
 import org.apache.tomcat.jni.Address;
-import whereQR.project.entity.member.PhoneNumber;
+import whereQR.project.entity.PhoneNumber;
 
 @Data
 public class MemberDto {

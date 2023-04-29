@@ -5,17 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
-import whereQR.project.entity.Qrcode;
+import whereQR.project.entity.qrcode.Qrcode;
 import whereQR.project.entity.member.Member;
 
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

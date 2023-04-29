@@ -1,4 +1,4 @@
-package whereQR.project.entity.member;
+package whereQR.project.entity;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
