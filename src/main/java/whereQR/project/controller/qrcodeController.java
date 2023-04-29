@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Qrcode;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 
@@ -22,25 +25,43 @@ import java.sql.Timestamp;
 public class qrcodeController {
 
     @PostMapping("/makeQR")
-    public Object makeQr() throws WriterException {
+    public Object makeQr() throws WriterException, IOException {
+
         //qrcode를 생성할 때는 모두 null값으로 설정한다.
         int width = 200;
         int height = 200;
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String key = timestamp.toString();
-        log.info("makeQr-qrcode생성-qrcodekey값", key);
+        log.info("makeQr-qrcode생성-qrcodekey값/ key => {}", key);
 
         BitMatrix matrix = new MultiFormatWriter().encode(key, BarcodeFormat.QR_CODE, width, height);
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
             MatrixToImageWriter.writeToStream(matrix, "PNG", out);
+            log.info("makeQR-qrcode-out/ out.toByteArray() => {}", out.toByteArray());
+
+            //make image file
+            makeImageFile(key, matrix);
+
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG)
                     .body(out.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void makeImageFile(String key, BitMatrix matrix) throws IOException {
+        String savePath = "src/main/java/whereQR/qrcode";
+        File file = new File(savePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
+        File temp = new File(savePath + "/" + key + "qr" + ".png");
+        ImageIO.write(bufferedImage, "png", temp);
     }
 
 }
