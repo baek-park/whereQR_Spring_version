@@ -1,16 +1,12 @@
-package whereQR.project.entity.member;
+package whereQR.project.entity;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import whereQR.project.entity.Address;
-import whereQR.project.entity.PhoneNumber;
-import whereQR.project.entity.qrcode.Qrcode;
 
 import javax.persistence.*;
 import java.util.ArrayList;

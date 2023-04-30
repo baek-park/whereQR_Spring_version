@@ -3,8 +3,8 @@ import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import whereQR.project.entity.qrcode.Qrcode;
-import whereQR.project.service.qrcode.QrcodeService;
+import whereQR.project.entity.Qrcode;
+import whereQR.project.service.QrcodeService;
 
 import java.io.IOException;
 

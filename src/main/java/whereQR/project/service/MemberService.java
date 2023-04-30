@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.dto.MemberSignupDto;
 import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
-import whereQR.project.entity.member.Member;
+import whereQR.project.entity.Member;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.repository.MemberRepository;
 

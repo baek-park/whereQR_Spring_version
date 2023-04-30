@@ -1,9 +1,9 @@
-package whereQR.project.entity.qrcode;
+package whereQR.project.entity;
 
 import lombok.Getter;
 import whereQR.project.entity.Address;
 import whereQR.project.entity.PhoneNumber;
-import whereQR.project.entity.member.Member;
+import whereQR.project.entity.Member;
 
 import javax.persistence.*;
 

@@ -1,7 +1,7 @@
 package whereQR.project.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import whereQR.project.entity.member.Member;
+import whereQR.project.entity.Member;
 
 import java.util.Optional;
 
