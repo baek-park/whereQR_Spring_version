@@ -1,4 +1,4 @@
-package whereQR.config;
+package whereQR.project.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
