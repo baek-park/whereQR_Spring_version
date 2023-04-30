@@ -2,8 +2,12 @@ package whereQR.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import whereQR.project.config.SecurityConfig;
 
-@SpringBootApplication
+@Import(SecurityConfig.class)
+@SpringBootApplication()
 public class ProjectApplication {
 
 	public static void main(String[] args) {

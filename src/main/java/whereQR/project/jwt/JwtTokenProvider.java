@@ -1,17 +1,24 @@
 package whereQR.project.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import whereQR.project.entity.dto.TokenInfo;
 
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -19,76 +26,103 @@ public class JwtTokenProvider {
 
     private final Key key;
 
-    @Value("${jwt.secretKey}")
-    private String secretKey; // JWT 서명에 사용할 비밀 키
+    private final String claimName = "auth";
+    private final String grantType = "Bearer";
 
-    @Value("${jwt.expiration}")
-    private long expiration; // 토큰의 만료 시간 (밀리초)
+    private final long expiration; // 토큰의 만료 시간 (밀리초)
+    private final long refreshExpiration; // 리프레시 토큰의 만료 시간 (밀리초)
 
-    @Value("${jwt.refreshExpiration}")
-    private long refreshExpiration; // 리프레시 토큰의 만료 시간 (밀리초)
+    public JwtTokenProvider(@Value("${jwt.secretKey}") String secretKey,
+                            @Value("${jwt.expiration}") long expiration,
+                            @Value("${jwt.refreshExpiration}") long refreshExpiration) {
 
-    public JwtTokenProvider() {
+        this.expiration = expiration;
+        this.refreshExpiration = refreshExpiration;
+
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //accesToken을 user 정보를 가지고 생성
-    public String  generateAccessToken(String username) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
+    public TokenInfo generateToken(Authentication authentication){
 
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
-    }
+        long now = (new Date()).getTime();
 
-    public String generateRefreshToken(String username) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + refreshExpiration);
+        // Access Token 생성
+        String accessToken = getAccessToken(authentication, authorities, now);
 
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
-    }
-
-    public TokenInfo generateToken(String username){
-        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
-        String accessToken = jwtTokenProvider.generateAccessToken(username);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(username);
+        // Refresh Token 생성
+        String refreshToken = getRefreshToken(Jwts.builder(), new Date(now + refreshExpiration));
 
         return TokenInfo.builder()
-                .grantType("Bearer")
+                .grantType(grantType)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
 
-    //JWT claim을 복호화하여 토큰의 정보를 꺼내는 메서드 작성
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+    private String getRefreshToken(JwtBuilder builder, Date now) {
+        String refreshToken = builder
+                .setExpiration(now)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+        return refreshToken;
     }
 
-    //토큰 정보 검증 메서드를 작성
+    private String getAccessToken(Authentication authentication, String authorities, long now) {
+        Date accessTokenExpiresIn = new Date(now + expiration);
+        String accessToken = getRefreshToken(Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(claimName, authorities), accessTokenExpiresIn);
+        return accessToken;
+    }
+
+    // JWT 토큰을 복호화
+    public Authentication getAuthentication(String accessToken) {
+
+        // 토큰 복호화
+        Claims claims = parseClaims(accessToken);
+
+        if (claims.get(claimName) == null) {
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        }
+
+        // 클레임에서 권한 정보 가져오기
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(claimName).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+
+    }
+
+    // 토큰 복호화
+    public Claims parseClaims(String accessToken) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+    //토큰 정보 검증 메서드
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            // 토큰이 유효하지 않음
-            log.error("JwtTokenProvider -> validationToken -> error : {}", e);
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.error("유효하지 않은 JWT Token 입니다.", e);
+        } catch (ExpiredJwtException e) {
+            log.error("만료된 JWT Token 입니다.", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("지원하지 않는 않은 JWT Token 입니다.", e);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT의 클레임이 비어있습니다.", e);
         }
         return false;
     }
