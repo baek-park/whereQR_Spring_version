@@ -12,8 +12,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import whereQR.project.entity.dto.TokenInfo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,6 +99,7 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         UserDetails principal = new User(claims.getSubject(), "", authorities);
+        log.info("principal = {}",principal);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 
     }
@@ -125,6 +128,14 @@ public class JwtTokenProvider {
             log.error("JWT의 클레임이 비어있습니다.", e);
         }
         return false;
+    }
+
+    public static String extractTokenFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
 }

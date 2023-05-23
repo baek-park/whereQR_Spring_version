@@ -7,12 +7,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import whereQR.project.entity.dto.MemberDetailDto;
 import whereQR.project.entity.dto.MemberSignupDto;
 import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.entity.Member;
+import whereQR.project.jwt.JwtAuthenticationFilter;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.repository.MemberRepository;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +53,13 @@ public class MemberService {
         return MemberSignupDto;
     }
 
+    public MemberDetailDto detail(HttpServletRequest request){
 
+        String token = JwtTokenProvider.extractTokenFromHeader(request);
+        String username = String.valueOf(jwtTokenProvider.parseClaims(token).get("sub"));
+        log.info("getUsernameFormToken subject = {}", username);
+        Optional<Member> member = memberRepository.findMemberByUsername(username);
+        MemberDetailDto memberDetailDto = new MemberDetailDto(member.get());
+        return memberDetailDto;
+    }
 }

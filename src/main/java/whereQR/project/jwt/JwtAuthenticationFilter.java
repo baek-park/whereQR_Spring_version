@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         // 토큰을 추출
-        String token = extractTokenFromHeader((HttpServletRequest) request);
+        String token = jwtTokenProvider.extractTokenFromHeader((HttpServletRequest) request);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             // 토큰이 유효한 경우 인증 정보 설정
@@ -32,14 +32,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         chain.doFilter(request, response);
 
-    }
-
-    private String extractTokenFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 
 }
