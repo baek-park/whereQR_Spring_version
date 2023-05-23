@@ -30,11 +30,6 @@ public class memberController {
         return memberService.signUp(memberSignupDto);
     }
 
-    @PostMapping("/test")
-    public String test(){
-        return "role check success";
-    }
-
     @GetMapping("/detail")
     public MemberDetailDto myPage(HttpServletRequest request){
         MemberDetailDto memberDetailDto = memberService.detail(request);

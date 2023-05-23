@@ -16,7 +16,7 @@ public class qrcodeController {
 
     private final QrcodeService qrcodeService;
 
-    @PostMapping("/makeQR")
+    @PostMapping("/create")
     public Qrcode makeQr() throws WriterException, IOException {
         return qrcodeService.make();
     }
