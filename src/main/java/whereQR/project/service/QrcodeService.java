@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import whereQR.project.entity.dto.QrcodeRegisterDto;
 import whereQR.project.repository.QrcodeRepository;
 import whereQR.project.entity.Qrcode;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -88,5 +90,15 @@ public class QrcodeService {
         ImageIO.write(bufferedImage, "png", temp);
 
         return temp;
+    }
+
+    //기존에 관리자가 만들어준 QRcode에서 사용자가 속성을 입력하여 update
+    public QrcodeRegisterDto register(Long id, QrcodeRegisterDto qrcodeRegisterDto){
+
+        // To Do : 예외처리 로직
+
+        Optional<Qrcode> qrcode = qrcodeRepository.findById(id);
+        qrcode.get().register(qrcodeRegisterDto);
+        return qrcodeRegisterDto;
     }
 }

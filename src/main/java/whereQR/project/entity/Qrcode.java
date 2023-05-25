@@ -1,9 +1,12 @@
 package whereQR.project.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import lombok.Getter;
 import whereQR.project.entity.Address;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Member;
+import whereQR.project.entity.dto.QrcodeRegisterDto;
 
 import javax.persistence.*;
 
@@ -44,6 +47,13 @@ public class Qrcode {
     public void changeQrcode(Member member){
         this.member = member;
         member.getQrcodes().add(this);
+    }
+
+    public void register(QrcodeRegisterDto qrcodeRegisterDto){
+        this.title = qrcodeRegisterDto.getTitle();
+        this.memo = qrcodeRegisterDto.getMemo();
+        this.address = qrcodeRegisterDto.getAddress();
+        this.phoneNumber = qrcodeRegisterDto.getPhoneNumber();
     }
 
 }
