@@ -1,14 +1,14 @@
 package whereQR.project.entity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import lombok.Getter;
 import whereQR.project.entity.Address;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.QrcodeRegisterDto;
+import whereQR.project.entity.dto.QrcodeDetailDto;
+import whereQR.project.entity.dto.QrcodeUpdateDto;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -30,6 +30,8 @@ public class Qrcode {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private LocalDateTime updateDate;
+
     public Qrcode(String title, String memo){
         this.title = title;
         this.memo = memo;
@@ -49,11 +51,12 @@ public class Qrcode {
         member.getQrcodes().add(this);
     }
 
-    public void register(QrcodeRegisterDto qrcodeRegisterDto){
-        this.title = qrcodeRegisterDto.getTitle();
-        this.memo = qrcodeRegisterDto.getMemo();
-        this.address = qrcodeRegisterDto.getAddress();
-        this.phoneNumber = qrcodeRegisterDto.getPhoneNumber();
+    public void update(QrcodeUpdateDto qrcodeUpdateDto){
+        this.title = qrcodeUpdateDto.getTitle();
+        this.memo = qrcodeUpdateDto.getMemo();
+        this.address = qrcodeUpdateDto.getAddress();
+        this.phoneNumber = qrcodeUpdateDto.getPhoneNumber();
+        this.updateDate = LocalDateTime.now();
     }
 
 }

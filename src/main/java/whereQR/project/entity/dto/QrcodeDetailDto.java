@@ -2,14 +2,13 @@ package whereQR.project.entity.dto;
 
 import lombok.Data;
 import whereQR.project.entity.Address;
-import whereQR.project.entity.Member;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Qrcode;
 
 import javax.persistence.Embedded;
 
 @Data
-public class QrcodeRegisterDto {
+public class QrcodeDetailDto {
 
     private String title;
     private String memo;
@@ -19,13 +18,14 @@ public class QrcodeRegisterDto {
     @Embedded
     PhoneNumber phoneNumber;
 
-    public QrcodeRegisterDto(String title, String memo, Address address, PhoneNumber phoneNumber){
-        this.title = title;
-        this.memo = memo;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
+    public QrcodeDetailDto(){
+
     }
 
+    public QrcodeDetailDto(Qrcode qrcode){
+        this.title = qrcode.getTitle();
+        this.memo = qrcode.getMemo();
+        this.address = qrcode.getAddress();
+        this.phoneNumber = qrcode.getPhoneNumber();
+    }
 }
-
-

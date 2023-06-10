@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Qrcode;
-import whereQR.project.entity.dto.QrcodeRegisterDto;
+import whereQR.project.entity.dto.QrcodeDetailDto;
+import whereQR.project.entity.dto.QrcodeUpdateDto;
 import whereQR.project.service.QrcodeService;
 
 import java.io.IOException;
@@ -19,11 +20,16 @@ public class qrcodeController {
 
     @PostMapping("/create")
     public Qrcode makeQr() throws WriterException, IOException {
-        return qrcodeService.make();
+        return qrcodeService.makeQr();
     }
 
-    @GetMapping("/register")
-    public QrcodeRegisterDto register(@RequestParam Long id, @RequestParam QrcodeRegisterDto qrcodeRegisterDto){
-        return qrcodeService.register(id, qrcodeRegisterDto);
+    @PostMapping("/update")
+    public QrcodeUpdateDto updateQr(@RequestParam Long id, @RequestBody QrcodeUpdateDto qrcodeUpdateDto) throws Exception {
+        return qrcodeService.updateQr(id, qrcodeUpdateDto);
+    }
+
+    @GetMapping("/detail")
+    public QrcodeDetailDto getQr(@RequestParam Long id){
+        return qrcodeService.getQr(id);
     }
 }
