@@ -18,6 +18,8 @@ public class Qrcode {
     private Long id;
     private String title;
     private String memo;
+    private String qrcodeKey;
+    private QrStatus qrStatus;
 
     @Embedded
     Address address;
@@ -30,32 +32,40 @@ public class Qrcode {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private LocalDateTime updateDate;
 
-    public Qrcode(String title, String memo){
-        this.title = title;
-        this.memo = memo;
-    }
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 
     public Qrcode() {
 
     }
 
-    public Qrcode(String url){
+    public Qrcode(String url, String key, QrStatus qrStatus){
         this.url = url;
+        this.qrcodeKey = key;
+        this.qrStatus = qrStatus;
     }
 
-    //연관관계 편의 메서드
+    //연관관계 편의 메서드Qrcode
     public void changeQrcode(Member member){
         this.member = member;
         member.getQrcodes().add(this);
     }
 
-    public void update(QrcodeUpdateDto qrcodeUpdateDto){
-        this.title = qrcodeUpdateDto.getTitle();
-        this.memo = qrcodeUpdateDto.getMemo();
-        this.address = qrcodeUpdateDto.getAddress();
-        this.phoneNumber = qrcodeUpdateDto.getPhoneNumber();
+    public void updateQr(String title, String memo, QrStatus qrStatus, Member member ){
+        this.title = title;
+        this.memo = memo;
+        this.createDate =  LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
+        this.qrStatus = qrStatus;
+        this.member = member;
+    }
+
+    public void updateQr(String title, String memo,Address address,  PhoneNumber phoneNumber){
+        this.title = title;
+        this.memo = memo;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
         this.updateDate = LocalDateTime.now();
     }
 

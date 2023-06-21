@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Qrcode;
 import whereQR.project.entity.dto.QrcodeDetailDto;
+import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
 import whereQR.project.service.QrcodeService;
 
@@ -24,12 +25,12 @@ public class qrcodeController {
     }
 
     @PostMapping("/update")
-    public QrcodeUpdateDto updateQr(@RequestParam Long id, @RequestBody QrcodeUpdateDto qrcodeUpdateDto) throws Exception {
-        return qrcodeService.updateQr(id, qrcodeUpdateDto);
+    public QrcodeUpdateDto updateQr(@RequestParam String key, @RequestBody QrcodeUpdateDto qrcodeUpdateDto) throws Exception {
+        return qrcodeService.saveQr(key, qrcodeUpdateDto);
     }
 
-    @GetMapping("/detail")
-    public QrcodeDetailDto getQr(@RequestParam Long id){
-        return qrcodeService.getQr(id);
+    @GetMapping("/scan")
+    public QrcodeScanDto getQr(@RequestParam String key){
+        return qrcodeService.scanQr(key);
     }
 }

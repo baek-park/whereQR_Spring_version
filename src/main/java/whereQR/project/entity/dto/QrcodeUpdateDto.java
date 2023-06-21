@@ -19,6 +19,11 @@ public class QrcodeUpdateDto {
     @Embedded
     PhoneNumber phoneNumber;
 
+    public QrcodeUpdateDto(String title, String memo){
+        this.title = title;
+        this.memo = memo;
+    }
+
     public QrcodeUpdateDto(String title, String memo, Address address, PhoneNumber phoneNumber){
         this.title = title;
         this.memo = memo;
