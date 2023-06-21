@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/members/**").permitAll()
                 .antMatchers("/qrcode/create").hasRole("ADMIN")
-                .antMatchers("/qrcode/update").hasRole("USER")
+                .antMatchers("/qrcode/update/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
