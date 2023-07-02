@@ -5,6 +5,9 @@ import org.apache.tomcat.jni.Address;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Member;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class MemberSignupDto {
 
@@ -12,26 +15,19 @@ public class MemberSignupDto {
     private int age;
     private Address address;
     private PhoneNumber phoneNumber;
+    private List<String> roles;
 
     private String password;
     private String email;
 
-    public void MemberSignupDto(String username, int age, Address address , PhoneNumber phoneNumber){
-        this.username = username;
-        this.age = age;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-    }
-
-    //builder pattern 사용
-    public Member toMember(String username,int age, String email, String password){
-        return Member.builder()
-                .username(username)
-                .age(age)
-                .email(email)
-                .password(password)
-                .build();
+    public MemberSignupDto(){
 
     }
 
+    public MemberSignupDto(String username, int age, String email, List<String> roles){
+            this.username = username;
+            this.age = age;
+            this.email = email;
+            this.roles = roles;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import whereQR.project.entity.dto.MemberDetailDto;
+import whereQR.project.entity.dto.MemberSignupDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -64,6 +65,14 @@ public class Member implements UserDetails {
         this.age = age;
     }
 
+    public Member(String username, int age, String email, String password, List<String> roles) {
+        this.username = username;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
+
     public void updateMember(String username, int age, Address address, PhoneNumber phoneNumber){
         this.username = username;
         this.age = age;
@@ -103,5 +112,14 @@ public class Member implements UserDetails {
                     this.username,
                     this.age,
                     this.qrcodes);
+    }
+
+    public MemberSignupDto toMemberSignupDto(){
+        return new MemberSignupDto(
+                this.username,
+                this.age,
+                this.email,
+                this.roles
+        );
     }
 }

@@ -7,6 +7,6 @@ import whereQR.project.entity.Member;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>{
     Optional<Member> findMemberByUsername(String username);
 }

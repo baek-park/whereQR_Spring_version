@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.dto.MemberDetailDto;
@@ -27,11 +28,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public TokenInfo login(MemberLoginDto memberLoginDto){
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getUsername(), memberLoginDto.getPassword());
+        // Todo : 비밀번호 암호화 사용을 위해 token 발급 method를 JWT.create()로 custom
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getUsername(),  memberLoginDto.getPassword());
         Authentication authentication =  authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
@@ -39,13 +41,11 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberSignupDto signUp(MemberSignupDto MemberSignupDto){
+    public MemberSignupDto signUp(MemberSignupDto memberSignupDto){
 
-       memberRepository.findMemberByUsername(MemberSignupDto.getUsername()).orElseThrow(() -> new InvalidUsername("중복된 username 입니다.", this.getClass().toString()));
-
-        Member member = MemberSignupDto.toMember(MemberSignupDto.getUsername(),MemberSignupDto.getAge(), MemberSignupDto.getEmail(), MemberSignupDto.getPassword());
+        Member member = new Member(memberSignupDto.getUsername(),memberSignupDto.getAge(), memberSignupDto.getEmail(),  passwordEncoder.encode(memberSignupDto.getPassword()), memberSignupDto.getRoles());
         memberRepository.save(member);
-        return MemberSignupDto;
+        return member.toMemberSignupDto();
     }
 
     public MemberDetailDto detail(){
