@@ -44,7 +44,7 @@ public class QrcodeService {
 
     //관리자용 권한
     @Transactional
-    public Qrcode makeQr() throws WriterException {
+    public Qrcode create() throws WriterException {
 
         HashMap hashMap = makeQrcodeMatrix(200,200);
         String key = (String) hashMap.get("key");
@@ -104,7 +104,7 @@ public class QrcodeService {
         return temp;
     }
 
-    public QrcodeScanDto scanQr(String key){
+    public QrcodeScanDto scan(String key){
         //주운 사람들까지 qrcode에 등록된 key를 활용해서 누구나 접근 가능해야함
         //값이 존재하면 넘겨줘야하고 Status가 false면 status만 넘겨줌
         Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new NotFoundException("key가 존재하지 않습니다.", this.getClass().toString()));
@@ -119,7 +119,7 @@ public class QrcodeService {
     }
 
     @Transactional
-    public QrcodeUpdateDto saveQr(String key, QrcodeUpdateDto qrcodeUpdateDto){
+    public QrcodeUpdateDto update(String key, QrcodeUpdateDto qrcodeUpdateDto){
 
         /**
          * saveQr에서 최초등록과 수정을 QrStatus로 구분

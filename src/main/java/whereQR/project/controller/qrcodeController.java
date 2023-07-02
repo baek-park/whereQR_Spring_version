@@ -21,16 +21,16 @@ public class qrcodeController {
 
     @PostMapping("/create")
     public Qrcode makeQr() throws WriterException, IOException {
-        return qrcodeService.makeQr();
+        return qrcodeService.create();
     }
 
     @PostMapping("/update")
     public QrcodeUpdateDto updateQr(@RequestParam String key, @RequestBody QrcodeUpdateDto qrcodeUpdateDto) throws Exception {
-        return qrcodeService.saveQr(key, qrcodeUpdateDto);
+        return qrcodeService.update(key, qrcodeUpdateDto);
     }
 
     @GetMapping("/scan")
-    public QrcodeScanDto getQr(@RequestParam String key){
-        return qrcodeService.scanQr(key);
+    public QrcodeScanDto scanQr(@RequestParam String key){
+        return qrcodeService.scan(key);
     }
 }
