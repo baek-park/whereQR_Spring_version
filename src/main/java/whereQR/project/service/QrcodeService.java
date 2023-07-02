@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
+import whereQR.project.exception.CustomExceptions.ForbiddenException;
+import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.repository.MemberRepository;
 import whereQR.project.repository.QrcodeRepository;
 import whereQR.project.entity.Qrcode;
@@ -42,13 +44,13 @@ public class QrcodeService {
 
     //관리자용 권한
     @Transactional
-    public Qrcode makeQr() throws WriterException, IOException {
+    public Qrcode makeQr() throws WriterException {
 
         HashMap hashMap = makeQrcodeMatrix(200,200);
         String key = (String) hashMap.get("key");
         BitMatrix matrix = (BitMatrix) hashMap.get("matrix");
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             MatrixToImageWriter.writeToStream(matrix, "PNG", out);
             log.info("makeQR-qrcode-out/ out.toByteArray() => {}\n", out.toByteArray());
 
@@ -105,7 +107,7 @@ public class QrcodeService {
     public QrcodeScanDto scanQr(String key){
         //주운 사람들까지 qrcode에 등록된 key를 활용해서 누구나 접근 가능해야함
         //값이 존재하면 넘겨줘야하고 Status가 false면 status만 넘겨줌
-        Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new IllegalArgumentException("key가 존재하지 않습니다."));
+        Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new NotFoundException("key가 존재하지 않습니다.", this.getClass().toString()));
         switch (qrcode.getQrStatus()){
             case New:
                 return new QrcodeScanDto(New);
@@ -117,16 +119,15 @@ public class QrcodeService {
     }
 
     @Transactional
-    public QrcodeUpdateDto saveQr(String key, QrcodeUpdateDto qrcodeUpdateDto) throws Exception {
+    public QrcodeUpdateDto saveQr(String key, QrcodeUpdateDto qrcodeUpdateDto){
 
         /**
          * saveQr에서 최초등록과 수정을 QrStatus로 구분
          */
 
-        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(
-                ()-> new IllegalArgumentException("login이 필요합니다") );
+        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> new NotFoundException("login이 필요합니다", this.getClass().toString()));
 
-        Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new IllegalArgumentException("key가 존재하지 않습니다."));
+        Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new NotFoundException("key가 존재하지 않습니다.", this.getClass().toString()));
         switch (qrcode.getQrStatus()){
             case New://최초로 등록하는 경우
                 qrcode.updateQr(qrcodeUpdateDto.getTitle(), qrcodeUpdateDto.getMemo(), Saved, member);
@@ -138,14 +139,9 @@ public class QrcodeService {
                     qrcode.updateQr(qrcodeUpdateDto.getTitle(), qrcodeUpdateDto.getMemo(), qrcodeUpdateDto.getAddress(), qrcodeUpdateDto.getPhoneNumber());
                     break;
                 }else{
-                    throw new RuntimeException("접근 권한이 존재하지 않습니다");
+                    throw new ForbiddenException("접근 권한이 존재하지 않습니다", this.getClass().toString());
                 }
         }
         return qrcode.toQrCodeUpdateDto();
     }
-
-
-
-
-
 }

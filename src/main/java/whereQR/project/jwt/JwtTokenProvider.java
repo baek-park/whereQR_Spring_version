@@ -14,6 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import whereQR.project.entity.dto.TokenInfo;
+import whereQR.project.exception.CustomExceptions.IllegalArgumentException;
+import whereQR.project.exception.CustomExceptions.MalformedJwtException;
+import whereQR.project.exception.CustomExceptions.ExpiredJwtException;
+import whereQR.project.exception.CustomExceptions.UnsupportedJwtException;
+import whereQR.project.exception.CustomExceptions.SecurityException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
@@ -108,26 +113,32 @@ public class JwtTokenProvider {
     public Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
             return e.getClaims();
         }
     }
 
     //토큰 정보 검증 메서드
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token){
+
+        String path = this.getClass().toString();
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.error("유효하지 않은 JWT Token 입니다.", e);
+        } catch (io.jsonwebtoken.security.SecurityException e) {
+            throw new SecurityException("유효하지 않은 JWT Token 입니다.", path);
+        } catch(MalformedJwtException e){
+            throw new MalformedJwtException("유효하지 않은 JWT Token 입니다.", path);
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT Token 입니다.", e);
+            throw new ExpiredJwtException("만료된 JWT Token 입니다.", path);
         } catch (UnsupportedJwtException e) {
             log.error("지원하지 않는 않은 JWT Token 입니다.", e);
+            throw new UnsupportedJwtException("지원하지 않는 않은 JWT Token 입니다.", path);
         } catch (IllegalArgumentException e) {
             log.error("JWT의 클레임이 비어있습니다.", e);
+            throw new IllegalArgumentException("JWT의 클레임이 비어있습니다.", path);
         }
-        return false;
     }
 
     public static String extractTokenFromHeader(HttpServletRequest request) {

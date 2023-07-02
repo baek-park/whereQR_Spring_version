@@ -12,6 +12,8 @@ import whereQR.project.entity.dto.MemberSignupDto;
 import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.entity.Member;
+import whereQR.project.exception.CustomExceptions.InvalidUsername;
+import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.repository.MemberRepository;
 import whereQR.project.utils.GetUser;
@@ -39,9 +41,7 @@ public class MemberService {
     @Transactional
     public MemberSignupDto signUp(MemberSignupDto MemberSignupDto){
 
-       memberRepository.findMemberByUsername(MemberSignupDto.getUsername()).orElseThrow(
-                () -> { throw new IllegalArgumentException("중복된 username 입니다.");
-                });
+       memberRepository.findMemberByUsername(MemberSignupDto.getUsername()).orElseThrow(() -> new InvalidUsername("중복된 username 입니다.", this.getClass().toString()));
 
         Member member = MemberSignupDto.toMember(MemberSignupDto.getUsername(),MemberSignupDto.getAge(), MemberSignupDto.getEmail(), MemberSignupDto.getPassword());
         memberRepository.save(member);
@@ -50,9 +50,7 @@ public class MemberService {
 
     public MemberDetailDto detail(){
 
-        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> {
-            throw new RuntimeException("존재하지 않는 User입니다.");
-        });
+        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() ->  new NotFoundException("존재하지 않는 User입니다.",this.getClass().toString()));
 
         return member.toMemberDetailDto();
     }
