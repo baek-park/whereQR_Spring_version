@@ -12,7 +12,7 @@ import whereQR.project.service.MemberService;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/members")
+@RequestMapping("/member")
 public class memberController {
 
     private final MemberService memberService;
