@@ -1,7 +1,6 @@
 package whereQR.project.entity;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 
 @Embeddable
 public class PhoneNumber {

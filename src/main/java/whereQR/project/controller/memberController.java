@@ -9,8 +9,6 @@ import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.service.MemberService;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
