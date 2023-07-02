@@ -12,12 +12,9 @@ import whereQR.project.entity.dto.MemberSignupDto;
 import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.entity.Member;
-import whereQR.project.jwt.JwtAuthenticationFilter;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.repository.MemberRepository;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
+import whereQR.project.utils.GetUser;
 
 @Service
 @RequiredArgsConstructor
@@ -42,24 +39,21 @@ public class MemberService {
     @Transactional
     public MemberSignupDto signUp(MemberSignupDto MemberSignupDto){
 
-//        Long memberId = memberRepository.findMemberByUsername(MemberDto.getUsername()).get().getId();
-//
-//        if(memberRepository.existsById(memberId)){
-//            throw new 예외처리 넣기
-//        }
+       memberRepository.findMemberByUsername(MemberSignupDto.getUsername()).orElseThrow(
+                () -> { throw new IllegalArgumentException("중복된 username 입니다.");
+                });
 
         Member member = MemberSignupDto.toMember(MemberSignupDto.getUsername(),MemberSignupDto.getAge(), MemberSignupDto.getEmail(), MemberSignupDto.getPassword());
         memberRepository.save(member);
         return MemberSignupDto;
     }
 
-    public MemberDetailDto detail(HttpServletRequest request){
+    public MemberDetailDto detail(){
 
-        String token = JwtTokenProvider.extractTokenFromHeader(request);
-        String username = String.valueOf(jwtTokenProvider.parseClaims(token).get("sub"));
-        log.info("getUsernameFormToken subject = {}", username);
-        Optional<Member> member = memberRepository.findMemberByUsername(username);
-        MemberDetailDto memberDetailDto = new MemberDetailDto(member.get());
-        return memberDetailDto;
+        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> {
+            throw new RuntimeException("존재하지 않는 User입니다.");
+        });
+
+        return member.toMemberDetailDto();
     }
 }

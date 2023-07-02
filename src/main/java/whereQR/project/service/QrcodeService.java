@@ -128,14 +128,20 @@ public class QrcodeService {
 
         Qrcode qrcode = qrcodeRepository.findQrcodeByQrcodeKey(key).orElseThrow(() -> new IllegalArgumentException("key가 존재하지 않습니다."));
         switch (qrcode.getQrStatus()){
-            case New:
+            case New://최초로 등록하는 경우
                 qrcode.updateQr(qrcodeUpdateDto.getTitle(), qrcodeUpdateDto.getMemo(), Saved, member);
                 break;
-            case Saved:
-                qrcode.updateQr(qrcodeUpdateDto.getTitle(), qrcodeUpdateDto.getMemo(), qrcodeUpdateDto.getAddress(), qrcodeUpdateDto.getPhoneNumber());
-                break;
+            case Saved://이미 등록된 경우
+
+                //이미 등록된 경우에는 동일한 고객이 아니라면 update가 불가능하다.
+                if( GetUser.getUserName().equals(qrcode.getMember().getUsername()) ){
+                    qrcode.updateQr(qrcodeUpdateDto.getTitle(), qrcodeUpdateDto.getMemo(), qrcodeUpdateDto.getAddress(), qrcodeUpdateDto.getPhoneNumber());
+                    break;
+                }else{
+                    throw new RuntimeException("접근 권한이 존재하지 않습니다");
+                }
         }
-        return qrcodeUpdateDto;
+        return qrcode.toQrCodeUpdateDto();
     }
 
 

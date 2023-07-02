@@ -28,9 +28,12 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/members/**").permitAll()
+                .antMatchers("/members/signup").permitAll()
+                .antMatchers("/members/login").permitAll()
+                .antMatchers("/member/detail").hasAnyRole("ADMIN","USERS")
                 .antMatchers("/qrcode/create").hasRole("ADMIN")
                 .antMatchers("/qrcode/update/**").hasRole("USER")
+                .antMatchers("/qrcode/scan/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

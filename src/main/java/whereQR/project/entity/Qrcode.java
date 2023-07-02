@@ -1,10 +1,6 @@
 package whereQR.project.entity;
 
 import lombok.Getter;
-import whereQR.project.entity.Address;
-import whereQR.project.entity.PhoneNumber;
-import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.QrcodeDetailDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
 
 import javax.persistence.*;
@@ -67,6 +63,16 @@ public class Qrcode {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.updateDate = LocalDateTime.now();
+    }
+
+    public QrcodeUpdateDto toQrCodeUpdateDto(){
+        return new QrcodeUpdateDto(
+                this.title,
+                this.memo,
+                this.address,
+                this.phoneNumber,
+                this.qrStatus,
+                this.member);
     }
 
 }

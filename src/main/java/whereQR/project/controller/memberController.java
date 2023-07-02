@@ -31,8 +31,8 @@ public class memberController {
     }
 
     @GetMapping("/detail")
-    public MemberDetailDto myPage(HttpServletRequest request){
-        MemberDetailDto memberDetailDto = memberService.detail(request);
+    public MemberDetailDto myPage(){
+        MemberDetailDto memberDetailDto = memberService.detail();
         return memberDetailDto;
     }
 }

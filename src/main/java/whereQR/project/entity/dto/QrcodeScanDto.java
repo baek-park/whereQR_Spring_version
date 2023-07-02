@@ -1,5 +1,7 @@
 package whereQR.project.entity.dto;
 
+import lombok.Data;
+import lombok.Getter;
 import whereQR.project.entity.Address;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.QrStatus;
@@ -7,6 +9,7 @@ import whereQR.project.entity.Qrcode;
 
 import javax.persistence.Embedded;
 
+@Data
 public class QrcodeScanDto {
 
     private String title;

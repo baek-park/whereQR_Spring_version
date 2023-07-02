@@ -1,5 +1,6 @@
 package whereQR.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import whereQR.project.entity.dto.MemberDetailDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class Member implements UserDetails {
 
     // member : qrcodes -> 1 : 다 -> qrcode가 연관관계 주인
     @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Qrcode> qrcodes = new ArrayList<>();
 
     //생성자
@@ -93,5 +96,12 @@ public class Member implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public MemberDetailDto toMemberDetailDto(){
+            return new MemberDetailDto(
+                    this.username,
+                    this.age,
+                    this.qrcodes);
     }
 }
