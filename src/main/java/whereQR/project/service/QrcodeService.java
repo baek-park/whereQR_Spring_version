@@ -11,8 +11,10 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
+import whereQR.project.entity.dto.QrcodeDetailDto;
 import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
+import whereQR.project.entity.dto.QrcodeUpdateResponseDto;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.repository.MemberRepository;
@@ -28,6 +30,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static whereQR.project.entity.QrStatus.New;
 import static whereQR.project.entity.QrStatus.Saved;
@@ -119,7 +123,7 @@ public class QrcodeService {
     }
 
     @Transactional
-    public QrcodeUpdateDto update(String key, QrcodeUpdateDto qrcodeUpdateDto){
+    public QrcodeUpdateResponseDto update(String key, QrcodeUpdateDto qrcodeUpdateDto){
 
         /**
          * saveQr에서 최초등록과 수정을 QrStatus로 구분
@@ -142,6 +146,23 @@ public class QrcodeService {
                     throw new ForbiddenException("접근 권한이 존재하지 않습니다", this.getClass().toString());
                 }
         }
-        return qrcode.toQrCodeUpdateDto();
+        return qrcode.toQrCodeUpdateResponseDto();
+    }
+
+    public List<QrcodeDetailDto> getQrcodeByMember(){
+
+        String username = GetUser.getUserName();
+
+        if(username.isEmpty() || !username.equals(GetUser.getUserName())){
+            throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
+        }
+
+        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> new NotFoundException("login이 필요합니다", this.getClass().toString()));
+
+        List<QrcodeDetailDto> qrcodeDetailDtoList = member.getQrcodes().stream()
+                .map(it->it.toQrcodeDetailDto())
+                .collect(Collectors.toList());
+
+        return qrcodeDetailDtoList;
     }
 }

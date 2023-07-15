@@ -8,26 +8,19 @@ import whereQR.project.entity.Qrcode;
 import javax.persistence.Embedded;
 
 @Data
-public class QrcodeDetailDto {
+public class QrcodeUpdateResponseDto {
 
     private String title;
     private String memo;
-    private String key;
-
     @Embedded
     Address address;
     @Embedded
     PhoneNumber phoneNumber;
 
-    public QrcodeDetailDto(){
-
-    }
-
-    public QrcodeDetailDto(Qrcode qrcode){
+    public QrcodeUpdateResponseDto(Qrcode qrcode) {
         this.title = qrcode.getTitle();
         this.memo = qrcode.getMemo();
         this.address = qrcode.getAddress();
         this.phoneNumber = qrcode.getPhoneNumber();
-        this.key = qrcode.getQrcodeKey();
     }
 }
