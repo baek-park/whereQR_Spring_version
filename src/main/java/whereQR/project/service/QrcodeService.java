@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.QrcodeDetailDto;
+import whereQR.project.entity.dto.QrcodeResponseDto;
 import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
 import whereQR.project.entity.dto.QrcodeUpdateResponseDto;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -149,7 +150,7 @@ public class QrcodeService {
         return qrcode.toQrCodeUpdateResponseDto();
     }
 
-    public List<QrcodeDetailDto> getQrcodeByMember(){
+    public List<QrcodeResponseDto> getQrcodeByMember(){
 
         String username = GetUser.getUserName();
 
@@ -159,8 +160,9 @@ public class QrcodeService {
 
         Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> new NotFoundException("login이 필요합니다", this.getClass().toString()));
 
-        List<QrcodeDetailDto> qrcodeDetailDtoList = member.getQrcodes().stream()
-                .map(it->it.toQrcodeDetailDto())
+        List<QrcodeResponseDto> qrcodeDetailDtoList = member.getQrcodes().stream()
+                .sorted(Comparator.comparing(Qrcode::getCreateDate).reversed())
+                .map(it->it.toQrcodeResponseDto())
                 .collect(Collectors.toList());
 
         return qrcodeDetailDtoList;
