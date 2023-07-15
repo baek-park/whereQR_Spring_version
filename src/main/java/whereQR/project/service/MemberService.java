@@ -33,13 +33,11 @@ public class MemberService {
 
     @Transactional
     public TokenInfo login(MemberLoginDto memberLoginDto){
-        // Todo : 비밀번호 암호화 사용을 위해 token 발급 method를 JWT.create()로 custom
 
         System.out.println(passwordEncoder.encode(memberLoginDto.getPassword()));
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getUsername(),memberLoginDto.getPassword());
-        System.out.println("hereer======");
+
         Authentication authentication =  authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println("hererererere----");
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         return tokenInfo;
