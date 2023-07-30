@@ -14,7 +14,7 @@ import whereQR.project.jwt.JwtAuthenticationFilter;
 import whereQR.project.jwt.JwtTokenProvider;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug=true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/member/detail").hasAnyRole("ADMIN","USER")
                 .antMatchers("/qrcode/create").hasRole("ADMIN")
                 .antMatchers("/qrcode/update/**").hasRole("USER")
+                .antMatchers("/qrcode/register/**").hasRole("USER")
                 .antMatchers("/qrcode/qrcode-list").hasRole("USER")
                 .antMatchers("/qrcode/scan/**").permitAll()
                 .anyRequest().authenticated()

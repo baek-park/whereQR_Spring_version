@@ -8,16 +8,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import whereQR.project.config.SecurityConfig;
 import whereQR.project.entity.dto.MemberDetailDto;
 import whereQR.project.entity.dto.MemberSignupDto;
 import whereQR.project.entity.dto.MemberLoginDto;
 import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.entity.Member;
-import whereQR.project.exception.CustomExceptions.InvalidUsername;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.jwt.JwtTokenProvider;
-import whereQR.project.repository.MemberRepository;
+import whereQR.project.repository.member.MemberRepository;
 import whereQR.project.utils.GetUser;
 
 @Service
@@ -45,6 +43,11 @@ public class MemberService {
 
     @Transactional
     public MemberSignupDto signUp(MemberSignupDto memberSignupDto){
+
+//        if( memberRepository.existsMemberByUsernameAndRoles(memberSignupDto.getUsername(), memberSignupDto.getRoles()) == Boolean.TRUE){
+//            throw new BadRequestException("이미 존재하는 회원",this.getClass().toString());
+//
+//        }//Todo : role 변경 후에 적용예정
 
         Member member = new Member(memberSignupDto.getUsername(),memberSignupDto.getAge(), memberSignupDto.getEmail(),  passwordEncoder.encode(memberSignupDto.getPassword()), memberSignupDto.getRoles());
         memberRepository.save(member);

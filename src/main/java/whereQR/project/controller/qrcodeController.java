@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Qrcode;
+import whereQR.project.entity.dto.QrcodeRegisterDto;
+import whereQR.project.entity.dto.QrcodeResponseDto;
 import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
-import whereQR.project.entity.dto.QrcodeUpdateResponseDto;
-import whereQR.project.service.QrcodeService;
+import whereQR.project.service.qrcode.QrcodeService;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/qrcode")
@@ -19,18 +21,23 @@ public class qrcodeController {
 
     private final QrcodeService qrcodeService;
     @PostMapping("/create")
-    public Qrcode makeQr() throws WriterException {
-        return qrcodeService.create();
+    public Qrcode make() throws WriterException {
+        return qrcodeService.createQrcode();
     }
 
     @PostMapping("/update")
-    public QrcodeUpdateResponseDto updateQr(@RequestParam String key, @RequestBody QrcodeUpdateDto qrcodeUpdateDto){
-        return qrcodeService.update(key, qrcodeUpdateDto);
+    public QrcodeResponseDto update(@RequestParam UUID id, @RequestBody QrcodeUpdateDto qrcodeUpdateDto){
+        return qrcodeService.updateQrcode(id, qrcodeUpdateDto);
+    }
+
+    @PostMapping("/register")
+    public QrcodeResponseDto register(@RequestParam UUID id, @RequestBody QrcodeRegisterDto qrcodeRegisterDto){
+        return qrcodeService.registerQrcode(id, qrcodeRegisterDto);
     }
 
     @GetMapping("/scan")
-    public QrcodeScanDto scanQr(@RequestParam String key){
-        return qrcodeService.scan(key);
+    public QrcodeScanDto scan(@RequestParam UUID id){
+        return qrcodeService.getQrcode(id);
     }
 
     @GetMapping("/qrcode-list")

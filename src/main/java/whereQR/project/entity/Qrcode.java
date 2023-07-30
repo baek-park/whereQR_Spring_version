@@ -1,22 +1,25 @@
 package whereQR.project.entity;
 
 import lombok.Getter;
+import whereQR.project.entity.dto.QrcodeRegisterDto;
 import whereQR.project.entity.dto.QrcodeResponseDto;
-import whereQR.project.entity.dto.QrcodeUpdateResponseDto;
+import whereQR.project.entity.dto.QrcodeUpdateDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
 public class Qrcode {
 
-    @Id @GeneratedValue
-    private Long id;
+    @Id
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
     private String title;
     private String memo;
-    private String qrcodeKey;
     private QrStatus qrStatus;
+
 
     @Embedded
     Address address;
@@ -29,17 +32,17 @@ public class Qrcode {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+
 
     public Qrcode() {
 
     }
 
-    public Qrcode(String url, String key, QrStatus qrStatus){
+    public Qrcode(UUID id,String url, QrStatus qrStatus){
         this.url = url;
-        this.qrcodeKey = key;
+        this.id = id;
         this.qrStatus = qrStatus;
     }
 
@@ -49,30 +52,25 @@ public class Qrcode {
         member.getQrcodes().add(this);
     }
 
-    public void updateQr(String title, String memo, QrStatus qrStatus, Member member ){
-        this.title = title;
-        this.memo = memo;
+    public void registerQrcode(QrcodeRegisterDto qrcodeRegisterDto, QrStatus qrStatus, Member member ){
+        this.title = qrcodeRegisterDto.getTitle();
+        this.memo = qrcodeRegisterDto.getMemo();
         this.createDate =  LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
         this.qrStatus = qrStatus;
         this.member = member;
     }
 
-    public void updateQr(String title, String memo,Address address,  PhoneNumber phoneNumber){
-        this.title = title;
-        this.memo = memo;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
+    public void updateQrcode(QrcodeUpdateDto qrcodeUpdateDto){
+        this.title = qrcodeUpdateDto.getTitle();
+        this.memo = qrcodeUpdateDto.getMemo();
+        this.phoneNumber = qrcodeUpdateDto.getPhoneNumber();
+        this.address = qrcodeUpdateDto.getAddress();
         this.updateDate = LocalDateTime.now();
     }
 
     public QrcodeResponseDto toQrcodeResponseDto(){
         return new QrcodeResponseDto(this);
     }
-
-    public QrcodeUpdateResponseDto toQrCodeUpdateResponseDto(){
-        return new QrcodeUpdateResponseDto(this);
-    }
-
 
 }

@@ -1,4 +1,4 @@
-package whereQR.project.repository;
+package whereQR.project.repository.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
