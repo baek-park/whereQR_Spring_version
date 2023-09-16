@@ -23,25 +23,25 @@ services:
     secrets:
       - db_password
 
-  react-app:
-    image: baeksujin/frontend:v1
-    ports:
-      - 3000:80
-    networks:
-      - application
-
-#  app:
-#    container_name: app
-#    image: whereqr:v1
-#    user: root
+#  react-app:
+#    image: baeksujin/frontend:v1
 #    ports:
-#      - 8080:8080
-#    restart: always
+#      - 3000:80
 #    networks:
 #      - application
-#    depends_on:
-#      db:
-#        condition: service_healthy
+
+  app:
+    container_name: backend
+    image: baeksujin/whereqr:v2
+    user: root
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - application
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   mysql-data:

@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk as builder
+FROM adoptopenjdk/openjdk11 as builder
 
 WORKDIR /builder
 
@@ -11,7 +11,7 @@ COPY src ./src
 
 RUN ./gradlew bootJar
 
-FROM openjdk:11-jdk as runner
+FROM adoptopenjdk/openjdk11  as runner
 
 WORKDIR /app
 
@@ -19,4 +19,4 @@ COPY --from=builder /builder/build/libs/app.jar ./
 
 EXPOSE 8080
 
-CMD ["java","-jar","app.jar"]
+CMD ["java","-jar","-Dspring.profiles.active=prod","app.jar"]
