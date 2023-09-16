@@ -49,7 +49,13 @@ Run을 시켜줍니다.
 ## 🌱 api 배포
 
 - 협업을 위해, localhost가 아닌 EC2의 탄력적 ip를 사용해 api를 제공
-**[postman](https://documenter.getpostman.com/view/19525584/2s946fdY9k)** 에서 체크 가능
+**[postman](https://documenter.getpostman.com/view/19525584/2s946fdY9k)** 에서 체크 가능 -> 변경.(aws 프리티어 문제로 중단.)
+** dockerfile build후 docker hub에 배포
+  
+<img width="700" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/6311c974-c6d5-457a-b8c7-2adf50dec562">
+
+frontend 도 docker hub에 배포후, GCP를 사용할 예정
+
 
 - CI/CD 구축 단계(Jenkins 활용)
 
