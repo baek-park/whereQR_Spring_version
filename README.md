@@ -49,14 +49,26 @@ Run을 시켜줍니다.
 ## 🌱 api 배포
 
 - 협업을 위해, localhost가 아닌 EC2의 탄력적 ip를 사용해 api를 제공
-**[postman](https://documenter.getpostman.com/view/19525584/2s946fdY9k)** 에서 체크 가능 -> 변경.(aws 프리티어 문제로 중단.)
-** dockerfile build후 docker hub에 배포
-  
-<img width="700" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/6311c974-c6d5-457a-b8c7-2adf50dec562">
+**[postman](https://documenter.getpostman.com/view/19525584/2s946fdY9k)** 에서 체크 가능 -> **docker image 활용해서 test가능**
 
-frontend 도 docker hub에 배포후, GCP를 사용할 예정
+### dockerfile build후 docker hub에 배포
+1. docker hub에 배포된 image ( baeksujin/whereqr-backend:v2.2 )
+![img_2.png](img_2.png)
+2. qrcode image 저장된 경로 ( /app/src/main/resources/static/qrcode )
+![img_1.png](img_1.png)
+3. qrcode 이미지 얻는 방법
+```
+docker cp 36730fe5a03a:/app/src/main/resources/static/qrcode .
+```
+
+36730fe5a03a : image container id 입니다.<br>
+. : 해당 명령어를 실행하는 경로로, docker container에 저장된 qrcode folder를 복사할 위치를 의미합니다.<br> 
 
 
-- CI/CD 구축 단계(Jenkins 활용)
+### CI/CD 구축 단계(Jenkins 활용)
+
+1. 프리티어로 중단 -> 동국대학교 창업동아리 선정(완료). -> 지원금 활용 예정.<br>
+
+
 
 
