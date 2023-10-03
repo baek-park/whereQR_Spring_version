@@ -5,30 +5,13 @@ networks:
     driver: bridge
 
 services:
-  db:
-    image: mysql:latest
+
+  react-app:
+    image: tnfus916/whereqr-front:latest
     ports:
-      - 3306:3306
-    volumes:
-      - mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: run/secrets/db_password
-      MYSQL_DATABASE: where_qr
+      - 3000:80
     networks:
       - application
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
-    secrets:
-      - db_password
-
-#  react-app:
-#    image: baeksujin/frontend:v1
-#    ports:
-#      - 3000:80
-#    networks:
-#      - application
 
   app:
     container_name: backend
@@ -39,13 +22,3 @@ services:
     restart: always
     networks:
       - application
-    depends_on:
-      db:
-        condition: service_healthy
-
-volumes:
-  mysql-data:
-
-secrets:
-  db_password:
-    file: db_password.txt

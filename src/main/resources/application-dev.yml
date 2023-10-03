@@ -1,0 +1,25 @@
+spring:
+
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://whererqr-mysql.crxyn5dktsnd.ap-northeast-2.rds.amazonaws.com:3306/where_qr
+    username: root
+    password: whereqr2upkw3!
+
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
