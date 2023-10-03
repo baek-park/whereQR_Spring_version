@@ -15,7 +15,7 @@ services:
 
   app:
     container_name: backend
-    image: baeksujin/whereqr:v2
+    image: baeksujin/whereqr-backend:v2.1
     user: root
     ports:
       - 8080:8080
