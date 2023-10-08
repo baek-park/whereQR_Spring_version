@@ -1,5 +1,6 @@
 package whereQR.project.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Qrcode;
@@ -14,8 +15,9 @@ public class QrcodeResponseDto {
     private UUID id;
     private String title;
     private String memo;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updateDate;
 
     @Embedded

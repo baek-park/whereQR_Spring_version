@@ -1,5 +1,6 @@
 package whereQR.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import whereQR.project.entity.dto.QrcodeRegisterDto;
 import whereQR.project.entity.dto.QrcodeResponseDto;
@@ -28,7 +29,10 @@ public class Qrcode {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updateDate;
 
 
