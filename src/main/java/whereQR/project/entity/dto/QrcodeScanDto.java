@@ -2,12 +2,10 @@ package whereQR.project.entity.dto;
 
 import lombok.Data;
 import lombok.Getter;
-import whereQR.project.entity.Address;
-import whereQR.project.entity.PhoneNumber;
-import whereQR.project.entity.QrStatus;
-import whereQR.project.entity.Qrcode;
+import whereQR.project.entity.*;
 
 import javax.persistence.Embedded;
+import java.util.UUID;
 
 @Data
 public class QrcodeScanDto {
@@ -21,12 +19,18 @@ public class QrcodeScanDto {
     @Embedded
     PhoneNumber phoneNumber;
 
+    private String url;
+
+    private Long memberId;
+
     public QrcodeScanDto(Qrcode qrcode) {
         this.title = qrcode.getTitle();
         this.memo = qrcode.getMemo();
         this.address = qrcode.getAddress();
         this.phoneNumber = qrcode.getPhoneNumber();
         this.qrStatus = qrcode.getQrStatus();
+        this.memberId = qrcode.getMember().getId();
+        this.url = qrcode.getUrl();
     }
 
     public QrcodeScanDto(QrStatus qrStatus) {

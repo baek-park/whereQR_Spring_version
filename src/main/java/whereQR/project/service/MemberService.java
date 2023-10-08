@@ -15,7 +15,7 @@ import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.entity.Member;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.jwt.JwtTokenProvider;
-import whereQR.project.repository.member.MemberRepository;
+import whereQR.project.repository.MemberRepository;
 import whereQR.project.utils.GetUser;
 
 @Service

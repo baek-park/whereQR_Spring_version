@@ -1,4 +1,4 @@
-package whereQR.project.service.qrcode;
+package whereQR.project.service;
 
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -15,12 +15,12 @@ import whereQR.project.entity.dto.QrcodeUpdateDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
-import whereQR.project.repository.QrcodeRepository;
 import whereQR.project.entity.Qrcode;
-import whereQR.project.repository.member.MemberRepository;
+import whereQR.project.properties.QrcodeProperties;
 import whereQR.project.utils.GetUser;
 import whereQR.project.utils.ZxingUtil;
-
+import whereQR.project.repository.MemberRepository;
+import whereQR.project.repository.QrcodeRepository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -38,13 +38,18 @@ public class QrcodeService {
 
     private final QrcodeRepository qrcodeRepository;
     private final MemberRepository memberRepository;
+    private final QrcodeProperties qrcodeProperties;
     public static String savePath = "src/main/resources/static/qrcode";
 
     //관리자용 권한
     @Transactional
     public Qrcode createQrcode() throws WriterException {
 
-        HashMap hashMap = ZxingUtil.makeQrcodeMatrix(200,200);
+        log.info("qrcodeProperties -> {}", qrcodeProperties);
+
+        ZxingUtil zxingUtil = new ZxingUtil(qrcodeProperties);
+
+        HashMap hashMap = zxingUtil.makeQrcodeMatrix(100,100);
         UUID id = (UUID) hashMap.get("id");
         BitMatrix matrix = (BitMatrix) hashMap.get("matrix");
 

@@ -7,7 +7,7 @@ networks:
 services:
 
   react-app:
-    image: tnfus916/whereqr-front:latest
+    image: tnfus916/whereqr-front:test
     ports:
       - 3000:80
     networks:

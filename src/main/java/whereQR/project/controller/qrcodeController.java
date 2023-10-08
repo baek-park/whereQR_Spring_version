@@ -8,7 +8,7 @@ import whereQR.project.entity.dto.QrcodeRegisterDto;
 import whereQR.project.entity.dto.QrcodeResponseDto;
 import whereQR.project.entity.dto.QrcodeScanDto;
 import whereQR.project.entity.dto.QrcodeUpdateDto;
-import whereQR.project.service.qrcode.QrcodeService;
+import whereQR.project.service.QrcodeService;
 
 import java.util.HashMap;
 import java.util.UUID;

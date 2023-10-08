@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3000" // local
                 )
                 .allowedMethods("*")
-                .allowCredentials(false)
+                .allowCredentials(true)
                 .maxAge(3000);
     }
 }

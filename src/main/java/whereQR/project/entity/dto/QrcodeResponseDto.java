@@ -2,10 +2,11 @@ package whereQR.project.entity.dto;
 
 import lombok.Data;
 import whereQR.project.entity.Address;
+import whereQR.project.entity.Member;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Qrcode;
 
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,6 +25,10 @@ public class QrcodeResponseDto {
     @Embedded
     private Address address;
 
+    private String url;
+
+    private Long memberId;
+
     public QrcodeResponseDto(){
 
     }
@@ -36,5 +41,7 @@ public class QrcodeResponseDto {
         this.address  = qrcode.getAddress();
         this.createDate = qrcode.getCreateDate();
         this.updateDate = qrcode.getUpdateDate();
+        this.memberId = qrcode.getMember().getId();
+        this.url = qrcode.getUrl();
     }
 }
