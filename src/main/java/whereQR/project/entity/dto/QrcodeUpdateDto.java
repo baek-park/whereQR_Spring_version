@@ -12,8 +12,6 @@ public class QrcodeUpdateDto {
     private String memo;
 
     @Embedded
-    Address address;
-    @Embedded
     PhoneNumber phoneNumber;
 
     public QrcodeUpdateDto(){

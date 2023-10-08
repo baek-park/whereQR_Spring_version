@@ -41,10 +41,6 @@ public class Member implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    // address
-    @Embedded
-    private Address address;
-
     //phonenumber
     @Embedded
     private PhoneNumber phoneNumber;
@@ -73,10 +69,9 @@ public class Member implements UserDetails {
         this.roles = roles;
     }
 
-    public void updateMember(String username, int age, Address address, PhoneNumber phoneNumber){
+    public void updateMember(String username, int age, PhoneNumber phoneNumber){
         this.username = username;
         this.age = age;
-        this.address = address;
         this.phoneNumber = phoneNumber;
     }
 

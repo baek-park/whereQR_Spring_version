@@ -15,8 +15,6 @@ public class QrcodeScanDto {
     private QrStatus qrStatus;
 
     @Embedded
-    Address address;
-    @Embedded
     PhoneNumber phoneNumber;
 
     private String url;
@@ -26,7 +24,6 @@ public class QrcodeScanDto {
     public QrcodeScanDto(Qrcode qrcode) {
         this.title = qrcode.getTitle();
         this.memo = qrcode.getMemo();
-        this.address = qrcode.getAddress();
         this.phoneNumber = qrcode.getPhoneNumber();
         this.qrStatus = qrcode.getQrStatus();
         this.memberId = qrcode.getMember().getId();

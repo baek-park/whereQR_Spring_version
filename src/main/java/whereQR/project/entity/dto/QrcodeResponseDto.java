@@ -1,8 +1,6 @@
 package whereQR.project.entity.dto;
 
 import lombok.Data;
-import whereQR.project.entity.Address;
-import whereQR.project.entity.Member;
 import whereQR.project.entity.PhoneNumber;
 import whereQR.project.entity.Qrcode;
 
@@ -22,8 +20,6 @@ public class QrcodeResponseDto {
 
     @Embedded
     private PhoneNumber phoneNumber;
-    @Embedded
-    private Address address;
 
     private String url;
 
@@ -38,7 +34,6 @@ public class QrcodeResponseDto {
         this.title = qrcode.getTitle();
         this.memo = qrcode.getMemo();
         this.phoneNumber = qrcode.getPhoneNumber();
-        this.address  = qrcode.getAddress();
         this.createDate = qrcode.getCreateDate();
         this.updateDate = qrcode.getUpdateDate();
         this.memberId = qrcode.getMember().getId();

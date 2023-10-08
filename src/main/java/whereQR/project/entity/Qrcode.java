@@ -19,10 +19,6 @@ public class Qrcode {
     private String title;
     private String memo;
     private QrStatus qrStatus;
-
-
-    @Embedded
-    Address address;
     @Embedded
     PhoneNumber phoneNumber;
     @Column(name="url", columnDefinition = "MEDIUMBLOB")
@@ -65,7 +61,6 @@ public class Qrcode {
         this.title = qrcodeUpdateDto.getTitle();
         this.memo = qrcodeUpdateDto.getMemo();
         this.phoneNumber = qrcodeUpdateDto.getPhoneNumber();
-        this.address = qrcodeUpdateDto.getAddress();
         this.updateDate = LocalDateTime.now();
     }
 
