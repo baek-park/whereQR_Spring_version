@@ -18,16 +18,14 @@ public class MemberSignupDto {
     private List<String> roles;
 
     private String password;
-    private String email;
 
     public MemberSignupDto(){
 
     }
 
-    public MemberSignupDto(String username, int age, String email, List<String> roles){
+    public MemberSignupDto(String username, int age, List<String> roles){
             this.username = username;
             this.age = age;
-            this.email = email;
             this.roles = roles;
     }
 }

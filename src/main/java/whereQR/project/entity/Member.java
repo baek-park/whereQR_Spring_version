@@ -1,6 +1,7 @@
 package whereQR.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.querydsl.core.Query;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,7 @@ public class Member implements UserDetails {
     // others
     @NotNull @Column(unique = true)
     private String username;
-    @NotNull @Column(unique = true)
-    private String email;
+
     private int age;
     @Column(nullable = false)
     private String password;
@@ -55,16 +55,14 @@ public class Member implements UserDetails {
 
     }
 
-    public Member(String username, String email, int age){
+    public Member(String username, int age){
         this.username = username;
-        this.email = email;
         this.age = age;
     }
 
-    public Member(String username, int age, String email, String password, List<String> roles) {
+    public Member(String username, int age, String password, List<String> roles) {
         this.username = username;
         this.age = age;
-        this.email = email;
         this.password = password;
         this.roles = roles;
     }
@@ -113,7 +111,6 @@ public class Member implements UserDetails {
         return new MemberSignupDto(
                 this.username,
                 this.age,
-                this.email,
                 this.roles
         );
     }
