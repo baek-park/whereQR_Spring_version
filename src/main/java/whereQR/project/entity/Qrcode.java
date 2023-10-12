@@ -20,8 +20,9 @@ public class Qrcode {
     private String title;
     private String memo;
     private QrStatus qrStatus;
-    @Embedded
-    PhoneNumber phoneNumber;
+//    @Embedded
+//    PhoneNumber phoneNumber;
+    private String phoneNumber;
     @Column(name="url", columnDefinition = "MEDIUMBLOB")
     private String url;
 
@@ -59,6 +60,7 @@ public class Qrcode {
         this.updateDate = LocalDateTime.now();
         this.qrStatus = qrStatus;
         this.member = member;
+        this.phoneNumber = member.getPhoneNumber();
     }
 
     public void updateQrcode(QrcodeUpdateDto qrcodeUpdateDto){

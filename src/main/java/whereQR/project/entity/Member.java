@@ -33,7 +33,6 @@ public class Member implements UserDetails {
     @NotNull @Column(unique = true)
     private String username;
 
-    private int age;
     @Column(nullable = false)
     private String password;
 
@@ -41,9 +40,7 @@ public class Member implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    //phonenumber
-    @Embedded
-    private PhoneNumber phoneNumber;
+    private String phoneNumber;
 
     // member : qrcodes -> 1 : 다 -> qrcode가 연관관계 주인
     @OneToMany(mappedBy = "member")
@@ -55,21 +52,15 @@ public class Member implements UserDetails {
 
     }
 
-    public Member(String username, int age){
+    public Member(String username, String phoneNumber, String password, List<String> roles) {
         this.username = username;
-        this.age = age;
-    }
-
-    public Member(String username, int age, String password, List<String> roles) {
-        this.username = username;
-        this.age = age;
+        this.phoneNumber = phoneNumber;
         this.password = password;
         this.roles = roles;
     }
 
-    public void updateMember(String username, int age, PhoneNumber phoneNumber){
+    public void updateMember(String username, String phoneNumber){
         this.username = username;
-        this.age = age;
         this.phoneNumber = phoneNumber;
     }
 
@@ -103,14 +94,14 @@ public class Member implements UserDetails {
     public MemberDetailDto toMemberDetailDto(){
             return new MemberDetailDto(
                     this.username,
-                    this.age,
+                    this.phoneNumber,
                     this.qrcodes);
     }
 
     public MemberSignupDto toMemberSignupDto(){
         return new MemberSignupDto(
                 this.username,
-                this.age,
+                this.phoneNumber,
                 this.roles
         );
     }

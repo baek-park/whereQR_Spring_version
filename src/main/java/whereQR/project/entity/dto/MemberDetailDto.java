@@ -12,15 +12,12 @@ import java.util.List;
 public class MemberDetailDto {
 
     private String username;
-    private int age;
-    private Address address;
-    private PhoneNumber phoneNumber;
-
+    private String phoneNumber;
     private List<Qrcode> qrcodes;
 
-    public MemberDetailDto(String username, int age, List<Qrcode> qrcodes){
+    public MemberDetailDto(String username, String phoneNumber, List<Qrcode> qrcodes){
         this.username = username;
-        this.age = age;
+        this.phoneNumber = phoneNumber;
         this.qrcodes = qrcodes;
     }
 }

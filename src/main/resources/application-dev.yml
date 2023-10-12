@@ -25,5 +25,5 @@ logging:
     org.hibernate.SQL: debug
 
 qrcode:
-  scanUrl: http://localhost:3000/qrscan/
+  scanUrl: http://27.96.130.127:3000/qrscan/
 

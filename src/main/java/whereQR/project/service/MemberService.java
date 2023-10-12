@@ -55,11 +55,10 @@ public class MemberService {
     @Transactional
     public MemberSignupDto signUp(MemberSignupDto memberSignupDto){
 
-        Member member = new Member(memberSignupDto.getUsername(),memberSignupDto.getAge(),  passwordEncoder.encode(memberSignupDto.getPassword()), memberSignupDto.getRoles());
+        Member member = new Member(memberSignupDto.getUsername(),memberSignupDto.getPhoneNumber(),  passwordEncoder.encode(memberSignupDto.getPassword()), memberSignupDto.getRoles());
         memberRepository.save(member);
         return member.toMemberSignupDto();
     }
-
 
     public MemberDetailDto detail(){
 

@@ -36,6 +36,7 @@ public class qrcodeController {
             throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
         }
 
+
         return qrcodeService.createQrcode();
     }
 

@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/member/signup").permitAll()
                 .antMatchers("/member/login").permitAll()
+                .antMatchers("/member/logout").permitAll()
                 .antMatchers("/member/detail").hasAnyRole("ADMIN","USER")
                 .antMatchers("/qrcode/create").hasRole("ADMIN")
                 .antMatchers("/qrcode/update/**").hasRole("USER")

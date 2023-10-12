@@ -12,9 +12,7 @@ import java.util.List;
 public class MemberSignupDto {
 
     private String username;
-    private int age;
-    private Address address;
-    private PhoneNumber phoneNumber;
+    private String phoneNumber;
     private List<String> roles;
 
     private String password;
@@ -23,9 +21,9 @@ public class MemberSignupDto {
 
     }
 
-    public MemberSignupDto(String username, int age, List<String> roles){
+    public MemberSignupDto(String username,String phoneNumber, List<String> roles){
             this.username = username;
-            this.age = age;
+            this.phoneNumber = phoneNumber;
             this.roles = roles;
     }
 }
