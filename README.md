@@ -53,8 +53,9 @@ Run을 시켜줍니다.
 
 ### dockerfile build후 docker hub에 배포
 1. docker hub에 배포된 image ( baeksujin/whereqr-backend:v2.2 )
-![img_2.png](img_2.png)
-2. qrcode image 저장된 경로 ( /app/src/main/resources/static/qrcode )
+<img width="1272" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/6e605a50-263c-4e83-8381-50f0b77aa2d3">
+
+2. qrcode image 저장된 경로 ( docker container 안에서 확인 -> /app/src/main/resources/static/qrcode )
 ![img_1.png](img_1.png)
 3. qrcode 이미지 얻는 방법
 ```
@@ -64,11 +65,35 @@ docker cp 36730fe5a03a:/app/src/main/resources/static/qrcode .
 36730fe5a03a : image container id 입니다.<br>
 . : 해당 명령어를 실행하는 경로로, docker container에 저장된 qrcode folder를 복사할 위치를 의미합니다.<br> 
 
+### NCP Server 배포
+
+- frontend, backend를 한번에 관리 -> docker compose file을 사용.
+- 이때, docker hub의 image를 사용
+
+<img width="697" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/f904acda-34de-46df-babb-45299fe7eb1a">
+
 
 ### CI/CD 구축 단계(Jenkins 활용)
 
 1. 프리티어로 중단 -> 동국대학교 창업동아리 선정(완료). -> 지원금 활용 예정.<br>
 
+----
+## 진행현황
+
+### 축제 당일
+
+- 활용 QR코드
+<img width="400" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/cbf9f76a-e4d7-4264-968f-4034a08f7c80">
+
+- 보완해야할 사항
+1. 예외처리 -> 등록한 예외가 아닐때도 200 ststua로 error handling이 frontend에서 가능하도록 넘겨줘야한다.
+  spring fileter chain에서 exception handler 구조를 변경한다. -> 등록된 exception이 아닐경우, 특정 exception message를 넘기도록 수정하도록 한다.
+2. 회원가입 유효성 검사 로직을 추가한다.
+
+- 추가사항
+1. 카카오톡 OAuth를 적용. 변경. 다만, 전화번호는 필수가 아니기에 회원가입 창으로 넘겨서 받도록.
+2. 채팅 내장시키기
+3. 보증금 기능 추가
 
 
 
