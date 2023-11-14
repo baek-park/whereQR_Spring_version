@@ -20,8 +20,6 @@ public class Qrcode {
     private String title;
     private String memo;
     private QrStatus qrStatus;
-//    @Embedded
-//    PhoneNumber phoneNumber;
     private String phoneNumber;
     @Column(name="url", columnDefinition = "MEDIUMBLOB")
     private String url;
@@ -50,7 +48,7 @@ public class Qrcode {
     //연관관계 편의 메서드Qrcode
     public void changeQrcode(Member member){
         this.member = member;
-        member.getQrcodes().add(this);
+        member.getQrcodeList().add(this);
     }
 
     public void registerQrcode(QrcodeRegisterDto qrcodeRegisterDto, QrStatus qrStatus, Member member ){

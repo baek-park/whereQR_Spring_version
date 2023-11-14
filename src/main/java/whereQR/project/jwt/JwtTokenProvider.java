@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import whereQR.project.entity.dto.TokenInfo;
 import whereQR.project.exception.CustomExceptions.IllegalArgumentException;
 import whereQR.project.exception.CustomExceptions.MalformedJwtException;
 import whereQR.project.exception.CustomExceptions.ExpiredJwtException;
@@ -50,42 +49,42 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(Authentication authentication){
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-
-        // Access Token 생성
-        String accessToken = getAccessToken(authentication, authorities, now);
-
-        // Refresh Token 생성
-        String refreshToken = getRefreshToken(Jwts.builder(), new Date(now + refreshExpiration));
-
-        return TokenInfo.builder()
-                .grantType(grantType)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    private String getRefreshToken(JwtBuilder builder, Date now) {
-        String refreshToken = builder
-                .setExpiration(now)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-        return refreshToken;
-    }
-
-    private String getAccessToken(Authentication authentication, String authorities, long now) {
-        Date accessTokenExpiresIn = new Date(now + expiration);
-        String accessToken = getRefreshToken(Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(claimName, authorities), accessTokenExpiresIn);
-        return accessToken;
-    }
+//    public TokenInfo generateToken(Authentication authentication){
+//
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+//
+//        long now = (new Date()).getTime();
+//
+//        // Access Token 생성
+//        String accessToken = getAccessToken(authentication, authorities, now);
+//
+//        // Refresh Token 생성
+//        String refreshToken = getRefreshToken(Jwts.builder(), new Date(now + refreshExpiration));
+//
+//        return TokenInfo.builder()
+//                .grantType(grantType)
+//                .accessToken(accessToken)
+//                .refreshToken(refreshToken)
+//                .build();
+//    }
+//
+//    private String getRefreshToken(JwtBuilder builder, Date now) {
+//        String refreshToken = builder
+//                .setExpiration(now)
+//                .signWith(key, SignatureAlgorithm.HS256)
+//                .compact();
+//        return refreshToken;
+//    }
+//
+//    private String getAccessToken(Authentication authentication, String authorities, long now) {
+//        Date accessTokenExpiresIn = new Date(now + expiration);
+//        String accessToken = getRefreshToken(Jwts.builder()
+//                .setSubject(authentication.getName())
+//                .claim(claimName, authorities), accessTokenExpiresIn);
+//        return accessToken;
+//    }
 
     // JWT 토큰을 복호화
     public Authentication getAuthentication(String accessToken) {

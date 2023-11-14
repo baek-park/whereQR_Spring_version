@@ -16,93 +16,58 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @Table(name="member")
-public class Member implements UserDetails {
+public class Member {
 
-    //pk
     @Id @GeneratedValue
     @Column(name="member_id")
-    private Long id;
-    // others
-    @NotNull @Column(unique = true)
-    private String username;
-
+    private UUID id;
     @Column(nullable = false)
-    private String password;
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
-
+    private String username;
+    @Column(nullable = false)
+    private Role role;
+    @Column(nullable = false)
     private String phoneNumber;
-
-    // member : qrcodes -> 1 : 다 -> qrcode가 연관관계 주인
     @OneToMany(mappedBy = "member")
     @JsonIgnore
-    private List<Qrcode> qrcodes = new ArrayList<>();
+    private List<Qrcode> qrcodeList = new ArrayList<>();
+    private String refreshToken;
+    @Column(unique = true, nullable = false)
+    private Long kakaoId;
 
     //생성자
     public Member(){
 
     }
 
-    public Member(String username, String phoneNumber, String password, List<String> roles) {
+    public Member(Long kakaoId, String username, String phoneNumber, Role role) {
+        this.kakaoId = kakaoId;
         this.username = username;
         this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.roles = roles;
+        this.role = role;
     }
 
-    public void updateMember(String username, String phoneNumber){
-        this.username = username;
-        this.phoneNumber = phoneNumber;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 
     public MemberDetailDto toMemberDetailDto(){
             return new MemberDetailDto(
                     this.username,
                     this.phoneNumber,
-                    this.qrcodes);
+                    this.qrcodeList);
     }
-
-    public MemberSignupDto toMemberSignupDto(){
-        return new MemberSignupDto(
-                this.username,
-                this.phoneNumber,
-                this.roles
-        );
-    }
+//
+//    public MemberSignupDto toMemberSignupDto(){
+//        return new MemberSignupDto(
+//                this.username,
+//                this.phoneNumber,
+//                this.role
+//        );
+//    }
 }

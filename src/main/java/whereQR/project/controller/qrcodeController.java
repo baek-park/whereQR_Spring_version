@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Qrcode;
+import whereQR.project.entity.Role;
 import whereQR.project.entity.dto.QrcodeRegisterDto;
 import whereQR.project.entity.dto.QrcodeResponseDto;
 import whereQR.project.entity.dto.QrcodeScanDto;
@@ -30,12 +31,11 @@ public class qrcodeController {
     public Qrcode make() throws WriterException {
 
         String username = getUserName();
-        Member member = memberService.getMember(username);
+        Member member = memberService.getMemberByUsername(username);
 
-        if(member.getRoles().get(0) == "USER"){
+        if(member.getRole() == Role.USER){
             throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
         }
-
 
         return qrcodeService.createQrcode();
     }

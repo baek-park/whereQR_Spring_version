@@ -15,8 +15,6 @@ public class MemberSignupDto {
     private String phoneNumber;
     private List<String> roles;
 
-    private String password;
-
     public MemberSignupDto(){
 
     }

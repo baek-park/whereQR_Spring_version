@@ -20,14 +20,11 @@ public class QrcodeResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updateDate;
 
-//    @Embedded
-//    private PhoneNumber phoneNumber;
-
     private String phoneNumber;
 
     private String url;
 
-    private Long memberId;
+    private UUID memberId;
 
     public QrcodeResponseDto(){
 

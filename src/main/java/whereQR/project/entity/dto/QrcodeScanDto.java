@@ -17,7 +17,7 @@ public class QrcodeScanDto {
     private String phoneNumber;
     private String url;
 
-    private Long memberId;
+    private UUID memberId;
 
     public QrcodeScanDto(Qrcode qrcode) {
         this.title = qrcode.getTitle();

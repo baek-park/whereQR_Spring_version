@@ -164,7 +164,7 @@ public class QrcodeService {
 
         Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> new NotFoundException("login이 필요합니다", this.getClass().toString()));
 
-        List<QrcodeResponseDto> qrcodeDetailDtoList = member.getQrcodes().stream()
+        List<QrcodeResponseDto> qrcodeDetailDtoList = member.getQrcodeList().stream()
                 .sorted(Comparator.comparing(Qrcode::getCreateDate).reversed())
                 .map(it->it.toQrcodeResponseDto())
                 .collect(Collectors.toList());
