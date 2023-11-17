@@ -1,23 +1,15 @@
 package whereQR.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.querydsl.core.Query;
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import whereQR.project.entity.dto.MemberDetailDto;
-import whereQR.project.entity.dto.MemberSignupDto;
+import whereQR.project.entity.dto.member.MemberDetailDto;
+import whereQR.project.entity.dto.member.MemberDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -30,6 +22,7 @@ public class Member {
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
     @Column(nullable = false)
     private String phoneNumber;
@@ -56,18 +49,16 @@ public class Member {
         this.refreshToken = refreshToken;
     }
 
-    public MemberDetailDto toMemberDetailDto(){
-            return new MemberDetailDto(
-                    this.username,
-                    this.phoneNumber,
-                    this.qrcodeList);
+
+    public MemberDetails toMemberDetails(){
+        return new MemberDetails(this, new SimpleGrantedAuthority(this.role.getName()));
     }
-//
-//    public MemberSignupDto toMemberSignupDto(){
-//        return new MemberSignupDto(
-//                this.username,
-//                this.phoneNumber,
-//                this.role
-//        );
-//    }
+
+    public MemberDetailDto toMemberDetailDto(){
+        return new MemberDetailDto(
+                this.username,
+                this.phoneNumber,
+                this.qrcodeList);
+    }
+
 }

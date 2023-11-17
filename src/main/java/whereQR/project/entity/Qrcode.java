@@ -2,9 +2,9 @@ package whereQR.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import whereQR.project.entity.dto.QrcodeRegisterDto;
-import whereQR.project.entity.dto.QrcodeResponseDto;
-import whereQR.project.entity.dto.QrcodeUpdateDto;
+import whereQR.project.entity.dto.qrcode.QrcodeRegisterDto;
+import whereQR.project.entity.dto.qrcode.QrcodeResponseDto;
+import whereQR.project.entity.dto.qrcode.QrcodeUpdateDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -6,18 +6,17 @@ import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Qrcode;
 import whereQR.project.entity.Role;
-import whereQR.project.entity.dto.QrcodeRegisterDto;
-import whereQR.project.entity.dto.QrcodeResponseDto;
-import whereQR.project.entity.dto.QrcodeScanDto;
-import whereQR.project.entity.dto.QrcodeUpdateDto;
+import whereQR.project.entity.dto.qrcode.QrcodeRegisterDto;
+import whereQR.project.entity.dto.qrcode.QrcodeResponseDto;
+import whereQR.project.entity.dto.qrcode.QrcodeScanDto;
+import whereQR.project.entity.dto.qrcode.QrcodeUpdateDto;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
-import whereQR.project.service.MemberService;
 import whereQR.project.service.QrcodeService;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-import static whereQR.project.utils.GetUser.getUserName;
+import static whereQR.project.utils.MemberUtil.getMember;
 
 @RestController
 @RequestMapping("/qrcode")
@@ -26,14 +25,12 @@ import static whereQR.project.utils.GetUser.getUserName;
 public class qrcodeController {
 
     private final QrcodeService qrcodeService;
-    private final MemberService memberService;
     @PostMapping("/create")
     public Qrcode make() throws WriterException {
 
-        String username = getUserName();
-        Member member = memberService.getMemberByUsername(username);
+        Member currentMember = getMember();
 
-        if(member.getRole() == Role.USER){
+        if(currentMember.getRole() == Role.USER){
             throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
         }
 

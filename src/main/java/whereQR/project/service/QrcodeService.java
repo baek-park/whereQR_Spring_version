@@ -8,16 +8,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.QrcodeRegisterDto;
-import whereQR.project.entity.dto.QrcodeResponseDto;
-import whereQR.project.entity.dto.QrcodeScanDto;
-import whereQR.project.entity.dto.QrcodeUpdateDto;
+import whereQR.project.entity.dto.qrcode.QrcodeRegisterDto;
+import whereQR.project.entity.dto.qrcode.QrcodeResponseDto;
+import whereQR.project.entity.dto.qrcode.QrcodeScanDto;
+import whereQR.project.entity.dto.qrcode.QrcodeUpdateDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.entity.Qrcode;
 import whereQR.project.properties.QrcodeProperties;
-import whereQR.project.utils.GetUser;
+import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.ZxingUtil;
 import whereQR.project.repository.MemberRepository;
 import whereQR.project.repository.QrcodeRepository;
@@ -112,13 +112,12 @@ public class QrcodeService {
          * 수정을 QrStatus로 구분
          */
 
-        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() ->
-                new NotFoundException("login이 필요합니다", this.getClass().toString()));
+        Member currentMember = MemberUtil.getMember();
 
         Qrcode qrcode = qrcodeRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("해당하는 qrcode가 존재하지 않습니다.", this.getClass().toString()));
 
-        if( GetUser.getUserName().equals(qrcode.getMember().getUsername()) && qrcodeRepository.existsById(qrcode.getId())){
+        if( qrcode.getMember().equals(currentMember) && qrcodeRepository.existsById(qrcode.getId())){
             qrcode.updateQrcode(qrcodeUpdateDto);
         }else{
             throw new ForbiddenException("접근 권한이 존재하지 않습니다", this.getClass().toString());
@@ -133,8 +132,7 @@ public class QrcodeService {
     @Transactional
     public QrcodeResponseDto registerQrcode(UUID id, QrcodeRegisterDto qrcodeRegisterDto){
 
-        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() ->
-                new NotFoundException("login이 필요합니다", this.getClass().toString()));
+        Member currentMember = MemberUtil.getMember();
 
         Qrcode qrcode = qrcodeRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("해당하는 qrcode가 존재하지 않습니다.", this.getClass().toString()));
@@ -144,7 +142,7 @@ public class QrcodeService {
             throw new BadRequestException("이미 등록된 qrcode입니다.", this.getClass().toString());
         }
 
-        qrcode.registerQrcode(qrcodeRegisterDto, Saved, member);
+        qrcode.registerQrcode(qrcodeRegisterDto, Saved, currentMember);
 
         return qrcode.toQrcodeResponseDto();
 
@@ -156,13 +154,7 @@ public class QrcodeService {
      */
     public List<QrcodeResponseDto> getQrcodeByMember(){
 
-        String username = GetUser.getUserName();
-
-        if(username.isEmpty() || !username.equals(GetUser.getUserName())){
-            throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
-        }
-
-        Member member = memberRepository.findMemberByUsername(GetUser.getUserName()).orElseThrow(() -> new NotFoundException("login이 필요합니다", this.getClass().toString()));
+        Member member = MemberUtil.getMember();
 
         List<QrcodeResponseDto> qrcodeDetailDtoList = member.getQrcodeList().stream()
                 .sorted(Comparator.comparing(Qrcode::getCreateDate).reversed())
