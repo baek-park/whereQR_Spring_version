@@ -8,6 +8,7 @@ import whereQR.project.entity.Member;
 import whereQR.project.entity.Role;
 import whereQR.project.entity.dto.member.*;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.service.AuthService;
 import whereQR.project.service.KakaoAuthService;
 import whereQR.project.service.MemberService;
 import whereQR.project.utils.MemberUtil;
@@ -23,6 +24,7 @@ public class memberController {
 
     private final MemberService memberService;
     private final KakaoAuthService kakaoAuthService;
+    private final AuthService authService;
 
     @GetMapping("/kakao/token")
     public ResponseEntity<TokenInfo> kakaoToken(@RequestParam String code){
@@ -38,8 +40,8 @@ public class memberController {
     @PostMapping("/kakao/login")
     public ResponseEntity<TokenInfo> login(@RequestBody KakaoLoginDto loginDto, HttpServletResponse response){
         Member member = memberService.getMemberByKakaoId(loginDto.getKakaoId());
-        TokenInfo tokenInfo = memberService.updateToken(member);
-        memberService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        TokenInfo tokenInfo = authService.updateToken(member);
+        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
 
         return ResponseEntity.ok(tokenInfo);
     }
@@ -82,8 +84,8 @@ public class memberController {
         }
 
         // 일치한다면 -> updateToken(member)을 진행
-        TokenInfo tokenInfo =  memberService.updateToken(currentMember);
-        memberService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        TokenInfo tokenInfo =  authService.updateToken(currentMember);
+        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
 
        return ResponseEntity.ok(tokenInfo);
     }
@@ -91,8 +93,8 @@ public class memberController {
     @PostMapping
     public ResponseEntity<UUID> signOut(HttpServletResponse response){
         Member currentMember = MemberUtil.getMember();
-        memberService.removeAccessTokenInCookie(response);
-        memberService.removeRefreshToken(currentMember);
+        authService.removeAccessTokenInCookie(response);
+        authService.removeRefreshToken(currentMember);
 
         return ResponseEntity.ok(currentMember.getId());
     }
