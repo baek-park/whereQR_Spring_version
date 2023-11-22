@@ -33,6 +33,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken imple
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return this.principal;
     }
 }

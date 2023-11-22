@@ -10,8 +10,4 @@ import java.util.UUID;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, UUID>, CustomMemberRepository{
-    Optional<Member> findMemberByUsername(String username);
-    Optional<Member> findMemberByKakaoId(Long kakaoId);
-
-    Optional<Member> findById(UUID id);
 }

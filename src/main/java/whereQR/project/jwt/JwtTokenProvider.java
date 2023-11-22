@@ -47,6 +47,8 @@ public class JwtTokenProvider {
 
     public String generateToken(Member member, Date expiration){
 
+        log.info("generateToken for member : {}" , member.getId());
+
         return Jwts.builder()
                 .setIssuer("whereQr")
                 .setExpiration(expiration)
@@ -78,6 +80,7 @@ public class JwtTokenProvider {
         Claims claim = decodeToken(accessToken);
         String memberId = claim.getSubject();
         Member member = memberService.getMemberById(UUID.fromString(memberId));
+        log.info("getMemberByToken -> {}",member);
         return member.toMemberDetails();
     }
 

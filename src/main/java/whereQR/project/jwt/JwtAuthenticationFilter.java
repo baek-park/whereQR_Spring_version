@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
 import whereQR.project.entity.dto.member.MemberDetails;
+import whereQR.project.utils.MemberUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -31,10 +32,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 // 토큰이 유효한 경우 인증 정보 설정
                 MemberDetails memberDetails = jwtTokenProvider.getMemberByToken(token);
+                log.info("doFilter/ memberDetails : {}", memberDetails);
                 WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request);
+                log.info("doFilter/ details : {}", details);
                 CustomAuthenticationToken authentication = new CustomAuthenticationToken(memberDetails,details);
+                log.info("doFilter/ authentication : {}", authentication);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("doFilter/ SecurityContextHolder : {}", MemberUtil.getMember());
             }
+            log.info("hereererer");
             chain.doFilter(request, response);
         }catch (ServletException e) {
             log.error("ServletException");

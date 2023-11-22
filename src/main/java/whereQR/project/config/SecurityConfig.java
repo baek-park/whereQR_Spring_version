@@ -10,6 +10,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import whereQR.project.jwt.JwtAuthenticationFilter;
 import whereQR.project.jwt.JwtTokenProvider;
 
@@ -33,14 +34,14 @@ public class SecurityConfig {
 //                .antMatchers("/member/login").permitAll()
 //                .antMatchers("/member/detail").hasAnyRole("ADMIN","USER")
                 .antMatchers("/member/**").permitAll()
-                .antMatchers("/qrcode/create").hasRole("ADMIN")
+                .antMatchers("/qrcode/create").permitAll()
                 .antMatchers("/qrcode/update/**").hasRole("USER")
                 .antMatchers("/qrcode/register/**").hasRole("USER")
                 .antMatchers("/qrcode/qrcode-list").hasRole("USER")
                 .antMatchers("/qrcode/scan/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), RequestHeaderAuthenticationFilter.class);
         return http.build();
 
     }

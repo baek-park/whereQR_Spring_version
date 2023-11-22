@@ -7,33 +7,30 @@ import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.member.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
 
-    @Transactional
+
     public TokenInfo updateToken(Member member){
+
         // Token 발급
         String accessToken = jwtTokenProvider.getAccessToken(member);
         String refreshToken = jwtTokenProvider.getRefreshToken(member);
-
-        // Refresh Token 저장
-        member.setRefreshToken(refreshToken);
 
         return new TokenInfo(accessToken, refreshToken);
     }
 
     @Transactional
     public void removeRefreshToken(Member member){
-        member.setRefreshToken(null);
+        member.updateToken(null);
     }
 
     public void removeAccessTokenInCookie(HttpServletResponse response){
@@ -58,4 +55,13 @@ public class AuthService {
         response.addCookie(cookie);
     }
 
+    @Transactional
+    public String updateRefreshToken(Long kakaoId, String refreshToken){
+
+        Member updateMember = memberService.getMemberByKakaoId(kakaoId);
+        log.info("updateRefreshToken member : {}" + updateMember);
+        updateMember.updateToken("adsf");
+
+        return refreshToken;
+    }
 }

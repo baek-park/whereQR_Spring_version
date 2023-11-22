@@ -38,15 +38,17 @@ public class memberController {
     }
 
     @PostMapping("/kakao/login")
-    public ResponseEntity<TokenInfo> login(@RequestBody KakaoLoginDto loginDto, HttpServletResponse response){
-        Member member = memberService.getMemberByKakaoId(loginDto.getKakaoId());
+    public ResponseEntity<TokenInfo> login(@RequestParam Long kakaoId, HttpServletResponse response){
+
+        Member member = memberService.getMemberByKakaoId(kakaoId);
+        log.info("login member id : {}", member.getId());
         TokenInfo tokenInfo = authService.updateToken(member);
-        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        //authService.updateRefreshToken(kakaoId, tokenInfo.refreshToken ); // Todo : exception 원인분석 및 처리
 
         return ResponseEntity.ok(tokenInfo);
     }
 
-    @PostMapping("/create/member")
+    @PostMapping("/create")
     public ResponseEntity<UUID> createMember(@RequestBody KakaoSignupDto signupDto){
 
         if(!signupDto.validationPhoneNumber()){
@@ -57,7 +59,8 @@ public class memberController {
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        return ResponseEntity.ok(memberService.signUp(signupDto, Role.USER).getId());
+        UUID uuid = memberService.signUp(signupDto, Role.USER).getId();
+        return ResponseEntity.ok(uuid);
     }
 
     @PostMapping("/create/admin")
@@ -85,9 +88,10 @@ public class memberController {
 
         // 일치한다면 -> updateToken(member)을 진행
         TokenInfo tokenInfo =  authService.updateToken(currentMember);
-        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
 
-       return ResponseEntity.ok(tokenInfo);
+        //authService.updateRefreshToken(currentMember, tokenInfo.getRefreshToken());
+        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        return ResponseEntity.ok(tokenInfo);
     }
 
     @PostMapping
@@ -100,7 +104,8 @@ public class memberController {
     }
 
     @GetMapping("/detail")
-    public MemberDetailDto detail() {
-        return MemberUtil.getMember().toMemberDetailDto();
+    public ResponseEntity<MemberDetailDto> detail() {
+        Member currentMember = MemberUtil.getMember();
+        return ResponseEntity.ok(memberService.getMemberById(currentMember.getId()).toMemberDetailDto());
     }
 }
