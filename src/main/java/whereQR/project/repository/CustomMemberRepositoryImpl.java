@@ -2,28 +2,20 @@ package whereQR.project.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.QMember;
 import whereQR.project.entity.Role;
-
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class CustomMemberRepositoryImpl implements CustomMemberRepository{
 
     private final JPAQueryFactory queryFactory;
     private QMember member = QMember.member;
-
-    @Override
-    public Boolean existsMemberByUsernameAndRole(String username, Role role) {
-        return queryFactory
-                .selectFrom(member)
-                .where(member.username.eq(username).and(member.role.eq(role)))
-                .fetchFirst() != null;
-    }
 
     @Override
     public Boolean existsMemberByKakaoIdAndRole(Long kakaoId, Role role){
@@ -34,10 +26,12 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository{
     }
 
     @Override
-    public Optional<Member> findMemberByKakaoId(Long kakaoId){
+    public Optional<Member> findMemberByKakaoIdAndRole(Long kakaoId, Role role){
+        log.info("meber role -> {} / role : {}", member.role , role);
+
         return Optional.ofNullable(queryFactory
                 .selectFrom(member)
-                .where(member.kakaoId.eq(kakaoId))
+                .where(member.kakaoId.eq(kakaoId).and(member.role.eq(role)))
                 .fetchFirst());
     }
 }

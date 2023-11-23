@@ -39,18 +39,26 @@ public class memberController {
     }
 
     @PostMapping("/kakao/login")
-    public ResponseEntity<TokenInfo> login(@RequestParam Long kakaoId, HttpServletResponse response){
+    public ResponseEntity<TokenInfo> loginUser(@RequestParam Long kakaoId, HttpServletResponse response){
 
-        Member member = memberService.getMemberByKakaoId(kakaoId);
-        log.info("login member id : {}", member.getId());
+        Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
         TokenInfo tokenInfo = authService.updateToken(member);
-        //authService.updateRefreshToken(kakaoId, tokenInfo.refreshToken ); // Todo : exception 원인분석 및 처리
+        authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
+        return ResponseEntity.ok(tokenInfo);
+    }
+
+    @PostMapping("/kakao/login/admin")
+    public ResponseEntity<TokenInfo> loginAdmin(@RequestParam Long kakaoId, HttpServletResponse response){
+
+        Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.ADMIN);
+        TokenInfo tokenInfo = authService.updateToken(member);
+        authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
 
         return ResponseEntity.ok(tokenInfo);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UUID> createMember(@RequestBody KakaoSignupDto signupDto){
+    public ResponseEntity<UUID> createUser(@RequestBody KakaoSignupDto signupDto){
 
         if(!signupDto.validationPhoneNumber()){
             throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
@@ -95,7 +103,7 @@ public class memberController {
         return ResponseEntity.ok(tokenInfo);
     }
 
-    @PostMapping
+    @PostMapping("/logout")
     public ResponseEntity<UUID> signOut(HttpServletResponse response){
         Member currentMember = MemberUtil.getMember();
         authService.removeAccessTokenInCookie(response);

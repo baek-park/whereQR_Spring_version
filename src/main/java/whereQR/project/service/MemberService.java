@@ -24,13 +24,12 @@ public class MemberService {
     }
 
     public Member getMemberById(UUID id){
-        log.info("getMemberById id : "+ id);
         return memberRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 사용자가 존재하지 않습니다.", this.getClass().toString()));
     }
 
     @Transactional
-    public Member getMemberByKakaoId(Long kakaoId){
-        return memberRepository.findMemberByKakaoId(kakaoId).orElseThrow(() -> new NotFoundException("해당하는 사용자가 존재하지 않습니다.", this.getClass().toString()));
+    public Member getMemberByKakaoIdAndRole(Long kakaoId, Role role){
+        return memberRepository.findMemberByKakaoIdAndRole(kakaoId, role).orElseThrow(() -> new NotFoundException("해당하는 사용자가 존재하지 않습니다.", this.getClass().toString()));
     }
 
     @Transactional

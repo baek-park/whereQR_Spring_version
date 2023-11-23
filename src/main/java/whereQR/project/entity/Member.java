@@ -49,8 +49,9 @@ public class Member {
         this.role = role;
     }
 
-    public void updateToken(String refreshToken){
+    public String updateToken(String refreshToken){
         this.refreshToken = refreshToken;
+        return this.refreshToken;
     }
 
     public MemberDetails toMemberDetails(){

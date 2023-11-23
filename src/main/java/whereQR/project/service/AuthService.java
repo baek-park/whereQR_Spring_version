@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
+import whereQR.project.entity.Role;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
 import javax.servlet.http.Cookie;
@@ -56,12 +57,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String updateRefreshToken(Long kakaoId, String refreshToken){
-
-        Member updateMember = memberService.getMemberByKakaoId(kakaoId);
-        log.info("updateRefreshToken member : {}" + updateMember);
-        updateMember.updateToken("adsf");
-
-        return refreshToken;
+    public String updateRefreshToken(Member member, String refreshToken){
+        return member.updateToken(refreshToken);
     }
 }
