@@ -3,6 +3,7 @@ package whereQR.project.service;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import whereQR.project.entity.dto.member.KakaoMemberInfo;
@@ -16,9 +17,11 @@ import java.net.URL;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class KakaoAuthService {
 
-    private static KakaoLoginProperties kakaoLoginProperties ;
+    private final KakaoLoginProperties kakaoLoginProperties ;
+
 
     /**
      * code를 통해서 tokenInfo를 반환
@@ -34,7 +37,7 @@ public class KakaoAuthService {
 
 
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-            StringBuilder builder = getUrlBuilder(code);
+            StringBuilder builder = getUrlBuilder(code, kakaoLoginProperties);
             writer.write(builder.toString());
             writer.flush();
 
@@ -104,12 +107,11 @@ public class KakaoAuthService {
         }
 
     }
-
-    private static StringBuilder getUrlBuilder(String code) throws IOException {
+    private static StringBuilder getUrlBuilder(String code, KakaoLoginProperties kakaoLoginProperties) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append("grant_type="+kakaoLoginProperties.getGrantType());
-        builder.append("&client_id="+kakaoLoginProperties.getClientId());
-        builder.append("&redirect_uri="+kakaoLoginProperties.getRedirectUrl());
+        builder.append("grant_type="+ kakaoLoginProperties.getGrantType());
+        builder.append("&client_id="+ kakaoLoginProperties.getClientId());
+        builder.append("&redirect_uri="+ kakaoLoginProperties.getRedirectUrl());
         builder.append("&code=" + code);
         return builder;
     }
