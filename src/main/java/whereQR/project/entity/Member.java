@@ -18,8 +18,6 @@ import java.util.UUID;
 public class Member {
 
     @Id
-//    @GeneratedValue(generator = "uuid2")
-//    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     @Column(nullable = false)
@@ -35,7 +33,7 @@ public class Member {
     @Column(unique = true)
     private String refreshToken;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private Long kakaoId;
 
     //생성자

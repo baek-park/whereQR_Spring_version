@@ -71,11 +71,11 @@ public class memberController {
             throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
         }
 
-        if( memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.USER) == Boolean.TRUE){
+        if( memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.ADMIN) == Boolean.TRUE){
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        return ResponseEntity.ok(memberService.signUp(signupDto, Role.USER).getId());
+        return ResponseEntity.ok(memberService.signUp(signupDto, Role.ADMIN).getId());
     }
 
     @PostMapping("/auth/refresh")
