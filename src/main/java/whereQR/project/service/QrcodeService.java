@@ -20,7 +20,6 @@ import whereQR.project.entity.Qrcode;
 import whereQR.project.properties.QrcodeProperties;
 import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.ZxingUtil;
-import whereQR.project.repository.MemberRepository;
 import whereQR.project.repository.QrcodeRepository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

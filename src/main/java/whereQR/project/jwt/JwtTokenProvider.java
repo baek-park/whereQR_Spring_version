@@ -10,7 +10,6 @@ import org.springframework.util.StringUtils;
 import whereQR.project.entity.Member;
 import whereQR.project.exception.CustomExceptions.IllegalArgumentException;
 import whereQR.project.exception.CustomExceptions.MalformedJwtException;
-import whereQR.project.exception.CustomExceptions.ExpiredJwtException;
 import whereQR.project.exception.CustomExceptions.UnsupportedJwtException;
 import whereQR.project.exception.CustomExceptions.SecurityException;
 import whereQR.project.service.MemberService;
@@ -106,12 +105,11 @@ public class JwtTokenProvider {
             throw new MalformedJwtException("유효하지 않은 JWT Token 입니다.", path);
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT Token 입니다.", e);
-            throw new ExpiredJwtException("만료된 JWT Token 입니다.", path);
+            e.printStackTrace();
+            return false;
         } catch (UnsupportedJwtException e) {
-            log.error("지원하지 않는 않은 JWT Token 입니다.", e);
             throw new UnsupportedJwtException("지원하지 않는 않은 JWT Token 입니다.", path);
         } catch (IllegalArgumentException e) {
-            log.error("JWT의 클레임이 비어있습니다.", e);
             throw new IllegalArgumentException("JWT의 클레임이 비어있습니다.", path);
         }
     }

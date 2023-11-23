@@ -88,17 +88,10 @@ public class memberController {
 
     @PostMapping("/auth/refresh")
     public ResponseEntity<TokenInfo> refreshToken(@RequestParam String refreshToken, HttpServletResponse response){
-        Member currentMember = MemberUtil.getMember();
 
-        // 일치하지 않다면 -> exception
-        if(!currentMember.getRefreshToken().equals(refreshToken)){
-            throw new BadRequestException("유효하지 않은 token입니다.", this.getClass().toString());
-        }
-
-        // 일치한다면 -> updateToken(member)을 진행
-        TokenInfo tokenInfo =  authService.updateToken(currentMember);
-
-        //authService.updateRefreshToken(currentMember, tokenInfo.getRefreshToken());
+        Member member = memberService.getMemberByRefreshToken(refreshToken);
+        TokenInfo tokenInfo = authService.updateToken(member);
+        authService.updateRefreshToken(member, tokenInfo.getRefreshToken());
         authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
         return ResponseEntity.ok(tokenInfo);
     }

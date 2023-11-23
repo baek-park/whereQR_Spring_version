@@ -27,11 +27,17 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository{
 
     @Override
     public Optional<Member> findMemberByKakaoIdAndRole(Long kakaoId, Role role){
-        log.info("meber role -> {} / role : {}", member.role , role);
-
         return Optional.ofNullable(queryFactory
                 .selectFrom(member)
                 .where(member.kakaoId.eq(kakaoId).and(member.role.eq(role)))
+                .fetchFirst());
+    }
+
+    @Override
+    public Optional<Member> findMemberByRefreshToken(String refreshToken){
+        return Optional.ofNullable(queryFactory
+                .selectFrom(member)
+                .where(member.refreshToken.eq(refreshToken))
                 .fetchFirst());
     }
 }
