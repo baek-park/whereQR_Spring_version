@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import whereQR.project.entity.dto.member.KakaoMemberInfo;
-import whereQR.project.entity.dto.member.TokenInfo;
+import whereQR.project.jwt.TokenInfo;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 
 import java.io.*;

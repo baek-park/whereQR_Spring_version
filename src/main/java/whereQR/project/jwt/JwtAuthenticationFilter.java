@@ -6,7 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
-import whereQR.project.entity.dto.member.MemberDetails;
 import whereQR.project.utils.MemberUtil;
 
 import javax.servlet.FilterChain;

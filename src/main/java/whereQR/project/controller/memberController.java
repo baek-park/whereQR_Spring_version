@@ -8,6 +8,7 @@ import whereQR.project.entity.Member;
 import whereQR.project.entity.Role;
 import whereQR.project.entity.dto.member.*;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.jwt.TokenInfo;
 import whereQR.project.service.AuthService;
 import whereQR.project.service.KakaoAuthService;
 import whereQR.project.service.MemberService;

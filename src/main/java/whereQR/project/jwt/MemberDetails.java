@@ -1,4 +1,4 @@
-package whereQR.project.entity.dto.member;
+package whereQR.project.jwt;
 
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

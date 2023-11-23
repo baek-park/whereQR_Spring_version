@@ -17,6 +17,23 @@ public class QrcodeUpdateDto {
 
     }
 
+    public boolean validationPhoneNumber(){
+        String PhoneNumber = this.phoneNumber;
+        if(PhoneNumber.length() != 11){
+            return false;
+        }
+        for(char c : phoneNumber.toCharArray()){
+            if(!Character.isDigit(c)){
+                return false;
+            }
+        }
+        String firstThreeDigits = phoneNumber.substring(0, 3);
+        if (!(firstThreeDigits.equals("010") || firstThreeDigits.equals("011"))) {
+            return false;
+        }
+        return true;
+    }
+
 }
 
 

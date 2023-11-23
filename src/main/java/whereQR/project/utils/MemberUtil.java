@@ -2,7 +2,7 @@ package whereQR.project.utils;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.member.MemberDetails;
+import whereQR.project.jwt.MemberDetails;
 
 public class MemberUtil {
 

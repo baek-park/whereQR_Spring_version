@@ -2,7 +2,7 @@ package whereQR.project.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import whereQR.project.entity.dto.member.MemberDetails;
+
 import java.io.Serializable;
 import java.util.Collections;
 

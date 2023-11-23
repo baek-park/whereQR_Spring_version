@@ -1,4 +1,4 @@
-package whereQR.project.entity.dto.member;
+package whereQR.project.jwt;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

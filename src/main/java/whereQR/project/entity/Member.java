@@ -2,12 +2,10 @@ package whereQR.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import whereQR.project.entity.dto.member.MemberDetailDto;
-import whereQR.project.entity.dto.member.MemberDetails;
+import whereQR.project.jwt.MemberDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -14,6 +14,7 @@ import whereQR.project.entity.dto.qrcode.QrcodeScanDto;
 import whereQR.project.entity.dto.qrcode.QrcodeUpdateDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
+import whereQR.project.exception.CustomExceptions.InternalException;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import whereQR.project.entity.Qrcode;
 import whereQR.project.properties.QrcodeProperties;
@@ -37,7 +38,7 @@ import static whereQR.project.entity.QrStatus.Saved;
 public class QrcodeService {
 
     private final QrcodeRepository qrcodeRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final QrcodeProperties qrcodeProperties;
     public static String savePath = "src/main/resources/static/qrcode";
 
@@ -70,7 +71,7 @@ public class QrcodeService {
             return qrcodeRepository.save(qrcode);
 
         } catch (IOException e) {
-            throw new RuntimeException(e); // Todo : 예외처리 변경
+            throw new InternalException(e.getMessage(),this.getClass().toString());
         }
     }
 
@@ -97,27 +98,21 @@ public class QrcodeService {
     }
 
     /**
-     *
-     * @param id
-     * @param qrcodeUpdateDto
-     * @return
-     *
      * 등록된 qrcode를 update
-     *
      */
     @Transactional
-    public QrcodeResponseDto updateQrcode(UUID id, QrcodeUpdateDto qrcodeUpdateDto){
+    public QrcodeResponseDto updateQrcodeByMember(UUID id, UUID memberId, QrcodeUpdateDto qrcodeUpdateDto){
 
-        /**
-         * 수정을 QrStatus로 구분
-         */
+        Member member = memberService.getMemberById(memberId);
 
-        Member currentMember = MemberUtil.getMember();
+        if(!qrcodeUpdateDto.validationPhoneNumber()){
+            throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
+        }
 
         Qrcode qrcode = qrcodeRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("해당하는 qrcode가 존재하지 않습니다.", this.getClass().toString()));
 
-        if( qrcode.getMember().equals(currentMember) && qrcodeRepository.existsById(qrcode.getId())){
+        if( qrcode.getMember().equals(member) && qrcodeRepository.existsById(qrcode.getId())){
             qrcode.updateQrcode(qrcodeUpdateDto);
         }else{
             throw new ForbiddenException("접근 권한이 존재하지 않습니다", this.getClass().toString());
@@ -152,15 +147,11 @@ public class QrcodeService {
      * user의 qrcodeList를 불러온다
      * @return
      */
-    public List<QrcodeResponseDto> getQrcodeByMember(){
-
-        Member member = MemberUtil.getMember();
-
-        List<QrcodeResponseDto> qrcodeDetailDtoList = member.getQrcodeList().stream()
+    public List<QrcodeResponseDto> getQrcodeByMember(UUID memberId){
+        Member member = memberService.getMemberById(memberId);
+        return member.getQrcodeList().stream()
                 .sorted(Comparator.comparing(Qrcode::getCreateDate).reversed())
                 .map(it->it.toQrcodeResponseDto())
                 .collect(Collectors.toList());
-
-        return qrcodeDetailDtoList;
     }
 }

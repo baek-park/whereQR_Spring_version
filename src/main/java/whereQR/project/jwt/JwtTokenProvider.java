@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.dto.member.MemberDetails;
 import whereQR.project.exception.CustomExceptions.IllegalArgumentException;
 import whereQR.project.exception.CustomExceptions.MalformedJwtException;
 import whereQR.project.exception.CustomExceptions.ExpiredJwtException;
