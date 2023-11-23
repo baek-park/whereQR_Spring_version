@@ -2,7 +2,6 @@ package whereQR.project.controller;
 import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Qrcode;
@@ -11,6 +10,8 @@ import whereQR.project.entity.dto.qrcode.QrcodeResponseDto;
 import whereQR.project.entity.dto.qrcode.QrcodeScanDto;
 import whereQR.project.entity.dto.qrcode.QrcodeUpdateDto;
 import whereQR.project.service.QrcodeService;
+import whereQR.project.utils.response.ResponseEntity;
+import whereQR.project.utils.response.Status;
 
 import java.util.*;
 import static whereQR.project.utils.MemberUtil.getMember;
@@ -28,28 +29,41 @@ public class qrcodeController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<QrcodeResponseDto> update(@RequestParam UUID id, @RequestBody QrcodeUpdateDto qrcodeUpdateDto){
+    public ResponseEntity update(@RequestParam UUID id, @RequestBody QrcodeUpdateDto qrcodeUpdateDto){
         Member currentMember = getMember();
         QrcodeResponseDto qrcodeResponse =  qrcodeService.updateQrcodeByMember(id, currentMember.getId(),  qrcodeUpdateDto);
-        return ResponseEntity.ok(qrcodeResponse);
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(qrcodeResponse)
+                .build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<QrcodeResponseDto> register(@RequestParam UUID id, @RequestBody QrcodeRegisterDto qrcodeRegisterDto){
+    public ResponseEntity register(@RequestParam UUID id, @RequestBody QrcodeRegisterDto qrcodeRegisterDto){
         QrcodeResponseDto qrcodeResponse= qrcodeService.registerQrcode(id, qrcodeRegisterDto);
-        return ResponseEntity.ok(qrcodeResponse);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(qrcodeResponse)
+                .build();
     }
 
     @GetMapping("/scan")
-    public ResponseEntity<QrcodeScanDto> scan(@RequestParam UUID id){
-        QrcodeScanDto qrcodeScan = qrcodeService.getQrcode(id);
-        return ResponseEntity.ok(qrcodeScan);
+    public ResponseEntity scan(@RequestParam UUID id){
+        QrcodeScanDto qrcodeScanDto = qrcodeService.getQrcode(id);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(qrcodeScanDto)
+                .build();
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<QrcodeResponseDto>> getQrList(){
+    public ResponseEntity getQrList(){
         Member member = getMember();
         List<QrcodeResponseDto> memberQrcodes = qrcodeService.getQrcodeByMember(member.getId());
-        return ResponseEntity.ok(memberQrcodes);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(memberQrcodes)
+                .build();
     }
 }

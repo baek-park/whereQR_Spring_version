@@ -2,7 +2,6 @@ package whereQR.project.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Role;
@@ -13,6 +12,8 @@ import whereQR.project.service.AuthService;
 import whereQR.project.service.KakaoAuthService;
 import whereQR.project.service.MemberService;
 import whereQR.project.utils.MemberUtil;
+import whereQR.project.utils.response.ResponseEntity;
+import whereQR.project.utils.response.Status;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
@@ -28,37 +29,50 @@ public class memberController {
     private final AuthService authService;
 
     @GetMapping("/kakao/token")
-    public ResponseEntity<TokenInfo> kakaoToken(@RequestParam String code){
-        return ResponseEntity.ok(kakaoAuthService.getKakaoTokenInfoByCode(code));
+    public ResponseEntity kakaoToken(@RequestParam String code){
+        TokenInfo tokenInfo = kakaoAuthService.getKakaoTokenInfoByCode(code);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(tokenInfo)
+                .build();
     }
 
     @GetMapping("/kakao/me")
-    public ResponseEntity<KakaoMemberInfo> kakaoMe(@RequestParam String accessToken){
-        log.info("accessToken -> {}", accessToken);
-        return ResponseEntity.ok(kakaoAuthService.getkakaoIdByAccessToken(accessToken));
+    public ResponseEntity kakaoMe(@RequestParam String accessToken){
+        KakaoMemberInfo memberInfo = kakaoAuthService.getkakaoIdByAccessToken(accessToken);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(memberInfo)
+                .build();
     }
 
     @PostMapping("/kakao/login")
-    public ResponseEntity<TokenInfo> loginUser(@RequestParam Long kakaoId, HttpServletResponse response){
+    public ResponseEntity loginUser(@RequestParam Long kakaoId){
 
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
-        return ResponseEntity.ok(tokenInfo);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(tokenInfo)
+                .build();
     }
 
     @PostMapping("/kakao/login/admin")
-    public ResponseEntity<TokenInfo> loginAdmin(@RequestParam Long kakaoId, HttpServletResponse response){
+    public ResponseEntity loginAdmin(@RequestParam Long kakaoId){
 
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.ADMIN);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
 
-        return ResponseEntity.ok(tokenInfo);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(tokenInfo)
+                .build();
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UUID> createUser(@RequestBody KakaoSignupDto signupDto){
+    public ResponseEntity createUser(@RequestBody KakaoSignupDto signupDto){
 
         if(!signupDto.validationPhoneNumber()){
             throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
@@ -68,12 +82,15 @@ public class memberController {
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        UUID uuid = memberService.signUp(signupDto, Role.USER).getId();
-        return ResponseEntity.ok(uuid);
+        Member member = memberService.signUp(signupDto, Role.USER);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(member.getId())
+                .build();
     }
 
     @PostMapping("/create/admin")
-    public ResponseEntity<UUID> createAdmin(@RequestBody KakaoSignupDto signupDto){
+    public ResponseEntity createAdmin(@RequestBody KakaoSignupDto signupDto){
 
         if(!signupDto.validationPhoneNumber()){
             throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
@@ -83,33 +100,48 @@ public class memberController {
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        return ResponseEntity.ok(memberService.signUp(signupDto, Role.ADMIN).getId());
+        Member member = memberService.signUp(signupDto, Role.ADMIN);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(member.getId())
+                .build();
     }
 
     @PostMapping("/auth/refresh")
-    public ResponseEntity<TokenInfo> refreshToken(@RequestParam String refreshToken, HttpServletResponse response){
+    public ResponseEntity refreshToken(@RequestParam String refreshToken, HttpServletResponse response){
 
         Member member = memberService.getMemberByRefreshToken(refreshToken);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken());
         authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
-        return ResponseEntity.ok(tokenInfo);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(tokenInfo)
+                .build();
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<UUID> signOut(HttpServletResponse response){
+    public ResponseEntity signOut(HttpServletResponse response){
         UUID memberId = MemberUtil.getMember().getId();
         Member member = memberService.getMemberById(memberId);
 
         authService.removeAccessTokenInCookie(response);
         authService.removeRefreshToken(member);
 
-        return ResponseEntity.ok(member.getId());
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(member.getId())
+                .build();
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<MemberDetailDto> detail() {
+    public ResponseEntity detail() {
         Member currentMember = MemberUtil.getMember();
-        return ResponseEntity.ok(memberService.getMemberById(currentMember.getId()).toMemberDetailDto());
+        MemberDetailDto memberDetailDto = memberService.getMemberById(currentMember.getId()).toMemberDetailDto();
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(memberDetailDto)
+                .build();
     }
 }
