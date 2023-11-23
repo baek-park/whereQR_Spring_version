@@ -105,11 +105,13 @@ public class memberController {
 
     @PostMapping("/logout")
     public ResponseEntity<UUID> signOut(HttpServletResponse response){
-        Member currentMember = MemberUtil.getMember();
-        authService.removeAccessTokenInCookie(response);
-        authService.removeRefreshToken(currentMember);
+        UUID memberId = MemberUtil.getMember().getId();
+        Member member = memberService.getMemberById(memberId);
 
-        return ResponseEntity.ok(currentMember.getId());
+        authService.removeAccessTokenInCookie(response);
+        authService.removeRefreshToken(member);
+
+        return ResponseEntity.ok(member.getId());
     }
 
     @GetMapping("/detail")

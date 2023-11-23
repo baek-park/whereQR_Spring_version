@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import whereQR.project.entity.dto.member.KakaoMemberInfo;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.properties.KakaoLoginProperties;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -17,8 +18,7 @@ import java.net.URL;
 @Slf4j
 public class KakaoAuthService {
 
-    private static String KakaoAuthRequestUrl = "https://kauth.kakao.com/oauth/token";
-    private static String KakaoUserDataRequestUrl = "https://kapi.kakao.com/v2/user/me";
+    private static KakaoLoginProperties kakaoLoginProperties ;
 
     /**
      * code를 통해서 tokenInfo를 반환
@@ -27,7 +27,7 @@ public class KakaoAuthService {
     public TokenInfo getKakaoTokenInfoByCode(String code){
 
         try{
-            URL requestUrl = new URL(KakaoAuthRequestUrl);
+            URL requestUrl = new URL(kakaoLoginProperties.getTokenRequestUrl());
             HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -69,7 +69,7 @@ public class KakaoAuthService {
     public KakaoMemberInfo getkakaoIdByAccessToken(String accessToken){
 
         try{
-            URL requestUrl = new URL(KakaoUserDataRequestUrl);
+            URL requestUrl = new URL(kakaoLoginProperties.getUserDataRequestUrl());
             HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
             conn.setRequestMethod("POST");
 
@@ -105,12 +105,11 @@ public class KakaoAuthService {
 
     }
 
-    // Todo : properties로 읽기
     private static StringBuilder getUrlBuilder(String code) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append("grant_type=authorization_code");
-        builder.append("&client_id=271b6b6b673acb0d6daca27769150dbc");
-        builder.append("&redirect_uri=http://localhost:3000/login"); // 일단임의로 설정
+        builder.append("grant_type="+kakaoLoginProperties.getGrantType());
+        builder.append("&client_id="+kakaoLoginProperties.getClientId());
+        builder.append("&redirect_uri="+kakaoLoginProperties.getRedirectUrl());
         builder.append("&code=" + code);
         return builder;
     }

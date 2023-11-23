@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.entity.Member;
-import whereQR.project.entity.Role;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
 import javax.servlet.http.Cookie;
