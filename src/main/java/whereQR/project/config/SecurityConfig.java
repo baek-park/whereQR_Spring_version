@@ -50,7 +50,6 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(unauthorizedEntryPoint()) // 인증되지 않은 요청에 대한 처리
                     .accessDeniedHandler(accessDeniedHandler()) // 권한이 없는 경우의 처리
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, RequestHeaderAuthenticationFilter.class)
@@ -79,19 +78,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedEntryPoint()) // 인증되지 않은 요청에 대한 처리
                 .accessDeniedHandler(accessDeniedHandler()) // 권한이 없는 경우의 처리
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, RequestHeaderAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationExceptionFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationExceptionFilter, JwtAuthenticationFilter.class); // 인가에 대한 필터
         return http.build();
 
-    }
-
-    @Bean
-    public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) ->
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 
     @Bean
