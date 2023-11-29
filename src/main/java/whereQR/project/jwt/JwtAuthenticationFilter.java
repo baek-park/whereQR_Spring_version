@@ -7,9 +7,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-import whereQR.project.exception.CustomExceptions.ForbiddenException;
-import whereQR.project.exception.CustomExceptions.InternalException;
-import whereQR.project.exception.CustomExceptions.SecurityException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,9 +34,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request);
             CustomAuthenticationToken authentication = new CustomAuthenticationToken(memberDetails,details);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }else{
-            throw new ForbiddenException("token이 비어있습니다.",this.getClass().toString());
         }
+        // Todo : token이 필요한데 null일경우에 대한 exception handling
         chain.doFilter(request, response);
 
     }
