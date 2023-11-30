@@ -104,7 +104,7 @@ public class JwtTokenProvider {
         } catch(MalformedJwtException e){
             throw new MalformedJwtException("유효하지 않은 JWT Token 입니다.", path);
         } catch (ExpiredJwtException e) {
-            throw new UnsupportedJwtException("만료된 JWT Token 입니다.", path);
+            throw new whereQR.project.exception.CustomExceptions.ExpiredJwtException("만료된 JWT Token 입니다.", path);
         } catch (UnsupportedJwtException e) {
             throw new UnsupportedJwtException("지원하지 않는 않은 JWT Token 입니다.", path);
         } catch (IllegalArgumentException e) {

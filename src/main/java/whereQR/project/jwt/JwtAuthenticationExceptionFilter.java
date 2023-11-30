@@ -2,11 +2,9 @@ package whereQR.project.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import whereQR.project.exception.CustomException;
-import whereQR.project.utils.response.ResponseEntity;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
