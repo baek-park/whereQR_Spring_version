@@ -25,17 +25,31 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
 
+        log.info("JwtAuthenticationFilter");
         // 토큰을 추출
         String token = jwtTokenProvider.extractTokenFromHeader((HttpServletRequest) request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            // 토큰이 유효한 경우 인증 정보 설정
-            MemberDetails memberDetails = jwtTokenProvider.getMemberByToken(token);
-            WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request);
-            CustomAuthenticationToken authentication = new CustomAuthenticationToken(memberDetails,details);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(token==null){
+            // 우선 통과시키고 아닐 경우 아래에서 검증
+            log.info("no token");
+        }else{
+            try{
+                boolean isValid = jwtTokenProvider.validateToken(token);
+                if (isValid) {
+                    // 토큰이 유효한 경우 인증 정보 설정
+                    MemberDetails memberDetails = jwtTokenProvider.getMemberByToken(token);
+                    WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request);
+                    CustomAuthenticationToken authentication = new CustomAuthenticationToken(memberDetails,details);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
-        // Todo : token이 필요한데 null일경우에 대한 exception handling
+
         chain.doFilter(request, response);
 
     }
