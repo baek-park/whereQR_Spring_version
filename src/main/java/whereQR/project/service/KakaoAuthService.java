@@ -29,6 +29,8 @@ public class KakaoAuthService {
 
     public TokenInfo getKakaoTokenInfoByCode(String code){
 
+        log.info("redirectUrl => {}", kakaoLoginProperties.getRedirectUrl());
+
         try{
             URL requestUrl = new URL(kakaoLoginProperties.getTokenRequestUrl());
             HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
@@ -44,7 +46,7 @@ public class KakaoAuthService {
             //예외처리
             int responseCode = conn.getResponseCode();
             if(responseCode != 200){
-                log.error("response code is not 200");
+                log.error("{}", conn.getContent());
                 throw new BadRequestException("kakao api 요청이 유효하지 않습니다.", this.getClass().toString());
                 // throw exception
             }

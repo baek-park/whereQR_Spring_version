@@ -31,6 +31,7 @@ public class memberController {
     @GetMapping("/kakao/token")
     public ResponseEntity kakaoToken(@RequestParam String code){
         TokenInfo tokenInfo = kakaoAuthService.getKakaoTokenInfoByCode(code);
+        log.info("kakao token accessToken -> {}", tokenInfo.getAccessToken());
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(tokenInfo)

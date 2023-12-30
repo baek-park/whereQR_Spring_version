@@ -12,8 +12,8 @@ public class TokenInfo {
     // kakao token
     public TokenInfo(JsonElement element){
         JsonObject jsonObject = element.getAsJsonObject();
-        this.accessToken = jsonObject.get("access_token").toString();
-        this.refreshToken = jsonObject.get("refresh_token").toString();
+        this.accessToken = jsonObject.get("access_token").getAsString();
+        this.refreshToken = jsonObject.get("refresh_token").getAsString();
     }
 
     // member token
