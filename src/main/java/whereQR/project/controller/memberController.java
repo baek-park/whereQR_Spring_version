@@ -48,11 +48,12 @@ public class memberController {
     }
 
     @PostMapping("/kakao/login")
-    public ResponseEntity loginUser(@RequestParam Long kakaoId){
-
+    public ResponseEntity loginUser(@RequestParam Long kakaoId,HttpServletResponse response ){
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
+        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(tokenInfo)
@@ -60,11 +61,12 @@ public class memberController {
     }
 
     @PostMapping("/kakao/login/admin")
-    public ResponseEntity loginAdmin(@RequestParam Long kakaoId){
+    public ResponseEntity loginAdmin(@RequestParam Long kakaoId, HttpServletResponse response){
 
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.ADMIN);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
+        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)

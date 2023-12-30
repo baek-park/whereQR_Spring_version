@@ -1,0 +1,22 @@
+FROM adoptopenjdk/openjdk11 as builder
+
+WORKDIR /builder
+
+COPY gradlew ./
+COPY gradle ./gradle
+COPY build.gradle ./
+COPY settings.gradle ./
+
+COPY src ./src
+
+RUN ./gradlew bootJar
+
+FROM adoptopenjdk/openjdk11  as runner
+
+WORKDIR /app
+
+COPY --from=builder /builder/build/libs/app.jar ./
+
+EXPOSE 8080
+
+CMD ["java","-jar","-Dspring.profiles.active=local","app.jar"]
