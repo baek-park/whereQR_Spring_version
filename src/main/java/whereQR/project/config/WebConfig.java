@@ -13,8 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000", // local,
-                        "http://27.96.130.127:3000", // dev
-                        "https://27.96.130.127:3000"
+                        "http://27.96.130.127:80", // dev,
+                        "http://27.96.130.127",
+                        "https://where-qr.com"
                 )
                 .allowedMethods("*")
                 .allowCredentials(false)
