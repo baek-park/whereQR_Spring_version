@@ -58,15 +58,18 @@ docker cp 36730fe5a03a:/app/src/main/resources/static/qrcode .
 <img width="697" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/f904acda-34de-46df-babb-45299fe7eb1a">
 
 
-### CI/CD 구축 단계(Jenkins 활용)
-
-1. 프리티어로 중단 -> 동국대학교 창업동아리 선정(완료). -> 지원금 활용 예정.<br>
-
 ----
+
+### feature
+
+- qrcode를 활용한 분실물 찾기
+
+- kakaotalk을 사용한 자체 회원가입 서비스
+
 ### 추가 예정
 
-1. 카카오톡 OAuth를 적용. 변경. 다만, 전화번호는 필수가 아니기에 회원가입 창으로 넘겨서 받도록.
-2. 채팅
+1. 채팅
+2. CICD
 
 
 
