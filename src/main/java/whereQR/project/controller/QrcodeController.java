@@ -20,7 +20,7 @@ import static whereQR.project.utils.MemberUtil.getMember;
 @RequestMapping("/qrcode")
 @RequiredArgsConstructor
 @Slf4j
-public class qrcodeController {
+public class QrcodeController {
 
     private final QrcodeService qrcodeService;
     @PostMapping("/create")

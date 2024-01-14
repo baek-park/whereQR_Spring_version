@@ -1,18 +1,64 @@
 package whereQR.project.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import whereQR.project.entity.dto.ResponseMessageDto;
+
+import javax.persistence.*;
 
 @Entity
-public class Message {
+@AllArgsConstructor
+public class Message extends EntityBase{
 
-    @Id
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender", nullable = false)
+    private Member sender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver", nullable = false)
+    private Member receiver;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatroom", nullable = false)
+    private Chatroom chatRoom;
+
+    @Column(length = 3000)
+    private String content;
+
+    private boolean isRead = false;
+
+    // method
     public Message(){
-        this.id = UUID.randomUUID();
+
     }
+
+    public Message(Member sender, Member receiver, Chatroom chatroom, String content){
+        this.sender = sender;
+        this.receiver = receiver;
+        this.chatRoom = chatroom;
+        this.content = content;
+    }
+
+    // method
+    public void readMessage(){
+        this.isRead = true;
+    }
+
+    public ResponseMessageDto toResponseMessageDto(){
+        return new ResponseMessageDto(
+                this.id,
+                this.sender,
+                this.receiver,
+                this.content,
+                this.isRead,
+                this.createdAt
+        );
+    }
+
+    public boolean isReceiver(Member member){
+        if(this.receiver.equals(member)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

@@ -1,11 +1,9 @@
-package whereQR.project.repository;
+package whereQR.project.repository.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import whereQR.project.entity.Member;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository

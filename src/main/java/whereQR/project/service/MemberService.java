@@ -8,7 +8,7 @@ import whereQR.project.entity.Role;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.member.KakaoSignupDto;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
-import whereQR.project.repository.MemberRepository;
+import whereQR.project.repository.member.MemberRepository;
 import java.util.UUID;
 
 @Service

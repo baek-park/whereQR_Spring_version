@@ -1,4 +1,4 @@
-package whereQR.project.repository;
+package whereQR.project.repository.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

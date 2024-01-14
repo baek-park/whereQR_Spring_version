@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/member")
-public class memberController {
+public class MemberController {
 
     private final MemberService memberService;
     private final KakaoAuthService kakaoAuthService;

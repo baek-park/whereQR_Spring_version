@@ -1,4 +1,4 @@
-package whereQR.project.repository;
+package whereQR.project.repository.member;
 
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Role;

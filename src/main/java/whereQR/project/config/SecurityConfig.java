@@ -43,6 +43,7 @@ public class SecurityConfig {
                     .antMatchers("/qrcode/update/**").hasRole("USER")
                     .antMatchers("/qrcode/register/**").hasRole("USER")
                     .antMatchers("/qrcode/qrcode-list").hasRole("USER")
+                    .antMatchers("/chat/**").hasRole("USER")
                     .antMatchers("/qrcode/scan/**").permitAll()
                 .and()
                 .exceptionHandling()
