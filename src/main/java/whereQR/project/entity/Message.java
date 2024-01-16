@@ -1,7 +1,7 @@
 package whereQR.project.entity;
 
 import lombok.AllArgsConstructor;
-import whereQR.project.entity.dto.ResponseMessageDto;
+import whereQR.project.entity.dto.chat.ResponseMessageDto;
 
 import javax.persistence.*;
 

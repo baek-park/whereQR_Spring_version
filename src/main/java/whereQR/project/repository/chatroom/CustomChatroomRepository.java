@@ -1,7 +1,6 @@
 package whereQR.project.repository.chatroom;
 
 import whereQR.project.entity.Member;
-import whereQR.project.entity.Role;
 
 public interface CustomChatroomRepository {
 

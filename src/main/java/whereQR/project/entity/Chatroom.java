@@ -2,7 +2,6 @@ package whereQR.project.entity;
 
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
-import whereQR.project.entity.dto.ResponseMessageDto;
 
 import javax.persistence.*;
 
@@ -35,8 +34,8 @@ public class Chatroom extends EntityBase{
         }
     }
 
-    public Boolean isChatroomMember(Member sender){
-        if (sender.equals(starter) || sender.equals(participant)) {
+    public Boolean isChatroomMember(Member member){
+        if (member.equals(starter) || member.equals(participant)) {
             return true;
         }
         return false;

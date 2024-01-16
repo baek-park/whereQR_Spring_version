@@ -1,16 +1,16 @@
 package whereQR.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
+import whereQR.project.entity.dto.chat.ChatroomCreateDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.service.ChatService;
 import whereQR.project.service.MemberService;
@@ -21,6 +21,7 @@ import whereQR.project.utils.response.Status;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -29,21 +30,25 @@ public class ChatController {
 
     //chatting room
     @PostMapping("chat/create/room")
-    public ResponseEntity createChatroom(@RequestBody UUID starter, @RequestBody UUID participant){
-        Member user1 = memberService.getMemberById(starter);
-        Member user2 = memberService.getMemberById(participant);
+    public ResponseEntity createChatroom(@RequestBody ChatroomCreateDto chatroomCreateDto){
+        Member starter = memberService.getMemberById(chatroomCreateDto.getStarter());
+        Member participant = memberService.getMemberById(chatroomCreateDto.getParticipant());
 
-        Chatroom chatroom = chatService.createChatroom(user1, user2);
+        Chatroom chatroom = chatService.createChatroom(starter, participant);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(chatroom.id)
                 .build();
     }
 
-
-    @MessageMapping("pub/{chatRoomId}")
-    @SendTo("sub/{chatRoomId}") // 구독하는 client에게 전송
-    public ResponseEntity sendMessage(@DestinationVariable String chatRoomId, @Payload String content) {
+    /**
+     * tip) client -> app/send/uuid (command : publish) / subscribe : message/uuid
+     * @param chatRoomId
+     * @param content
+     * @return
+     */
+    @MessageMapping("/send/{chatRoomId}")
+    public ResponseEntity sendMessage(@DestinationVariable String chatRoomId, String content) {
 
         Chatroom chatroom = chatService.getChatroomById(UUID.fromString(chatRoomId));
         Member currentMember = MemberUtil.getMember();
@@ -52,32 +57,36 @@ public class ChatController {
             throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
         }
 
-        chatService.sendMessage(chatroom, currentMember, content);
+        Message message = chatService.sendMessage(chatroom, currentMember, content);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
-                .data("send success") // Todo : 변경
+                .data(message)
                 .build();
     }
 
-    @MessageMapping("pub/read/{chatRoomId}")
-    @SendTo("sub/read/{chatRoomId}") // 구독하는 client에게 전송
-    public ResponseEntity readMessage(@DestinationVariable UUID chatRoomId, @Payload UUID messageId) {
+    /**
+     * 수정 중
+     * tip) client -> app/read/uuid (command: subscribe) / subscribe : message/read/uuid
+     * @param chatRoomId
+     * @return
+     */
+    @MessageMapping("/read/{chatRoomId}")
+    public ResponseEntity readMessage(@DestinationVariable UUID chatRoomId) {
 
         Chatroom chatroom = chatService.getChatroomById(chatRoomId);
-        Message message = chatService.getMessageById(chatRoomId);
-        Member currentMember = MemberUtil.getMember();
 
-        if(message.isReceiver(currentMember)){
+        Member currentMember = MemberUtil.getMember();
+        if(!chatroom.isChatroomMember(currentMember)){
             throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
         }
 
         // read message
-        chatService.readMessage(chatroom, message);
+        chatService.readMessage(chatroom, currentMember);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
-                .data("read success") //  Todo : 변경
+                .data("read")
                 .build();
     }
 
@@ -85,6 +94,12 @@ public class ChatController {
     // Todo : 읽지 않은 메시지 수
     /**
      * getNotReadCount
+     */
+
+
+    // Todo : pagination적용 message query
+    /**
+     * getMessagesByChatroom
      */
 
 }

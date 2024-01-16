@@ -1,6 +1,7 @@
 package whereQR.project.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,14 @@ import whereQR.project.repository.chatroom.ChatroomRepository;
 import whereQR.project.repository.member.MemberRepository;
 import whereQR.project.repository.message.MessageRepository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatService {
@@ -45,6 +51,7 @@ public class ChatService {
         if(chatroomRepository.existChatroomByUsers(starter, participant)) {
             throw new BadRequestException("이미 진행 중인 채팅방이 존재합니다.", this.getClass().toString());
         }
+
         Chatroom chatroom = new Chatroom(starter, participant);
         return chatroomRepository.save(chatroom);
     }
@@ -53,33 +60,41 @@ public class ChatService {
      * 채팅
      */
     @Transactional
-    public void sendMessage(Chatroom chatroom, Member sender, String content){
+    public Message sendMessage(Chatroom chatroom, Member sender, String content){
 
         // get receiver
         Member receiver = chatroom.getReceiverBySender(sender);
         // 1. 메시지 생성
         Message message = new Message(sender, receiver, chatroom, content);
 
-        // 2. 메시지 저장
-        messageRepository.save(message);
-
-        // 3. 메시지 전송
+        // 2. 메시지 전송
         try{
-            simpMessagingTemplate.convertAndSend("/sub/" + chatroom.id, message);
+            simpMessagingTemplate.convertAndSend("/message/" + chatroom.id, message);
         } catch (MessagingException exception){
             throw new InternalException(exception.getFailedMessage().toString(), this.getClass().toString());
         }
+
+        // 3. 저장
+        return messageRepository.save(message);
     }
 
     @Transactional
-    public void readMessage(Chatroom chatroom, Message message){
+    public void readMessage(Chatroom chatroom, Member member){
 
-        // 1. 메시지 읽기
-        message.readMessage();
+        // 1. 안 읽은 메시지 찾기 -> chatroom이 chatroom이고 receiver가 member인 것을 전부 find
+        Optional<List<Message>> notReadMessages =  messageRepository.findNotReadMessageByChatroomAndReceiver(chatroom, member);
 
-        // 2. 메시지 전송
+        // 2. 메시지 읽기
+        if (!notReadMessages.isEmpty()){
+            notReadMessages.get().forEach(Message::readMessage);
+        }
+
+        // 3. 읽은 메시지 병렬 처리
         try{
-            simpMessagingTemplate.convertAndSend("/sub/read/" + chatroom.id, message);
+            List<CompletableFuture<Void>> futures = notReadMessages.stream()
+                    .map(message -> CompletableFuture.runAsync(() -> simpMessagingTemplate.convertAndSend("/message/read/" + chatroom.id, message)))
+                    .collect(Collectors.toList());
+            CompletableFuture.allOf((CompletableFuture<?>) futures).join();
         } catch (MessagingException exception){
             throw new InternalException(exception.getFailedMessage().toString(), this.getClass().toString());
         }

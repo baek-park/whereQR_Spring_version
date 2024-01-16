@@ -147,4 +147,13 @@ public class MemberController {
                 .data(memberDetailDto)
                 .build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity me(){
+        Member currentMember = MemberUtil.getMember();
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(currentMember.getId())
+                .build();
+    }
 }
