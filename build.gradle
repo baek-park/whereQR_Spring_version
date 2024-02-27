@@ -14,7 +14,7 @@ plugins {
 
 group = 'whereQR'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = "16"
+sourceCompatibility = "11"
 
 configurations {
 	compileOnly {
@@ -62,10 +62,8 @@ dependencies {
 
 	//properties
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 }
@@ -108,4 +106,4 @@ configurations {
 
 
 //querydsl 추가 끝
-targetCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_11

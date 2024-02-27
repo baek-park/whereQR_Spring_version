@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.entity.Chatroom;
@@ -18,6 +19,7 @@ import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.response.ResponseEntity;
 import whereQR.project.utils.response.Status;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -101,5 +103,18 @@ public class ChatController {
     /**
      * getMessagesByChatroom
      */
+
+
+    // Todo : chatroom 목록
+    @GetMapping("chat/chatrooms")
+    public ResponseEntity getChatroomsByMember(){
+        Member currentMember = MemberUtil.getMember();
+        List<Chatroom> chatrooms = chatService.getChatroomsByMember(currentMember);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(chatrooms)
+                .build();
+    }
+
 
 }

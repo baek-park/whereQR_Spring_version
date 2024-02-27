@@ -101,5 +101,10 @@ public class ChatService {
 
     }
 
+    @Transactional(readOnly = true)
+    public List<Chatroom> getChatroomsByMember(Member member){
+        return chatroomRepository.findChatroomsByMember(member);
+    }
+
 
 }

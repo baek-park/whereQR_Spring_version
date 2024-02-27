@@ -4,10 +4,12 @@ import lombok.Data;
 import whereQR.project.entity.*;
 
 import javax.persistence.Embedded;
+import java.util.UUID;
 
 @Data
 public class QrcodeUpdateDto {
 
+    private UUID id;
     private String title;
     private String memo;
 

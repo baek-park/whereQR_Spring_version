@@ -7,6 +7,7 @@ import whereQR.project.entity.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,6 +22,6 @@ public class CustomMessageRepositoryImpl implements CustomMessageRepository{
         return Optional.ofNullable(queryFactory.selectFrom(message)
                 .leftJoin(message.chatRoom,qChatroom)
                 .where(message.chatRoom.eq(chatroom).and( message.receiver.eq(receiver)))
-                .fetchAll().stream().toList());
+                .fetchAll().stream().collect(Collectors.toList()));
     }
 }
