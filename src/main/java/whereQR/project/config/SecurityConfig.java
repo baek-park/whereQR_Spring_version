@@ -44,6 +44,8 @@ public class SecurityConfig {
                     .antMatchers("/qrcode/register").hasRole("USER")
                     .antMatchers("/qrcode/qrcode-list").hasRole("USER")
                     .antMatchers("/chat/create/room").hasRole("USER")
+                    .antMatchers("/chat/chatroom").hasRole("USER")
+                    .antMatchers("/chat/chatrooms").hasRole("USER")
                     .antMatchers("/pub/**").hasRole("USER")
                     .antMatchers("/sub/**").hasRole("USER")
                     .antMatchers("/qrcode/scan/**").permitAll()

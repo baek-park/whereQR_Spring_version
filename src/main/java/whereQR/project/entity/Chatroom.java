@@ -1,7 +1,9 @@
 package whereQR.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
+import whereQR.project.entity.dto.chat.ChatroomResponseDto;
 
 import javax.persistence.*;
 
@@ -39,6 +41,11 @@ public class Chatroom extends EntityBase{
             return true;
         }
         return false;
+    }
+
+    public ChatroomResponseDto toChatroomResponseDto(){
+
+        return new ChatroomResponseDto(this.id,this.participant);
     }
 
 }

@@ -25,7 +25,7 @@ public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response); // jwtAuthentication 실행
             log.info("JwtAuthenticationExceptionFilter");
         }catch(Exception e){
-            log.error("JwtAuthenticationExceptionFilter error");
+            log.error("{}",e);
             if (e instanceof CustomException) {// 정의한 error에 속할 경우
                 CustomException customException = (CustomException) e;
                 handleAuthenticationException(response, customException.getMessage());

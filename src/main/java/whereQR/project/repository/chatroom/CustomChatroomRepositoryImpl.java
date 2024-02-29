@@ -9,6 +9,8 @@ import whereQR.project.entity.QChatroom;
 import whereQR.project.entity.QMember;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -37,6 +39,14 @@ public class CustomChatroomRepositoryImpl implements CustomChatroomRepository{
                 .leftJoin(chatroom.participant, member)
                 .where(chatroom.starter.eq(user).or(chatroom.participant.eq(user)))
                 .fetchAll().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<UUID> findChatroomByMemberIds(UUID starterId, UUID participantId) {
+        return Optional.ofNullable(queryFactory.select(chatroom.id)
+                        .from(chatroom)
+                        .where(chatroom.starter.id.eq(starterId).and(chatroom.participant.id.eq(participantId)))
+                        .fetchOne());
     }
 
 }

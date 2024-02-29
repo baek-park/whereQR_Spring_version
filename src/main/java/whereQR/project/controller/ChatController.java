@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
-import whereQR.project.entity.dto.chat.ChatroomCreateDto;
+import whereQR.project.entity.dto.chat.ChatroomMemberDto;
+import whereQR.project.entity.dto.chat.ChatroomResponseDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.service.ChatService;
 import whereQR.project.service.MemberService;
@@ -21,8 +19,9 @@ import whereQR.project.utils.response.Status;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 public class ChatController {
@@ -32,9 +31,9 @@ public class ChatController {
 
     //chatting room
     @PostMapping("chat/create/room")
-    public ResponseEntity createChatroom(@RequestBody ChatroomCreateDto chatroomCreateDto){
-        Member starter = memberService.getMemberById(chatroomCreateDto.getStarter());
-        Member participant = memberService.getMemberById(chatroomCreateDto.getParticipant());
+    public ResponseEntity createChatroom(@RequestBody ChatroomMemberDto chatroomMemberDto){
+        Member starter = memberService.getMemberById(UUID.fromString(chatroomMemberDto.getStarter()));
+        Member participant = memberService.getMemberById(UUID.fromString(chatroomMemberDto.getParticipant()));
 
         Chatroom chatroom = chatService.createChatroom(starter, participant);
         return ResponseEntity.builder()
@@ -110,9 +109,27 @@ public class ChatController {
     public ResponseEntity getChatroomsByMember(){
         Member currentMember = MemberUtil.getMember();
         List<Chatroom> chatrooms = chatService.getChatroomsByMember(currentMember);
+
+        List<ChatroomResponseDto> chatroomResponses = chatrooms.stream().map(Chatroom::toChatroomResponseDto).collect(Collectors.toList());
+
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
-                .data(chatrooms)
+                .data(chatroomResponses)
+                .build();
+    }
+
+
+    @GetMapping("chat/chatroom")
+    public ResponseEntity getChatroomByMember(@RequestBody ChatroomMemberDto chatroomMemberDto){
+
+        UUID starterId = UUID.fromString(chatroomMemberDto.getStarter());
+        UUID participantId = UUID.fromString(chatroomMemberDto.getParticipant());
+        String chatroomId = chatService.getChatroomByIds(starterId, participantId);
+        log.info(chatroomId);
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(chatroomId)
                 .build();
     }
 

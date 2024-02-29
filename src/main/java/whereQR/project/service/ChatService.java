@@ -42,6 +42,18 @@ public class ChatService {
         return chatroomRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 채팅방이 존재하지 않습니다.", this.getClass().toString()));
     }
 
+    /**
+//     * 채팅방을 조회
+//     * @param starterId
+//     * @param participantId
+     * @return chatroomId
+     */
+    public String getChatroomByIds( UUID starterId, UUID participantId){
+        String id = chatroomRepository.findChatroomByMemberIds(starterId, participantId).orElseThrow(() -> new NotFoundException("해당하는 채팅방이 존재하지 않습니다.", this.getClass().toString())).toString();
+        log.info("getChatroomByIds id -> {}", id);
+        return id;
+    }
+
     public Message getMessageById(UUID id){
         return messageRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 메시지가 존재하지 않습니다.", this.getClass().toString()));
     }
