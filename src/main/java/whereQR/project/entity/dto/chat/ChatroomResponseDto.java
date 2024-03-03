@@ -8,11 +8,11 @@ import java.util.UUID;
 @Data
 public class ChatroomResponseDto {
     private String id;
-    private String participantUsername;
+    private String opponentUsername;
 
     public ChatroomResponseDto(UUID id, Member participant) {
         this.id = id.toString();
-        this.participantUsername = participant.getUsername();
+        this.opponentUsername = participant.getUsername();
     }
 
 }

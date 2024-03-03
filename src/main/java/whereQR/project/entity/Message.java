@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import whereQR.project.entity.dto.chat.ResponseMessageDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @AllArgsConstructor
-public class Message extends EntityBase{
+public class Message extends EntityBase implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender", nullable = false)
@@ -61,4 +62,12 @@ public class Message extends EntityBase{
         }
     }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sender=" + sender.getId() +
+                ", receiver=" + receiver.getId() +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

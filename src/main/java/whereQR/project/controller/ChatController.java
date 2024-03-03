@@ -1,10 +1,14 @@
 package whereQR.project.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
@@ -29,6 +33,8 @@ public class ChatController {
     private final ChatService chatService;
     private final MemberService memberService;
 
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
     //chatting room
     @PostMapping("chat/create/room")
     public ResponseEntity createChatroom(@RequestBody ChatroomMemberDto chatroomMemberDto){
@@ -43,20 +49,21 @@ public class ChatController {
     }
 
     /**
-     * tip) client -> app/send/uuid (command : publish) / subscribe : message/uuid
+     * tip) client -> app/send/uuid/uuid (command : publish) / subscribe : message/uuid
      * @param chatRoomId
      * @param content
      * @return
      */
-    @MessageMapping("/send/{chatRoomId}")
-    public ResponseEntity sendMessage(@DestinationVariable String chatRoomId, String content) {
+    @MessageMapping("/send/{memberId}/{chatRoomId}")
+    public ResponseEntity sendMessage(@DestinationVariable String memberId, @DestinationVariable String chatRoomId,  @RequestBody String content) throws JsonProcessingException {
 
         Chatroom chatroom = chatService.getChatroomById(UUID.fromString(chatRoomId));
-        Member currentMember = MemberUtil.getMember();
+        Member currentMember = memberService.getMemberById(UUID.fromString(memberId));
 
         if(!chatroom.isChatroomMember(currentMember)){
             throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
         }
+
 
         Message message = chatService.sendMessage(chatroom, currentMember, content);
 
@@ -73,9 +80,9 @@ public class ChatController {
      * @return
      */
     @MessageMapping("/read/{chatRoomId}")
-    public ResponseEntity readMessage(@DestinationVariable UUID chatRoomId) {
+    public ResponseEntity readMessage(@DestinationVariable String chatRoomId) {
 
-        Chatroom chatroom = chatService.getChatroomById(chatRoomId);
+        Chatroom chatroom = chatService.getChatroomById(UUID.fromString(chatRoomId));
 
         Member currentMember = MemberUtil.getMember();
         if(!chatroom.isChatroomMember(currentMember)){
@@ -91,11 +98,26 @@ public class ChatController {
                 .build();
     }
 
+//    @MessageMapping("/hello/{id}")
+//    public String greeting(@DestinationVariable int id, String message) throws Exception {
+//
+//        String greeting = "Hello" + id;
+//        log.info(greeting);
+//        try{
+//            simpMessagingTemplate.convertAndSend("subscribe/greetings/1",greeting );
+//            log.info("here");
+//        } catch (MessagingException exception){
+//            throw exception;
+//        }
+//        return greeting;
+//    }
+
 
     // Todo : 읽지 않은 메시지 수
     /**
      * getNotReadCount
      */
+
 
 
     // Todo : pagination적용 message query
@@ -108,9 +130,10 @@ public class ChatController {
     @GetMapping("chat/chatrooms")
     public ResponseEntity getChatroomsByMember(){
         Member currentMember = MemberUtil.getMember();
+        UUID currentMemberId = currentMember.getId();
         List<Chatroom> chatrooms = chatService.getChatroomsByMember(currentMember);
 
-        List<ChatroomResponseDto> chatroomResponses = chatrooms.stream().map(Chatroom::toChatroomResponseDto).collect(Collectors.toList());
+        List<ChatroomResponseDto> chatroomResponses = chatrooms.stream().map(chatroom -> chatroom.toChatroomResponseDto(currentMemberId)).collect(Collectors.toList());
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
@@ -120,11 +143,9 @@ public class ChatController {
 
 
     @GetMapping("chat/chatroom")
-    public ResponseEntity getChatroomByMember(@RequestBody ChatroomMemberDto chatroomMemberDto){
+    public ResponseEntity getChatroomByMembers(@RequestParam String starterId, @RequestParam String participantId){
 
-        UUID starterId = UUID.fromString(chatroomMemberDto.getStarter());
-        UUID participantId = UUID.fromString(chatroomMemberDto.getParticipant());
-        String chatroomId = chatService.getChatroomByIds(starterId, participantId);
+        String chatroomId = chatService.getChatroomByIds(UUID.fromString(starterId), UUID.fromString(participantId));
         log.info(chatroomId);
 
         return ResponseEntity.builder()

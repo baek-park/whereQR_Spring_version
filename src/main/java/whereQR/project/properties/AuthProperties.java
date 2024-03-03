@@ -13,4 +13,5 @@ public final class AuthProperties {
     private Boolean secure;
     private Boolean httpOnly;
 
+    private String domain;
 }

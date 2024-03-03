@@ -1,11 +1,14 @@
 package whereQR.project.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final ChatroomRepository chatroomRepository;
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -72,16 +75,17 @@ public class ChatService {
      * 채팅
      */
     @Transactional
-    public Message sendMessage(Chatroom chatroom, Member sender, String content){
+    public Message sendMessage(Chatroom chatroom, Member sender, String content) throws JsonProcessingException {
 
         // get receiver
-        Member receiver = chatroom.getReceiverBySender(sender);
+        UUID receiverId = chatroom.getReceiverBySender(sender);
+        Member receiver = memberService.getMemberById(receiverId);
         // 1. 메시지 생성
         Message message = new Message(sender, receiver, chatroom, content);
-
         // 2. 메시지 전송
         try{
-            simpMessagingTemplate.convertAndSend("/message/" + chatroom.id, message);
+            simpMessagingTemplate.convertAndSend("/subscribe/" + chatroom.id, message.toString());
+            log.info("convertAndSend success");
         } catch (MessagingException exception){
             throw new InternalException(exception.getFailedMessage().toString(), this.getClass().toString());
         }
@@ -117,6 +121,5 @@ public class ChatService {
     public List<Chatroom> getChatroomsByMember(Member member){
         return chatroomRepository.findChatroomsByMember(member);
     }
-
 
 }

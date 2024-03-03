@@ -38,6 +38,7 @@ public class AuthService {
     public void removeAccessTokenInCookie(HttpServletResponse response){
         Cookie cookie = new Cookie("WhereQr-AccessToken", null);
         cookie.setPath("/");
+        cookie.setDomain(authProperties.getDomain());
         cookie.setSecure(authProperties.getSecure());
         cookie.setHttpOnly(authProperties.getHttpOnly());
 
@@ -49,6 +50,7 @@ public class AuthService {
 
         Cookie cookie = new Cookie("WhereQr-AccessToken", accessToken);
         cookie.setPath("/");
+        cookie.setDomain(authProperties.getDomain());
         cookie.setSecure(authProperties.getSecure());
         cookie.setHttpOnly(authProperties.getHttpOnly());
         cookie.setMaxAge(86400); // 1일로 설정. access token
