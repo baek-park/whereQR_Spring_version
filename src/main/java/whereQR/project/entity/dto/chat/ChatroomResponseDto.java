@@ -10,9 +10,13 @@ public class ChatroomResponseDto {
     private String id;
     private String opponentUsername;
 
-    public ChatroomResponseDto(UUID id, Member participant) {
+    private Long notReadMessageCount;
+    
+
+    public ChatroomResponseDto(UUID id, Member opponent, Long notReadMessageCount) {
         this.id = id.toString();
-        this.opponentUsername = participant.getUsername();
+        this.opponentUsername = opponent.getUsername();
+        this.notReadMessageCount = notReadMessageCount;
     }
 
 }

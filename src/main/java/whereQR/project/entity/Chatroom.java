@@ -45,14 +45,4 @@ public class Chatroom extends EntityBase{
         return false;
     }
 
-    public ChatroomResponseDto toChatroomResponseDto(UUID memberId){
-
-        if(memberId.equals(this.starter.getId())){
-            return new ChatroomResponseDto(this.id,this.participant);
-        }else{
-            return new ChatroomResponseDto(this.id, this.starter);
-        }
-
-    }
-
 }

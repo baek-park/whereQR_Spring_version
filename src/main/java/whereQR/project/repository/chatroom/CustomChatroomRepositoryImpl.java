@@ -1,12 +1,14 @@
 package whereQR.project.repository.chatroom;
 
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whereQR.project.entity.Chatroom;
-import whereQR.project.entity.Member;
-import whereQR.project.entity.QChatroom;
-import whereQR.project.entity.QMember;
+import whereQR.project.entity.*;
+import whereQR.project.entity.dto.chat.ChatroomProjectionDto;
+import whereQR.project.entity.dto.chat.ChatroomResponseDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +34,28 @@ public class CustomChatroomRepositoryImpl implements CustomChatroomRepository{
     }
 
     @Override
-    public List<Chatroom> findChatroomsByMember(Member user) {
+    public List<ChatroomProjectionDto> findChatroomsByMember(Member user) {
         QMember member = QMember.member;
-        return queryFactory.selectFrom(chatroom)
+        QMessage message = QMessage.message;
+
+        return queryFactory.select(
+                        Projections.constructor(
+                                ChatroomProjectionDto.class,
+                                chatroom.id,
+                                chatroom.starter,
+                                chatroom.participant,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(message.count())
+                                                .from(message)
+                                                .where(message.chatRoom.id.eq(chatroom.id), message.isRead.isFalse()),
+                                        "notReadMessageCount"))
+                )
+                .from(chatroom)
                 .leftJoin(chatroom.starter, member)
                 .leftJoin(chatroom.participant, member)
                 .where(chatroom.starter.eq(user).or(chatroom.participant.eq(user)))
                 .fetchAll().stream().collect(Collectors.toList());
+
     }
 
     @Override

@@ -13,6 +13,7 @@ import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
 import whereQR.project.entity.dto.chat.ChatroomMemberDto;
+import whereQR.project.entity.dto.chat.ChatroomProjectionDto;
 import whereQR.project.entity.dto.chat.ChatroomResponseDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.service.ChatService;
@@ -113,25 +114,12 @@ public class ChatController {
 //    }
 
 
-    // Todo : 읽지 않은 메시지 수
-    /**
-     * getNotReadCount
-     */
-
-
-
-    // Todo : pagination적용 message query
-    /**
-     * getMessagesByChatroom
-     */
-
-
     // Todo : chatroom 목록
     @GetMapping("chat/chatrooms")
     public ResponseEntity getChatroomsByMember(){
         Member currentMember = MemberUtil.getMember();
         UUID currentMemberId = currentMember.getId();
-        List<Chatroom> chatrooms = chatService.getChatroomsByMember(currentMember);
+        List<ChatroomProjectionDto> chatrooms = chatService.getChatroomsByMember(currentMember);
 
         List<ChatroomResponseDto> chatroomResponses = chatrooms.stream().map(chatroom -> chatroom.toChatroomResponseDto(currentMemberId)).collect(Collectors.toList());
 
@@ -140,7 +128,6 @@ public class ChatController {
                 .data(chatroomResponses)
                 .build();
     }
-
 
     @GetMapping("chat/chatroom")
     public ResponseEntity getChatroomByMembers(@RequestParam String starterId, @RequestParam String participantId){

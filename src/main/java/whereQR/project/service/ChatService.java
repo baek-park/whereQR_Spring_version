@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
+import whereQR.project.entity.dto.chat.ChatroomProjectionDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.InternalException;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
@@ -118,7 +119,7 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<Chatroom> getChatroomsByMember(Member member){
+    public List<ChatroomProjectionDto> getChatroomsByMember(Member member){
         return chatroomRepository.findChatroomsByMember(member);
     }
 
