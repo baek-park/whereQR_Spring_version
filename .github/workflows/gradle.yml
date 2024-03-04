@@ -37,5 +37,5 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh-keyscan -p 12345 210.89.189.74 >> ~/.ssh/known_hosts 
-          ssh -i ~/.ssh/id_rsa -p 12345 root@210.89.189.74 'echo "Connected to NCP Server"'
+          ssh-keyscan -p 12321 210.89.181.89 >> ~/.ssh/known_hosts 
+          ssh -i ~/.ssh/id_rsa -p 12321 root@210.89.181.89 'echo "Connected to NCP Server"'
