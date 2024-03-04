@@ -7,6 +7,7 @@ import whereQR.project.entity.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -23,5 +24,16 @@ public class CustomMessageRepositoryImpl implements CustomMessageRepository{
                 .leftJoin(message.chatRoom,qChatroom)
                 .where(message.chatRoom.eq(chatroom).and( message.receiver.eq(receiver)))
                 .fetchAll().stream().collect(Collectors.toList()));
+    }
+
+    @Override
+    public List<Message> findMessagesByChatroomId(UUID chatroomId) {
+        QChatroom chatroom = QChatroom.chatroom;
+
+        return queryFactory.selectFrom(message)
+                .leftJoin(message.chatRoom, chatroom)
+                .where(message.chatRoom.id.eq(chatroomId))
+                .orderBy(message.createdAt.asc())
+                .fetchAll().stream().collect(Collectors.toList());
     }
 }

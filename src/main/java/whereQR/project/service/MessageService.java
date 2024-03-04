@@ -1,23 +1,17 @@
 package whereQR.project.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
-import whereQR.project.entity.dto.chat.ChatroomProjectionDto;
-import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.entity.dto.chat.ResponseMessageDto;
 import whereQR.project.exception.CustomExceptions.InternalException;
-import whereQR.project.exception.CustomExceptions.NotFoundException;
-import whereQR.project.repository.chatroom.ChatroomRepository;
-import whereQR.project.repository.member.MemberRepository;
 import whereQR.project.repository.message.MessageRepository;
 
 import java.util.List;
@@ -30,47 +24,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ChatService {
-
-    private final MemberService memberService;
-    private final ChatroomRepository chatroomRepository;
+public class MessageService {
     private final MessageRepository messageRepository;
+    private final MemberService memberService;
+
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    /**
-     * 채팅방 :
-     * 채팅방 이름 X. -> update X
-     * 삭제 (아직 X.) -> delete X
-     */
-    public Chatroom getChatroomById(UUID id){
-        return chatroomRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 채팅방이 존재하지 않습니다.", this.getClass().toString()));
-    }
 
-    /**
-//     * 채팅방을 조회
-//     * @param starterId
-//     * @param participantId
-     * @return chatroomId
-     */
-    public String getChatroomByIds( UUID starterId, UUID participantId){
-        String id = chatroomRepository.findChatroomByMemberIds(starterId, participantId).orElseThrow(() -> new NotFoundException("해당하는 채팅방이 존재하지 않습니다.", this.getClass().toString())).toString();
-        log.info("getChatroomByIds id -> {}", id);
-        return id;
-    }
-
-    public Message getMessageById(UUID id){
-        return messageRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 메시지가 존재하지 않습니다.", this.getClass().toString()));
-    }
-
-    @Transactional
-    public Chatroom createChatroom(Member starter, Member participant){
-        if(chatroomRepository.existChatroomByUsers(starter, participant)) {
-            throw new BadRequestException("이미 진행 중인 채팅방이 존재합니다.", this.getClass().toString());
-        }
-
-        Chatroom chatroom = new Chatroom(starter, participant);
-        return chatroomRepository.save(chatroom);
-    }
 
     /**
      * 채팅
@@ -118,9 +78,8 @@ public class ChatService {
 
     }
 
-    @Transactional(readOnly = true)
-    public List<ChatroomProjectionDto> getChatroomsByMember(Member member){
-        return chatroomRepository.findChatroomsByMember(member);
+    public List<ResponseMessageDto> getMessagesByChatroomId(UUID chatroomId){
+        return messageRepository.findMessagesByChatroomId(chatroomId).stream().map(Message::toResponseMessageDto).collect(Collectors.toList());
     }
 
 }

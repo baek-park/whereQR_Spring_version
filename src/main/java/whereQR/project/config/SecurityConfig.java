@@ -46,8 +46,7 @@ public class SecurityConfig {
                     .antMatchers("/chat/create/room").hasRole("USER")
                     .antMatchers("/chat/chatroom").hasRole("USER")
                     .antMatchers("/chat/chatrooms").hasRole("USER")
-                    .antMatchers("/publish/**").permitAll()
-                    .antMatchers("/subscribe/**").permitAll()
+                    .antMatchers("/chat/messages").hasRole("USER")
                     .antMatchers("/qrcode/scan/**").permitAll()
 
                 .and()

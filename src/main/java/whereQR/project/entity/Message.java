@@ -46,8 +46,8 @@ public class Message extends EntityBase implements Serializable {
     public ResponseMessageDto toResponseMessageDto(){
         return new ResponseMessageDto(
                 this.id,
-                this.sender,
-                this.receiver,
+                this.sender.getId().toString(),
+                this.receiver.getId().toString(),
                 this.content,
                 this.isRead,
                 this.createdAt

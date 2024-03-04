@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import whereQR.project.entity.*;
 import whereQR.project.entity.dto.chat.ChatroomProjectionDto;
-import whereQR.project.entity.dto.chat.ChatroomResponseDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +47,22 @@ public class CustomChatroomRepositoryImpl implements CustomChatroomRepository{
                                         JPAExpressions.select(message.count())
                                                 .from(message)
                                                 .where(message.chatRoom.id.eq(chatroom.id), message.isRead.isFalse()),
-                                        "notReadMessageCount"))
+                                        "notReadMessageCount"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(message.updatedAt.max())
+                                                .from(message)
+                                                .where(message.chatRoom.id.eq(chatroom.id)),
+                                        "lastDate"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(message.content)
+                                                .from(message)
+                                                .where(message.chatRoom.id.eq(chatroom.id),
+                                                        message.updatedAt.eq(
+                                                            JPAExpressions
+                                                                    .select(message.updatedAt.max())
+                                                                    .from(message)
+                                                                    .where(message.chatRoom.id.eq(chatroom.id)))),
+                                        "lastContent"))
                 )
                 .from(chatroom)
                 .leftJoin(chatroom.starter, member)

@@ -12,8 +12,8 @@ import java.util.UUID;
 public class ResponseMessageDto {
 
     private UUID id;
-    private Member sender;
-    private Member receiver;
+    private String senderId;
+    private String receiverId;
     private String content;
 
     private Boolean isRead;
@@ -21,6 +21,6 @@ public class ResponseMessageDto {
     private LocalDateTime createdAt;
 
     public ResponseMessageDto(){
-
     }
+
 }
