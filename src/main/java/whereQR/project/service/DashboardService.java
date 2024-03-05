@@ -48,5 +48,8 @@ public class DashboardService {
         return dashboard.getDashboardId();
     }
 
+    public void deleteDashboard(UUID dashboardId) {
+        dashboardRepository.deleteById(dashboardId);
+    }
 
 }

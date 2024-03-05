@@ -35,4 +35,11 @@ public class DashboardController {
         UUID dashboardId = dashboardService.updateDashboard(request);
         return ResponseEntity.ok(dashboardId);
     }
+
+    @DeleteMapping("/delete/{dashboardId}")
+    public ResponseEntity<?> deleteDashboard(@PathVariable UUID dashboardId) {
+        dashboardService.deleteDashboard(dashboardId);
+        return ResponseEntity.ok().build();
+    }
+
 }
