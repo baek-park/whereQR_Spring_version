@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.dashboard.DashboardCreateRequest;
+import whereQR.project.entity.dto.dashboard.DashboardUpdateRequest;
 import whereQR.project.service.DashboardService;
 
 import java.util.UUID;
@@ -26,6 +27,12 @@ public class DashboardController {
         Member author = null; // 인증 정보를 바탕으로 Member 객체를 설정해야함
 
         UUID dashboardId = dashboardService.createDashboard(request, author);
+        return ResponseEntity.ok(dashboardId);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<UUID> updateDashboard(@RequestBody DashboardUpdateRequest request) {
+        UUID dashboardId = dashboardService.updateDashboard(request);
         return ResponseEntity.ok(dashboardId);
     }
 }

@@ -54,4 +54,14 @@ public class Dashboard {
         this.lostedDistrict = lostedDistrict;
         this.author = author;
     }
+
+    public void update(String title, String content, String lostedType, String lostedCity, String lostedDistrict) {
+        this.title = title;
+        this.content = content;
+        this.lostedType = lostedType;
+        this.lostedCity = lostedCity;
+        this.lostedDistrict = lostedDistrict;
+        // updatedAt은 @UpdateTimestamp 어노테이션이 자동으로 처리
+    }
+
 }

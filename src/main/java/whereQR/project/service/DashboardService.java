@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import whereQR.project.entity.Dashboard;
 import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.dashboard.DashboardCreateRequest;
+import whereQR.project.entity.dto.dashboard.DashboardUpdateRequest;
 import whereQR.project.repository.dashboard.DashboardRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
@@ -31,4 +33,20 @@ public class DashboardService {
         dashboard = dashboardRepository.save(dashboard);
         return dashboard.getDashboardId();
     }
+
+    public UUID updateDashboard(DashboardUpdateRequest request) {
+        Dashboard dashboard = dashboardRepository.findById(request.getDashboardId())
+                .orElseThrow(() -> new EntityNotFoundException("Dashboard not found with id: " + request.getDashboardId()));
+        dashboard.update(
+                request.getTitle(),
+                request.getContent(),
+                request.getLostedType(),
+                request.getLostedCity(),
+                request.getLostedDistrict()
+        );
+        dashboardRepository.save(dashboard);
+        return dashboard.getDashboardId();
+    }
+
+
 }
