@@ -1,9 +1,12 @@
 package whereQR.project.entity.dto.dashboard;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-public class DashboardCreateRequest {
+import java.util.UUID;
+
+@Data
+public class DashboardUpdateRequest {
+    private UUID dashboardId;
     private String title;
     private String content;
     private String lostedType;
