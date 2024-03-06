@@ -1,5 +1,6 @@
 package whereQR.project.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import whereQR.project.entity.Dashboard;
@@ -7,19 +8,17 @@ import whereQR.project.entity.Member;
 import whereQR.project.entity.dto.dashboard.DashboardCreateRequest;
 import whereQR.project.entity.dto.dashboard.DashboardUpdateRequest;
 import whereQR.project.repository.dashboard.DashboardRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
 
     private final DashboardRepository dashboardRepository;
 
-    @Autowired
-    public DashboardService(DashboardRepository dashboardRepository) {
-        this.dashboardRepository = dashboardRepository;
-    }
 
     public UUID createDashboard(DashboardCreateRequest request, Member author) {
         Dashboard dashboard = new Dashboard(
@@ -31,9 +30,10 @@ public class DashboardService {
                 author
         );
         dashboard = dashboardRepository.save(dashboard);
-        return dashboard.getDashboardId();
+        return dashboard.getId();
     }
 
+    @Transactional
     public UUID updateDashboard(DashboardUpdateRequest request) {
         Dashboard dashboard = dashboardRepository.findById(request.getDashboardId())
                 .orElseThrow(() -> new EntityNotFoundException("Dashboard not found with id: " + request.getDashboardId()));
@@ -44,8 +44,7 @@ public class DashboardService {
                 request.getLostedCity(),
                 request.getLostedDistrict()
         );
-        dashboardRepository.save(dashboard);
-        return dashboard.getDashboardId();
+        return dashboard.getId();
     }
 
     public void deleteDashboard(UUID dashboardId) {
