@@ -65,26 +65,6 @@ public class ChatController {
         Message message = messageService.sendMessage(chatroom, currentMember, content);
     }
 
-    /**
-     * 수정 중
-     * tip) client -> app/read/uuid (command: subscribe) / subscribe : message/read/uuid
-     * @param chatRoomId
-     * @return
-     */
-    @MessageMapping("/read/{chatRoomId}")
-    public void readMessage(@DestinationVariable String chatRoomId) {
-
-        Chatroom chatroom = chatroomService.getChatroomById(UUID.fromString(chatRoomId));
-
-        Member currentMember = MemberUtil.getMember();
-        if(!chatroom.isChatroomMember(currentMember)){
-            throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
-        }
-
-        // read message
-        messageService.readMessage(chatroom, currentMember);
-    }
-
     @GetMapping("chat/chatrooms")
     public ResponseEntity getChatroomsByMember(){
         Member currentMember = MemberUtil.getMember();

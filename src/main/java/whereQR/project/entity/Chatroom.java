@@ -38,6 +38,7 @@ public class Chatroom extends EntityBase{
     }
 
     public Boolean isChatroomMember(Member member){
+        System.out.println(member);
 
         if (member.getId().equals(this.starter.getId()) || member.getId().equals(this.participant.getId())) {
             return true;

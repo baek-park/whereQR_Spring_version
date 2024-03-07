@@ -15,7 +15,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3000", // local,
                         "https://where-qr.com" //dev
                 )
-                .allowedMethods("")
                 .allowedMethods("GET", "POST", "PATCH", "DELETE")
                 .allowCredentials(true);
     }
