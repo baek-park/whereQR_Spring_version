@@ -1,5 +1,6 @@
 package whereQR.project.entity.dto.dashboard;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,11 +8,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor // 모든 필드를 인자로 받는 생성자를 자동으로 생성
+@AllArgsConstructor
 public class DashboardResponseDto {
     private UUID dashboard_id;
     private String title;
     private String content;
-    private String author_id; // author의 id. Member 엔티티와 연동 필요
+    private String author_id;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 }
