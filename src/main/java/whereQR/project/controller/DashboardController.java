@@ -11,9 +11,8 @@ import whereQR.project.entity.dto.dashboard.DashboardCreateRequest;
 import whereQR.project.entity.dto.dashboard.DashboardUpdateRequest;
 import whereQR.project.service.DashboardService;
 import whereQR.project.utils.response.Status;
+import whereQR.project.utils.MemberUtil;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +24,7 @@ public class DashboardController {
 
     @PostMapping("/create")
     public ResponseEntity createDashboard(@RequestBody DashboardCreateRequest request) {
-        // 인증 정보를 바탕으로 Member 객체를 조회하는 로직 구현 필요
-        Member author = null; // 인증 정보를 바탕으로 Member 객체를 설정해야함
+        Member author = MemberUtil.getMember();
 
         UUID dashboardId = dashboardService.createDashboard(request, author);
         return ResponseEntity.builder()
