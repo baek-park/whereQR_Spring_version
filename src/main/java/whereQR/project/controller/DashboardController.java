@@ -1,6 +1,9 @@
 package whereQR.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import whereQR.project.entity.Dashboard;
+import whereQR.project.entity.dto.dashboard.DashboardPageResponseDto;
 import whereQR.project.utils.response.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.entity.Member;
@@ -8,6 +11,7 @@ import whereQR.project.entity.dto.dashboard.DashboardCreateRequest;
 import whereQR.project.entity.dto.dashboard.DashboardUpdateRequest;
 import whereQR.project.service.DashboardService;
 import whereQR.project.utils.response.Status;
+import whereQR.project.utils.MemberUtil;
 
 import java.util.UUID;
 
@@ -20,13 +24,26 @@ public class DashboardController {
 
     @PostMapping("/create")
     public ResponseEntity createDashboard(@RequestBody DashboardCreateRequest request) {
-        // 인증 정보를 바탕으로 Member 객체를 조회하는 로직 구현 필요
-        Member author = null; // 인증 정보를 바탕으로 Member 객체를 설정해야함
+        Member author = MemberUtil.getMember();
 
         UUID dashboardId = dashboardService.createDashboard(request, author);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(dashboardId)
+                .build();
+    }
+
+    @GetMapping
+    public ResponseEntity getDashboards(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "search", required = false) String search) {
+
+        DashboardPageResponseDto pageResponseDto = dashboardService.getDashboards(offset, limit, search);
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(pageResponseDto)
                 .build();
     }
     @PostMapping("/update")
