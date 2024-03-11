@@ -27,7 +27,7 @@
 **[postman](https://documenter.getpostman.com/view/31138114/2sA2xiVBD3)** 에서 체크 가능 -> **docker image 활용해서 test가능**
 
 ### dockerfile build후 docker hub에 배포
-1. docker hub에 배포된 image ( baeksujin/whereqr-backend:v2.2 )
+1. docker hub에 배포된 image 를 NCP Server에서 배포
 2. qrcode image 저장된 경로 ( docker container 안에서 확인 -> /app/src/main/resources/static/qrcode )
 
 ## Feature
