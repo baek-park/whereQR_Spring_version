@@ -34,10 +34,10 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/server_key
+          chmod 600 ~/.ssh/server_key
           ssh-keyscan -p 12321 210.89.181.89 >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa -p 12321 root@210.89.181.89 '
+          ssh -i ~/.ssh/server_key -p 12321 root@210.89.181.89 '
             echo "Connected to NCP Server"
 
             # Docker 로그인 (Docker Hub)
