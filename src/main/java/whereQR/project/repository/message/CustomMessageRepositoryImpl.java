@@ -17,13 +17,13 @@ public class CustomMessageRepositoryImpl implements CustomMessageRepository{
     private final QMessage message = QMessage.message;
 
     @Override
-    public Optional<List<Message>> findNotReadMessageByChatroomAndReceiver(Chatroom chatroom, Member receiver) {
+    public List<Message> findNotReadMessageByChatroomAndReceiver(Chatroom chatroom, Member receiver) {
 
         QChatroom qChatroom = QChatroom.chatroom;
-        return Optional.ofNullable(queryFactory.selectFrom(message)
+        return queryFactory.selectFrom(message)
                 .leftJoin(message.chatRoom,qChatroom)
-                .where(message.chatRoom.eq(chatroom).and( message.receiver.eq(receiver)))
-                .fetchAll().stream().collect(Collectors.toList()));
+                .where(message.chatRoom.eq(chatroom).and( message.receiver.eq(receiver)).and(message.isRead.eq(false)))
+                .fetchAll().stream().collect(Collectors.toList());
     }
 
     @Override

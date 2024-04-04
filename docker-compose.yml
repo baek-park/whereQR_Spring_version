@@ -1,24 +1,1 @@
-version: "3.8"
-
-networks:
-  application:
-    driver: bridge
-
-services:
-
-  react-app:
-    image: tnfus916/whereqr-front:ver1.0
-    ports:
-      - 3000:80
-    networks:
-      - application
-
-  app:
-    container_name: backend
-    image: baeksujin/whereqr-backend:v2.5
-    user: root
-    ports:
-      - 8080:8080
-    restart: always
-    networks:
-      - application
+version: "3.8"networks:  application:    driver: bridgeservices:  react-app:    image: tnfus916/whereqr-front:ver1.0    ports:      - 3000:80    networks:      - application  app:    container_name: backend    image: baeksujin/whereqr-backend:v2.5    user: root    ports:      - 8080:8080    restart: always    networks:      - application

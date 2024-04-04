@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface CustomMessageRepository {
 
-    Optional<List<Message>> findNotReadMessageByChatroomAndReceiver(Chatroom chatroom, Member receiver);
+    List<Message> findNotReadMessageByChatroomAndReceiver(Chatroom chatroom, Member receiver);
 
     List<Message> findMessagesByChatroomId(UUID chatroomId);
 }

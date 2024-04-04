@@ -13,9 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000", // local,
-                        "https://where-qr.com" //dev
+                        "https://where-qr.com", //dev,
+                        "https://where-qr.com:8080"
                 )
                 .allowedMethods("GET", "POST", "PATCH", "DELETE")
+                .allowedHeaders("*")
                 .allowCredentials(true);
     }
 }

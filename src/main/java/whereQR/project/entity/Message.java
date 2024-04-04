@@ -1,7 +1,7 @@
 package whereQR.project.entity;
 
 import lombok.AllArgsConstructor;
-import whereQR.project.entity.dto.chat.ResponseMessageDto;
+import whereQR.project.entity.dto.message.ResponseMessageDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -67,6 +67,7 @@ public class Message extends EntityBase implements Serializable {
         return "Message{" +
                 "sender=" + sender.getId() +
                 ", receiver=" + receiver.getId() +
+                ", isRead=" + isRead +
                 ", content='" + content + '\'' +
                 '}';
     }

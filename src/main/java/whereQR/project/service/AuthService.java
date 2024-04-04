@@ -9,7 +9,8 @@ import whereQR.project.jwt.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.properties.AuthProperties;
 
-import javax.servlet.http.Cookie;
+//import javax.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
@@ -36,27 +37,31 @@ public class AuthService {
     }
 
     public void removeAccessTokenInCookie(HttpServletResponse response){
-        Cookie cookie = new Cookie("WhereQr-AccessToken", null);
-        cookie.setPath("/");
-        cookie.setDomain(authProperties.getDomain());
-        cookie.setSecure(authProperties.getSecure());
-        cookie.setHttpOnly(authProperties.getHttpOnly());
+        ResponseCookie cookie = ResponseCookie.from("access-token", null)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(authProperties.getHttpOnly())
+                .secure(authProperties.getSecure())
+                .domain(authProperties.getDomain())
+                .build();
 
-        // cookie를 저장
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
+
     }
 
     public void accessTokenToCookie(String accessToken, HttpServletResponse response){
 
-        Cookie cookie = new Cookie("WhereQr-AccessToken", accessToken);
-        cookie.setPath("/");
-        cookie.setDomain(authProperties.getDomain());
-        cookie.setSecure(authProperties.getSecure());
-        cookie.setHttpOnly(authProperties.getHttpOnly());
-        cookie.setMaxAge(86400); // 1일로 설정. access token
+        ResponseCookie cookie = ResponseCookie.from("access-token", accessToken)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(authProperties.getHttpOnly())
+                .secure(authProperties.getSecure())
+                .maxAge(86400)
+                .domain(authProperties.getDomain())
+                .build();
 
-        // cookie를 저장
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
+
     }
 
     @Transactional

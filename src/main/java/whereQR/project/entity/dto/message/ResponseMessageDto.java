@@ -1,4 +1,4 @@
-package whereQR.project.entity.dto.chat;
+package whereQR.project.entity.dto.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
