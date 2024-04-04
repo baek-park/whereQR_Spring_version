@@ -13,8 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000", // local,
-                        "https://where-qr.com", //dev,
-                        "https://where-qr.com:8080"
+                        "https://where-qr.com" //dev
                 )
                 .allowedMethods("GET", "POST", "PATCH", "DELETE")
                 .allowedHeaders("*")
