@@ -5,7 +5,6 @@ import whereQR.project.entity.Member;
 import whereQR.project.entity.Message;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomMessageRepository {

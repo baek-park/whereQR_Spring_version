@@ -47,24 +47,6 @@ public class ChatController {
                 .build();
     }
 
-    /**
-     * tip) client -> app/send/uuid/uuid (command : publish) / subscribe : message/uuid
-     * @param chatRoomId
-     * @param content
-     * @return
-     */
-    @MessageMapping("/send/{memberId}/{chatRoomId}")
-    public void sendMessage(@DestinationVariable String memberId, @DestinationVariable String chatRoomId,  @RequestBody String content) throws JsonProcessingException {
-
-        Chatroom chatroom = chatroomService.getChatroomById(UUID.fromString(chatRoomId));
-        Member currentMember = memberService.getMemberById(UUID.fromString(memberId));
-
-        if(!chatroom.isChatroomMember(currentMember)){
-            throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
-        }
-        Message message = messageService.sendMessage(chatroom, currentMember, content);
-    }
-
     @GetMapping("chat/chatrooms")
     public ResponseEntity getChatroomsByMember(){
         Member currentMember = MemberUtil.getMember();

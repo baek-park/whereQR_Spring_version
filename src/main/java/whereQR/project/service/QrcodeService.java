@@ -45,8 +45,6 @@ public class QrcodeService {
     @Transactional
     public Qrcode createQrcode() throws WriterException {
 
-        log.info("qrcodeProperties -> {}", qrcodeProperties);
-
         ZxingUtil zxingUtil = new ZxingUtil(qrcodeProperties);
 
         HashMap hashMap = zxingUtil.makeQrcodeMatrix(100,100);
@@ -55,17 +53,13 @@ public class QrcodeService {
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             MatrixToImageWriter.writeToStream(matrix, "PNG", out);
-            log.info("makeQR-qrcode-out/ out.toByteArray() => {}\n", out.toByteArray());
 
             //make image file
             File qrImageFile = ZxingUtil.makeImageFile(id, matrix);
 
             //convert image file to Base64 encoded string
             String qrImageUrl = ZxingUtil.imageToStringConverter(qrImageFile);
-            log.info("makeQR-qrcode-out/ qrImageUrl => {}\n",qrImageUrl);
-
             Qrcode qrcode = new Qrcode(id,qrImageUrl, New);
-            log.info("create qrcode id -> {}", qrcode.getId());
 
             return qrcodeRepository.save(qrcode);
 

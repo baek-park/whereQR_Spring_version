@@ -29,8 +29,6 @@ public class KakaoAuthService {
 
     public TokenInfo getKakaoTokenInfoByCode(String code){
 
-        log.info("redirectUrl => {}", kakaoLoginProperties.getRedirectUrl());
-
         try{
             URL requestUrl = new URL(kakaoLoginProperties.getTokenRequestUrl());
             HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
@@ -57,7 +55,7 @@ public class KakaoAuthService {
             reader.close();
             writer.close();
 
-            log.info("token response => {}", result);
+            log.info("getKakaoTokenInfoByCode / token response => {}", result);
 
             //Gson library
             JsonParser parser = new JsonParser();
@@ -78,14 +76,12 @@ public class KakaoAuthService {
             HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
             conn.setRequestMethod("POST");
 
-            //    요청에 필요한 Header에 포함될 내용
+            //요청에 필요한 Header에 포함될 내용
             conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
             //예외처리
             int responseCode = conn.getResponseCode();
             if(responseCode != 200){
-                // throw exception
-                log.error("here");
                 throw new BadRequestException("kakao token이 유효하지 않습니다.", this.getClass().toString());
             }
 

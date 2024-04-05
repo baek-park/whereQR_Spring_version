@@ -8,12 +8,11 @@ import whereQR.project.entity.Member;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.properties.AuthProperties;
-
-//import javax.servlet.http.Cookie;
 import org.springframework.http.ResponseCookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
@@ -21,7 +20,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthProperties authProperties;
 
-
+    @Transactional
     public TokenInfo updateToken(Member member){
 
         // Token 발급

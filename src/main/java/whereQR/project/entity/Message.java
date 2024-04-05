@@ -39,8 +39,9 @@ public class Message extends EntityBase implements Serializable {
     }
 
     // method
-    public void readMessage(){
+    public Boolean readMessage(){
         this.isRead = true;
+        return true;
     }
 
     public ResponseMessageDto toResponseMessageDto(){
@@ -55,7 +56,7 @@ public class Message extends EntityBase implements Serializable {
     }
 
     public boolean isReceiver(Member member){
-        if(this.receiver.equals(member)){
+        if(this.receiver.getId().equals(member.getId())){
             return true;
         }else{
             return false;
@@ -65,7 +66,8 @@ public class Message extends EntityBase implements Serializable {
     @Override
     public String toString() {
         return "Message{" +
-                "sender=" + sender.getId() +
+                "id=" + this.id +
+                ", sender=" + sender.getId() +
                 ", receiver=" + receiver.getId() +
                 ", isRead=" + isRead +
                 ", content='" + content + '\'' +

@@ -28,8 +28,6 @@ public class ZxingUtil {
 
     public HashMap<String ,Object> makeQrcodeMatrix(int width, int height) throws WriterException {
         UUID id = UUID.randomUUID();
-        log.info("ZxingUtilmake/QrcodeMatrix/id => {}", id);
-        log.info("baseScanUrl => {}", qrcodeProperties.getScanUrl());
         BitMatrix matrix = new MultiFormatWriter().encode(qrcodeProperties.getScanUrl() + id, BarcodeFormat.QR_CODE, width, height);
         HashMap hashMap = new HashMap();
         hashMap.put("id",id);
