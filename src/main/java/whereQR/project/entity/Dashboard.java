@@ -52,4 +52,12 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         // updatedAt은 EntityBase에 정의된 @LastModifiedDate 어노테이션이 자동으로 처리
     }
 
+    public Boolean isAuthor(Member member){
+        if(author.getId().equals(member.getId())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

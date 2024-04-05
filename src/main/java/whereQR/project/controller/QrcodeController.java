@@ -30,7 +30,6 @@ public class QrcodeController {
 
     @PostMapping("/update")
     public ResponseEntity update(@RequestBody QrcodeUpdateDto qrcodeUpdateDto){
-        log.info("[controller] -> update");
         Member currentMember = getMember();
         QrcodeResponseDto qrcodeResponse =  qrcodeService.updateQrcodeByMember(qrcodeUpdateDto.getId(), currentMember.getId(),  qrcodeUpdateDto);
 
@@ -42,7 +41,6 @@ public class QrcodeController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody QrcodeRegisterDto qrcodeRegisterDto){
-        log.info("[controller] -> register");
         QrcodeResponseDto qrcodeResponse= qrcodeService.registerQrcode(qrcodeRegisterDto.getId(), qrcodeRegisterDto);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)

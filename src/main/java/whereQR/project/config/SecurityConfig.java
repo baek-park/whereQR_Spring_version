@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/member/kakao/**").permitAll()
                     .antMatchers("/qrcode/create").hasRole("ADMIN")
                     .antMatchers("/qrcode/update").hasRole("USER")
                     .antMatchers("/qrcode/register").hasRole("USER")
@@ -47,8 +46,9 @@ public class SecurityConfig {
                     .antMatchers("/chat/chatroom").hasRole("USER")
                     .antMatchers("/chat/chatrooms").hasRole("USER")
                     .antMatchers("/chat/messages").hasRole("USER")
-                    .antMatchers("/qrcode/scan/**").permitAll()
-
+                    .antMatchers("/dashboard/create").hasRole("USER")
+                    .antMatchers("/dashboard/update").hasRole("USER")
+                    .antMatchers("/dashboard/delete").hasRole("USER")
                 .and()
                 .exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler()) // 권한이 없는 경우의 처리
@@ -70,7 +70,6 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/member/kakao/**").permitAll()
                     .antMatchers("/qrcode/create").hasRole("ADMIN")
                     .antMatchers("/qrcode/update").hasRole("USER")
                     .antMatchers("/qrcode/register").hasRole("USER")
@@ -78,9 +77,7 @@ public class SecurityConfig {
                     .antMatchers("/chat/create/room").hasRole("USER")
                     .antMatchers("/chat/chatroom").hasRole("USER")
                     .antMatchers("/chat/chatrooms").hasRole("USER")
-                    .antMatchers("/pub/**").hasRole("USER")
-                    .antMatchers("/sub/**").hasRole("USER")
-                    .antMatchers("/qrcode/scan/**").permitAll()
+                    .antMatchers("/chat/messages").hasRole("USER")
                 .and()
                 .exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler()) // 권한이 없는 경우의 처리
