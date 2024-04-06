@@ -8,11 +8,11 @@ import whereQR.project.entity.Member;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.jwt.JwtTokenProvider;
 import whereQR.project.properties.AuthProperties;
-import org.springframework.http.ResponseCookie;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
@@ -20,7 +20,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthProperties authProperties;
 
-    @Transactional
+
     public TokenInfo updateToken(Member member){
 
         // Token 발급
@@ -36,31 +36,27 @@ public class AuthService {
     }
 
     public void removeAccessTokenInCookie(HttpServletResponse response){
-        ResponseCookie cookie = ResponseCookie.from("access-token", null)
-                .path("/")
-                .sameSite("None")
-                .httpOnly(authProperties.getHttpOnly())
-                .secure(authProperties.getSecure())
-                .domain(authProperties.getDomain())
-                .build();
+        Cookie cookie = new Cookie("access_token", null);
+        cookie.setPath("/");
+        cookie.setDomain(authProperties.getDomain());
+        cookie.setSecure(authProperties.getSecure());
+        cookie.setHttpOnly(authProperties.getHttpOnly());
 
-        response.addHeader("Set-Cookie", cookie.toString());
-
+        // cookie를 저장
+        response.addCookie(cookie);
     }
 
     public void accessTokenToCookie(String accessToken, HttpServletResponse response){
 
-        ResponseCookie cookie = ResponseCookie.from("access-token", accessToken)
-                .path("/")
-                .sameSite("None")
-                .httpOnly(authProperties.getHttpOnly())
-                .secure(authProperties.getSecure())
-                .maxAge(86400)
-                .domain(authProperties.getDomain())
-                .build();
+        Cookie cookie = new Cookie("access_token", accessToken);
+        cookie.setPath("/");
+        cookie.setDomain(authProperties.getDomain());
+        cookie.setSecure(authProperties.getSecure());
+        cookie.setHttpOnly(authProperties.getHttpOnly());
+        cookie.setMaxAge(86400); // 1일로 설정. access token
 
-        response.addHeader("Set-Cookie", cookie.toString());
-
+        // cookie를 저장
+        response.addCookie(cookie);
     }
 
     @Transactional
