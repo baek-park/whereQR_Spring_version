@@ -35,8 +35,8 @@ public class AuthService {
         member.updateToken(null);
     }
 
-    public void removeAccessTokenInCookie(HttpServletResponse response){
-        Cookie cookie = new Cookie("access_token", null);
+    public void removeRefreshTokenInCookie(HttpServletResponse response){
+        Cookie cookie = new Cookie("refresh-token", null);
         cookie.setPath("/");
         cookie.setDomain(authProperties.getDomain());
         cookie.setSecure(authProperties.getSecure());
@@ -46,9 +46,9 @@ public class AuthService {
         response.addCookie(cookie);
     }
 
-    public void accessTokenToCookie(String accessToken, HttpServletResponse response){
+    public void refreshTokenToCookie(String accessToken, HttpServletResponse response){
 
-        Cookie cookie = new Cookie("access_token", accessToken);
+        Cookie cookie = new Cookie("refresh-token", accessToken);
         cookie.setPath("/");
         cookie.setDomain(authProperties.getDomain());
         cookie.setSecure(authProperties.getSecure());

@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static whereQR.project.jwt.CustomHandleAuthenticationException.handleAuthenticationException;
+
 @Component
 @Slf4j
 public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
@@ -23,7 +25,6 @@ public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
             filterChain.doFilter(request, response); // jwtAuthentication 실행
-            log.info("JwtAuthenticationExceptionFilter");
         }catch(Exception e){
             log.error("{}",e);
             if (e instanceof CustomException) {// 정의한 error에 속할 경우
@@ -35,19 +36,4 @@ public class JwtAuthenticationExceptionFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleAuthenticationException(HttpServletResponse response,String message ) throws IOException {
-        response.setStatus(200);
-        response.setContentType("application/json;charset=UTF-8");
-
-        Map<String, Object> responseBody = new HashMap<>();
-        Map<String, Object> responseBodyData = new HashMap<>();
-        responseBodyData.put("message", message);
-        responseBody.put("status", "FAILED");
-        responseBody.put("data", responseBodyData);
-
-        PrintWriter writer = response.getWriter();
-        writer.write(new ObjectMapper().writeValueAsString(responseBody));
-        writer.flush();
-        writer.close();
-    }
 }

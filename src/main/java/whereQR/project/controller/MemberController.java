@@ -52,7 +52,7 @@ public class MemberController {
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
-        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
@@ -66,7 +66,7 @@ public class MemberController {
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.ADMIN);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
-        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
@@ -110,25 +110,31 @@ public class MemberController {
                 .build();
     }
 
+    /**
+     * refresh token을 cookie 활용하는걸로 변경
+     */
     @PostMapping("/auth/refresh")
-    public ResponseEntity refreshToken(@RequestParam String refreshToken, HttpServletResponse response){
+    public ResponseEntity refreshToken(HttpServletResponse response, @CookieValue(value = "refresh-token") String refreshToken ){
 
         Member member = memberService.getMemberByRefreshToken(refreshToken);
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken());
-        authService.accessTokenToCookie(tokenInfo.getAccessToken(), response);
+        authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(tokenInfo)
                 .build();
     }
 
+    /**
+     * frontend에서도 localstorage의 access token을 제거
+     */
     @PostMapping("/logout")
     public ResponseEntity signOut(HttpServletResponse response){
         UUID memberId = MemberUtil.getMember().getId();
         Member member = memberService.getMemberById(memberId);
 
-        authService.removeAccessTokenInCookie(response);
+        authService.removeRefreshTokenInCookie(response);
         authService.removeRefreshToken(member);
 
         return ResponseEntity.builder()

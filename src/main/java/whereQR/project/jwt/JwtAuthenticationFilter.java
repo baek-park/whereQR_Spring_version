@@ -1,5 +1,6 @@
 package whereQR.project.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +14,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -32,6 +37,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         if(token==null){
             // 우선 통과시키고 아닐 경우 아래에서 검증
             log.info("no token");
+            handleAuthenticationException((HttpServletResponse) response, "internal server error"); // 전체 internal로 처리
         }else{
             try{
                 boolean isValid = jwtTokenProvider.validateToken(token);
@@ -52,6 +58,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         chain.doFilter(request, response);
 
+    }
+
+    private void handleAuthenticationException(HttpServletResponse response, String message ) throws IOException {
+        response.setStatus(200);
+        response.setContentType("application/json;charset=UTF-8");
+
+        Map<String, Object> responseBody = new HashMap<>();
+        Map<String, Object> responseBodyData = new HashMap<>();
+        responseBodyData.put("message", message);
+        responseBodyData.put("errorType", "UNAUTHORIZED");
+        responseBody.put("status", "FAILED");
+        responseBody.put("data", responseBodyData);
+
+        PrintWriter writer = response.getWriter();
+        writer.write(new ObjectMapper().writeValueAsString(responseBody));
+        writer.flush();
+        writer.close();
     }
 
 }
