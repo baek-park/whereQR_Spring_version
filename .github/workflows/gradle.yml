@@ -48,7 +48,6 @@ jobs:
       - name: Build and Push Docker image
         run: |
           docker buildx build --platform linux/amd64 --push --tag whereqr/whereqr:latest -f Dockerfile2 .
-
       - name: Deploy to NCP
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -62,7 +61,14 @@ jobs:
 
             # 이미지 Pull 및 컨테이너 재시작
             docker pull whereqr/whereqr:latest
+            echo "Docker image pull: $?"
+            
             docker stop where_qr_container || true
+            echo "Docker container stop: $?"
+            
             docker rm where_qr_container || true
+            echo "Docker container removal: $?"
+            
             docker run -d --name where_qr_container -p 80:8080 whereqr/whereqr:latest
+            echo "Docker container run: $?"
           '
