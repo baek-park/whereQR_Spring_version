@@ -2,7 +2,7 @@ package whereQR.project.jwt;
 
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import whereQR.project.entity.Member;
+import whereQR.project.domain.member.Member;
 
 import java.io.Serializable;
 
