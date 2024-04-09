@@ -46,6 +46,8 @@ jobs:
             # 이미지 Pull 및 컨테이너 재시작
             docker pull whereqr/whereqr:latest
             echo "Docker image pull: $?""
+            docker stop where_qr_container || true
+            docker rm where_qr_container || true
             docker stop backend || true
             docker compose up -d
           '
