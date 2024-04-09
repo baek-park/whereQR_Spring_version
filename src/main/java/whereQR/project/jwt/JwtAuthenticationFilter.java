@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         if(token==null){
             // 우선 통과시키고 아닐 경우 아래에서 검증
             log.info("no token");
-            handleAuthenticationException((HttpServletResponse) response, "internal server error"); // 전체 internal로 처리
         }else{
             try{
                 boolean isValid = jwtTokenProvider.validateToken(token);
