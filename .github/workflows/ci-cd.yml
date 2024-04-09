@@ -17,9 +17,7 @@ jobs:
         with:
           java-version: '16'
           distribution: 'temurin'
-      - name: Convert Gradle Wrapper to LF
-        run: sed -i 's/\r$//' gradlew
-        shell: bash
+          
       - name: Update Gradle Wrapper
         run: ./gradlew wrapper --gradle-version 8.0
       - name: Create resources directory
