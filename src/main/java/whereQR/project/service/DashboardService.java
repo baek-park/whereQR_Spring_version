@@ -43,7 +43,6 @@ public class DashboardService {
         dashboard = dashboardRepository.save(dashboard);
         return dashboard.getId();
     }
-
     public DashboardPageResponseDto getDashboards(int offset, int limit, String search) {
 
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
@@ -52,7 +51,8 @@ public class DashboardService {
         if (search == null || search.isEmpty()) {
             dashboardPage = dashboardRepository.findAll(pageable);
         } else {
-            dashboardPage = dashboardRepository.searchByKeyword(search, pageable);
+            dashboardPage = dashboardRepository.searchByKeyword(search, pageable)
+                    .orElse(Page.empty()); // provide an empty Page as default
         }
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
