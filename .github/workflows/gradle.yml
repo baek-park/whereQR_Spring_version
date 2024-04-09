@@ -69,6 +69,6 @@ jobs:
             docker rm where_qr_container || true
             echo "Docker container removal: $?"
             
-            docker run -d --name where_qr_container -p 80:8080 whereqr/whereqr:latest
+            docker run -d --name where_qr_container -p 8080:8080 whereqr/whereqr:latest
             echo "Docker container run: $?"
           '
