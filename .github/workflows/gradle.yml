@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "dashboard" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "dashboard" ]
 
 permissions:
   contents: read
@@ -24,66 +24,45 @@ jobs:
           java-version: '16'
           distribution: 'temurin'
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.6.0
-        with:
-          arguments: build
+      - name: Convert Gradle Wrapper to LF
+        run: sed -i 's/\r$//' gradlew
+        shell: bash
+
+      - name: Update Gradle Wrapper
+        run: ./gradlew wrapper --gradle-version 8.0
+
+
+      - name: Create resources directory
+        run: mkdir -p src/main/resources
+
+      - name: Copy application.yml and application-dev.yml
+        run: |
+          touch ./src/main/resources/application.yml
+          touch ./src/main/resources/application-dev.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_DEV_YML }}" > ./src/main/resources/application-dev.yml
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and Push Docker image
+        run: |
+          docker buildx build --platform linux/amd64 --push --tag whereqr/whereqr:latest -f Dockerfile2 .
 
       - name: Deploy to NCP
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/server_key
+          chmod 600 ~/.ssh/server_key
           ssh-keyscan -p 12321 210.89.181.89 >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa -p 12321 root@210.89.181.89 '
+          ssh -i ~/.ssh/server_key -p 12321 root@210.89.181.89 '
             echo "Connected to NCP Server"
 
-            # Docker 로그인 (Docker Hub)
-            echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-            # Docker 이미지 Pull
-            docker pull where_qr/where_qr:latest
-#           your_dockerhub_username, your_image_name
-
-            # 이전에 실행 중이던 컨테이너 중지 및 제거
+            # 이미지 Pull 및 컨테이너 재시작
+            docker pull whereqr/whereqr:latest
             docker stop where_qr_container || true
             docker rm where_qr_container || true
-
-            # 새로운 Docker 컨테이너 실행
-            docker run -d --name where_qr_container -p 80:8080 where_qr/where_qr:latest
+            docker run -d --name where_qr_container -p 80:8080 whereqr/whereqr:latest
           '
-#      - name: Deploy to NCP
-#        env:
-#          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-#        run: |
-#          mkdir -p ~/.ssh
-#          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-#          chmod 600 ~/.ssh/id_rsa
-#
-#          ssh-keyscan -p 12321 210.89.181.89 >> ~/.ssh/known_hosts
-#          ssh -i ~/.ssh/id_rsa -p 12321 root@210.89.181.89 'echo "Connected to NCP Server"'
-
-      # - name: Build Docker image
-      #   run: |
-      #     ./gradlew clean bootBuildImage -PDOCKERHUB_ID=${{ secrets.DOCKERHUB_ID }} -PDOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
-      #     docker tag your_image_name:latest your_dockerhub_username/your_image_name:latest
-
-      # - name: Push Docker image to Docker Hub
-      #   run: docker push your_dockerhub_username/your_image_name:latest
-
-      # - name: SSH into EC2 instance and deploy
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.EC2_HOST }}
-      #     username: ${{ secrets.EC2_USERNAME }}
-      #     password: ${{ secrets.EC2_PASSWORD }}
-      #     port: ${{ secrets.EC2_SSH_PORT }}
-      #     script: |
-      #       docker pull your_dockerhub_username/your_image_name:latest
-      #       docker ps -f name=be-server -q | xargs --no-run-if-empty docker container stop
-      #       docker ps -a -f name=be-server -q | xargs --no-run-if-empty docker container rm
-      #       docker run -d --name be-server -p 80:8080 \
-      #           -e GOOGLE_APPLICATION_CREDENTIALS="${HOME}/key.json" \
-      #           your_dockerhub_username/your_image_name:latest
