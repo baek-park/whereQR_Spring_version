@@ -47,6 +47,18 @@ public class DashboardController {
                 .data(pageResponseDto)
                 .build();
     }
+
+    @GetMapping("/detail")
+    public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
+        Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(dashboard.toDashboardResponseDto())
+                .build();
+    }
+
+
     @PostMapping("/update")
     public ResponseEntity updateDashboard(@RequestBody DashboardUpdateRequest request) {
 
@@ -78,6 +90,18 @@ public class DashboardController {
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(dashboardId)
+                .build();
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity myDashboards(  @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                         @RequestParam(value = "limit", defaultValue = "10") int limit){
+        Member currentMember = MemberUtil.getMember();
+
+        DashboardPageResponseDto pageResponseDto = dashboardService.getDashboardsByMemberId(offset, limit, currentMember.getId());
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(pageResponseDto)
                 .build();
     }
 

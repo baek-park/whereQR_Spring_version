@@ -1,6 +1,8 @@
 package whereQR.project.entity;
 
 import lombok.Getter;
+import whereQR.project.entity.dto.dashboard.DashboardResponseDto;
+
 import javax.persistence.*;
 
 @Entity
@@ -60,4 +62,13 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         }
     }
 
+    public DashboardResponseDto toDashboardResponseDto(){
+        return new DashboardResponseDto(
+                this.id,
+                this.title,
+                this.content,
+                this.author.getId().toString(),
+                this.createdAt
+                );
+    }
 }

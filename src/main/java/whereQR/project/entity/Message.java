@@ -24,7 +24,7 @@ public class Message extends EntityBase implements Serializable {
     @Column(length = 3000)
     private String content;
 
-    private boolean isRead = false;
+    public boolean isRead = false;
 
     // method
     public Message(){

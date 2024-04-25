@@ -12,6 +12,7 @@ import whereQR.project.entity.QDashboard;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +30,27 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
                         .orderBy(dashboard.createdAt.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .fetchResults())
+                        .fetchResults()) // deprecated?
                 .map(result -> new PageImpl<>(result.getResults(), pageable, result.getTotal()));
+    }
+
+    @Override
+    public List<Dashboard> findDashboardsByPaginationAndMemberId(UUID memberId, Pageable pageable) {
+        return queryFactory
+                .selectFrom(dashboard)
+                .where(dashboard.author.id.eq(memberId))
+                .orderBy(dashboard.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+    }
+
+    public Long countByDashboards(List<Dashboard> dashboards){
+        return queryFactory
+                .select(dashboard.count())
+                .from(dashboard)
+                .where(dashboard.in(dashboards))
+                .fetchOne();
     }
 }

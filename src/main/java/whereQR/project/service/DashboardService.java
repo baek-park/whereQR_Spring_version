@@ -1,10 +1,7 @@
 package whereQR.project.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import whereQR.project.entity.Chatroom;
 import whereQR.project.entity.Dashboard;
@@ -69,6 +66,26 @@ public class DashboardService {
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
     }
 
+    public DashboardPageResponseDto getDashboardsByMemberId(int offset, int limit, UUID memberId){
+        Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
+
+        List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndMemberId(memberId, pageable);
+        Long totalCount = dashboardRepository.countByDashboards(content);
+        Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
+
+        PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
+
+        List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
+                .map(dashboard -> new DashboardResponseDto(
+                        dashboard.getId(),
+                        dashboard.getTitle(),
+                        dashboard.getContent(),
+                        dashboard.getAuthor() != null ? dashboard.getAuthor().getUsername() : "Unknown", // 'username' 추가
+                        dashboard.getCreatedAt()))
+                .collect(Collectors.toList());
+
+        return new DashboardPageResponseDto(dashboardDtos, pageInfo);
+    }
     @Transactional
     public UUID updateDashboard(DashboardUpdateRequest request) {
         Dashboard dashboard = dashboardRepository.findById(request.getDashboardId())
