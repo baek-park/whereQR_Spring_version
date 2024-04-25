@@ -1,9 +1,9 @@
 name: Java CI with Gradle
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "master" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "master" ]
 permissions:
   contents: read
 jobs:
@@ -22,14 +22,30 @@ jobs:
         run: ./gradlew wrapper --gradle-version 8.0
       - name: Create resources directory
         run: mkdir -p src/main/resources
-      - name: Copy application.yml and application-local.yml
+      - name: Copy application.yml and application-dev.yml
         run: |
           touch ./src/main/resources/application.yml
-          touch ./src/main/resources/application-local.yml
+          touch ./src/main/resources/application-dev.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-          echo "${{ secrets.APPLICATION_LOCAL_YML }}" > ./src/main/resources/application-local.yml
+          echo "${{ secrets.APPLICATION_DEV_YML }}" > ./src/main/resources/application-dev.yml
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Build and Push Docker image
         run: |
-          docker buildx build --platform linux/amd64 --push --tag whereqr/whereqr-dev:latest -f Dockerfile2 .
+          docker buildx build --platform linux/amd64 --push --tag whereqr/whereqr:latest -f Dockerfile .
+      - name: Deploy to NCP
+        if: github.ref == 'refs/heads/master'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/server_key
+          chmod 600 ~/.ssh/server_key
+          ssh-keyscan -p 12321 210.89.181.89 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/server_key -p 12321 root@210.89.181.89 '
+            echo "Connected to NCP Server"
+            # 이미지 Pull 및 컨테이너 재시작
+            docker pull whereqr/whereqr:latest
+            docker stop backend || true
+            docker compose up -d
+          '
