@@ -7,12 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import whereQR.project.entity.Member;
+import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.IllegalArgumentException;
 import whereQR.project.exception.CustomExceptions.MalformedJwtException;
 import whereQR.project.exception.CustomExceptions.UnsupportedJwtException;
 import whereQR.project.exception.CustomExceptions.SecurityException;
-import whereQR.project.service.MemberService;
+import whereQR.project.domain.member.MemberService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
