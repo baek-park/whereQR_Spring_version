@@ -1,6 +1,7 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import whereQR.project.domain.dashboard.dto.*;
@@ -15,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -47,8 +49,10 @@ public class DashboardService {
         if (search == null || search.isEmpty()) {
             dashboardPage = dashboardRepository.findAll(pageable);
         } else {
-            dashboardPage = dashboardRepository.searchByKeyword(search, pageable)
-                    .orElse(Page.empty()); // provide an empty Page as default
+            log.info("search -> {}", search);
+            List<Dashboard> content = dashboardRepository.searchByKeyword(search, pageable);
+            Long totalCount = dashboardRepository.countByDashboards(content);
+            dashboardPage = new PageImpl<>(content, pageable, totalCount);
         }
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()

@@ -22,15 +22,14 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
     private QDashboard dashboard = QDashboard.dashboard;
 
     @Override
-    public Optional<Page<Dashboard>> searchByKeyword(String keyword, Pageable pageable) {
-        return Optional.ofNullable(queryFactory
-                        .selectFrom(dashboard)
-                        .where(dashboard.title.contains(keyword).or(dashboard.content.contains(keyword)))
-                        .orderBy(dashboard.createdAt.desc())
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .fetchResults()) // deprecated?
-                .map(result -> new PageImpl<>(result.getResults(), pageable, result.getTotal()));
+    public List<Dashboard> searchByKeyword(String keyword, Pageable pageable) {
+        return queryFactory
+                .selectFrom(dashboard)
+                .where(dashboard.title.contains(keyword).or(dashboard.content.contains(keyword)))
+                .orderBy(dashboard.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 
     @Override

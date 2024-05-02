@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomDashboardRepository {
-    Optional<Page<Dashboard>> searchByKeyword(String keyword, Pageable pageable);
+    List<Dashboard> searchByKeyword(String keyword, Pageable pageable);
     List<Dashboard> findDashboardsByPaginationAndMemberId(UUID memberId, Pageable pageable);
     Long countByDashboards(List<Dashboard> dashboards);
 }
