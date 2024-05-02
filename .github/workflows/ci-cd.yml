@@ -1,9 +1,9 @@
 name: Java CI with Gradle
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop", "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "develop", "master" ]
 permissions:
   contents: read
 jobs:
@@ -34,6 +34,7 @@ jobs:
         run: |
           docker buildx build --platform linux/amd64 --push --tag whereqr/whereqr:latest -f Dockerfile .
       - name: Deploy to NCP
+        if: github.ref == 'refs/heads/master'
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |

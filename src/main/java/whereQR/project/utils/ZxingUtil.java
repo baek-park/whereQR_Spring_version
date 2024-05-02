@@ -8,7 +8,6 @@ import com.google.zxing.common.BitMatrix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import whereQR.project.properties.QrcodeProperties;
 
 import javax.imageio.ImageIO;
@@ -19,7 +18,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static whereQR.project.service.QrcodeService.savePath;
+import static whereQR.project.domain.qrcode.QrcodeService.savePath;
 
 @Slf4j
 @RequiredArgsConstructor
