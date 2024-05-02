@@ -11,4 +11,6 @@ public interface CustomMessageRepository {
     List<Message> findNotReadMessageByChatroomAndReceiver(Chatroom chatroom, Member receiver);
 
     List<Message> findMessagesByChatroomId(UUID chatroomId);
+
+    void updateReadByMessageIds(List<UUID> messageIds);
 }

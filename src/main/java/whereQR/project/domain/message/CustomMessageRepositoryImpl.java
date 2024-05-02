@@ -37,4 +37,15 @@ public class CustomMessageRepositoryImpl implements CustomMessageRepository{
                 .orderBy(message.createdAt.asc())
                 .fetchAll().stream().collect(Collectors.toList());
     }
+
+    @Override
+    public void updateReadByMessageIds(List<UUID> messageIds) {
+
+        Long result = queryFactory.update(message)
+                .set(message.isRead, Boolean.TRUE)
+                .where(message.id.in(messageIds))
+                .execute();
+    }
+
+
 }

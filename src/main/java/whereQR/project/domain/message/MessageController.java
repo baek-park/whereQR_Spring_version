@@ -47,18 +47,17 @@ public class MessageController {
         messageService.sendMessage(chatroom, currentMember, content);
     }
 
-    @MessageMapping("/read/{memberId}/{chatroomId}/{messageId}")
-    public void readMessage(@DestinationVariable String memberId, @DestinationVariable String chatroomId, @DestinationVariable String messageId) {
+    @MessageMapping("/read/{memberId}/{chatroomId}")
+    public void readMessage(@DestinationVariable String memberId, @DestinationVariable String chatroomId) {
 
         Chatroom chatroom = chatroomService.getChatroomById(UUID.fromString(chatroomId));
         Member currentMember = memberService.getMemberById(UUID.fromString(memberId));
-        Message message = messageService.getMessageById(UUID.fromString(messageId));
 
         if(!chatroom.isChatroomMember(currentMember)){
             throw new BadRequestException("사용자가 올바르지 않습니다.", this.getClass().toString());
         }
 
-        messageService.readMessage(currentMember, chatroom, message);
+        messageService.readMessage(currentMember, chatroom);
     }
 
     @GetMapping("/chat/messages")
