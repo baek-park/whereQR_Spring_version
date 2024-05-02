@@ -19,11 +19,11 @@
 ### Api Document
 
 - 협업을 위해, localhost가 아닌 EC2의 탄력적 ip를 사용해 api를 제공
-**[postman](https://documenter.getpostman.com/view/31138114/2sA2xiVBD3)** 에서 체크 가능
+- postman 사용
 
 ### dockerfile build후 docker hub에 배포
 1. docker hub에 배포된 image 를 NCP Server에서 배포
-2. qrcode image 저장된 경로 ( docker container 안에서 확인 -> /app/src/main/resources/static/qrcode )
+2. github action CI/CD 활용 자동화
 
 ## Feature
 
@@ -34,4 +34,16 @@
 <img width="1156" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/81832511-43b6-48e9-a095-05b050ec0ae6">
 <img width="1228" alt="image" src="https://github.com/baek-park/whereQR_Spring_version/assets/74058047/9c16345a-cecf-4231-a64c-bf4203ab7872">
 
+## 💻 Member
 
+- Baeksujin / 2023~
+<br>[프로필](https://github.com/baeksoojin)<br>
+
+1. AWS, NCP, DNS, SSL, Docker 연결 등 개발환경 구성
+2. Backend REST API 개발
+3. Backend Socket API 개발
+
+- Parkjoonwoo / 2024~
+<br>[프로필](https://github.com/Joonw00)<br>
+1. github action CI/CD 구축
+2. Backend REST API 개발
