@@ -1,12 +1,9 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.Getter;
-<<<<<<< HEAD:src/main/java/whereQR/project/entity/Dashboard.java
-import whereQR.project.entity.dto.dashboard.DashboardResponseDto;
-=======
+import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
 import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
->>>>>>> develop:src/main/java/whereQR/project/domain/dashboard/Dashboard.java
 
 import javax.persistence.*;
 

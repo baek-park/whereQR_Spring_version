@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import whereQR.project.domain.chatroom.Chatroom;
 import whereQR.project.domain.member.Member;
 import whereQR.project.domain.chatroom.ChatroomService;
+import whereQR.project.domain.member.MemberService;
 import whereQR.project.domain.message.dto.ResponseMessageDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
-import whereQR.project.domain.member.MemberService;
 import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.response.ResponseEntity;
 import whereQR.project.utils.response.Status;
@@ -76,4 +76,5 @@ public class MessageController {
                 .data(messages)
                 .build();
     }
+
 }
