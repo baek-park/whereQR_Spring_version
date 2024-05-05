@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.dashboard.DashboardRepository;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
+import whereQR.project.domain.favorite.dto.FavoriteCountDto;
 import whereQR.project.domain.member.Member;
 import whereQR.project.domain.member.MemberRepository;
 
@@ -57,10 +58,11 @@ public class FavoriteService {
     }
 
 
-    public long countFavoritesByDashboardId(UUID dashboardId) {
+    public FavoriteCountDto getFavoriteCountByDashboardId(UUID dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId)
                 .orElseThrow(() -> new EntityNotFoundException("Dashboard not found"));
-        return favoriteRepository.countByDashboard(dashboard);
+        long count = favoriteRepository.countByDashboard(dashboard);
+        return new FavoriteCountDto(dashboardId, count);
     }
 
     public List<DashboardResponseDto> getFavoritesByMember(Member member) {

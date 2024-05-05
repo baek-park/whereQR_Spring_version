@@ -111,8 +111,11 @@ public class DashboardService {
         return dashboard.getId();
     }
 
+    @Transactional
     public void deleteDashboard(UUID dashboardId) {
-        dashboardRepository.deleteById(dashboardId);
+        Dashboard dashboard = dashboardRepository.findById(dashboardId)
+                .orElseThrow(() -> new NotFoundException("해당하는 대시보드가 존재하지 않습니다.", this.getClass().toString()));
+        dashboardRepository.delete(dashboard);
     }
 
 }
