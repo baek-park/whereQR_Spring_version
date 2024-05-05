@@ -1,21 +1,17 @@
 package whereQR.project.domain.favorite;
 
 import lombok.Getter;
-import org.hibernate.annotations.GenericGenerator;
 import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.member.Member;
+import whereQR.project.utils.EntityBase;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Getter
-public class Favorite {
+@AttributeOverride(name = "id", column = @Column(name = "like_id", columnDefinition = "BINARY(16)"))
+public class Favorite extends EntityBase {
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dashboard_id")
@@ -25,9 +21,12 @@ public class Favorite {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Favorite() {}
+    public Favorite() {
+        super();
+    }
 
     public Favorite(Dashboard dashboard, Member member) {
+        super();
         this.dashboard = dashboard;
         this.member = member;
     }
