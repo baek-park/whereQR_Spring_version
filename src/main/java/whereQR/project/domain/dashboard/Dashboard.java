@@ -70,6 +70,10 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.title,
                 this.content,
                 this.author.getId().toString(),
+                this.author.getUsername(),
+                this.lostedCity,
+                this.lostedDistrict,
+                this.lostedType,
                 this.createdAt
                 );
     }

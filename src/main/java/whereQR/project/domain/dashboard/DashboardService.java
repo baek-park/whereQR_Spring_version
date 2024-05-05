@@ -60,7 +60,11 @@ public class DashboardService {
                         dashboard.getId(),
                         dashboard.getTitle(),
                         dashboard.getContent(),
-                        dashboard.getAuthor() != null ? dashboard.getAuthor().getUsername() : "Unknown", // 'username' 추가
+                        dashboard.getAuthor().getId().toString(),
+                        dashboard.getAuthor().getUsername(),
+                        dashboard.getLostedCity(),
+                        dashboard.getLostedDistrict(),
+                        dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 
@@ -83,7 +87,11 @@ public class DashboardService {
                         dashboard.getId(),
                         dashboard.getTitle(),
                         dashboard.getContent(),
-                        dashboard.getAuthor() != null ? dashboard.getAuthor().getUsername() : "Unknown", // 'username' 추가
+                        dashboard.getAuthor().getId().toString(),
+                        dashboard.getAuthor().getUsername(),
+                        dashboard.getLostedCity(),
+                        dashboard.getLostedDistrict(),
+                        dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 

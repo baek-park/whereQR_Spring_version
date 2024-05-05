@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.dashboard.DashboardRepository;
-import whereQR.project.domain.favorite.dto.FavoriteRequestDto;
+import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
 import whereQR.project.domain.member.Member;
 import whereQR.project.domain.member.MemberRepository;
 
@@ -64,6 +63,25 @@ public class FavoriteService {
         return favoriteRepository.countByDashboard(dashboard);
     }
 
-
+    public List<DashboardResponseDto> getFavoritesByMember(Member member) {
+        List<Favorite> favorites = favoriteRepository.findByMember(member);
+        return favorites.stream()
+                .map(favorite -> {
+                    Dashboard dashboard = favorite.getDashboard();
+                    DashboardResponseDto dto = new DashboardResponseDto(
+                            dashboard.getId(),
+                            dashboard.getTitle(),
+                            dashboard.getContent(),
+                            dashboard.getAuthor().getId().toString(),
+                            dashboard.getAuthor().getUsername(),
+                            dashboard.getLostedCity(),
+                            dashboard.getLostedDistrict(),
+                            dashboard.getLostedType(),
+                            dashboard.getCreatedAt()
+                    );
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
 }

@@ -15,6 +15,11 @@ public class DashboardResponseDto {
     private String content;
     private String author_id;
 
+    private String authorName;
+    private String lostedCity;
+    private String lostedDistrict;
+    private String lostedType;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 }
