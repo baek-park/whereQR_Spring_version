@@ -74,10 +74,9 @@ public class DashboardController {
                 .build();
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity deleteDashboard(@RequestBody DashboardDeleteRequestDto request) {
         UUID dashboardId = request.getDashboardId();
-        System.out.println("11dashboardId = " + dashboardId);
 
         Member currentMember = MemberUtil.getMember();
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);

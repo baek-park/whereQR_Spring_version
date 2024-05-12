@@ -10,8 +10,10 @@ import java.util.UUID;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
     Optional<Favorite> findByDashboardAndMember(Dashboard dashboard, Member member);
-    long countByDashboard(Dashboard dashboard); // countByDashboardId
+    long countByDashboard(Dashboard dashboard);
 
-    List<Favorite> findByMember(Member member); // findByMemberId
+    List<Favorite> findByMember(Member member);
+    List<Favorite> findByDashboard(Dashboard dashboard);
+
 
 }
