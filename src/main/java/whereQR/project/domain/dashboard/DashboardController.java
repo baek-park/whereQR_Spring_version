@@ -11,6 +11,8 @@ import whereQR.project.domain.dashboard.dto.DashboardCreateRequestDto;
 import whereQR.project.domain.dashboard.dto.DashboardUpdateRequestDto;
 import whereQR.project.utils.response.Status;
 import whereQR.project.utils.MemberUtil;
+import whereQR.project.domain.favorite.FavoriteService;
+import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class DashboardController {
 
     private final DashboardService dashboardService;
+    private final FavoriteService favoriteService;
 
     @PostMapping("/create")
     public ResponseEntity createDashboard(@RequestBody DashboardCreateRequestDto request) {
@@ -67,10 +70,20 @@ public class DashboardController {
     @GetMapping("/detail")
     public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
+        Member member = MemberUtil.getMember();
+        boolean isFavorite = false;
 
+        if (member != null) {
+            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
+            isFavorite = favoriteId != null;
+        }
+
+        long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
+
+        DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
-                .data(dashboard.toDashboardResponseDto())
+                .data(responseDto)
                 .build();
     }
 

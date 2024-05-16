@@ -1,6 +1,7 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.Getter;
+import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
 import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
@@ -76,5 +77,21 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedType,
                 this.createdAt
                 );
+    }
+
+    public DashboardDetailResponseDto toDashboardDetailResponseDto(boolean isFavorite, long favoriteCount){
+        return new DashboardDetailResponseDto(
+                this.id,
+                this.title,
+                this.content,
+                this.author.getId().toString(),
+                this.author.getUsername(),
+                this.lostedCity,
+                this.lostedDistrict,
+                this.lostedType,
+                isFavorite,
+                favoriteCount,
+                this.createdAt
+        );
     }
 }
