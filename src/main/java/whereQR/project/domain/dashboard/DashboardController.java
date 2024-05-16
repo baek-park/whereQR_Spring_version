@@ -1,6 +1,7 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import whereQR.project.domain.dashboard.dto.DashboardDeleteRequestDto;
 import whereQR.project.domain.member.Member;
 import whereQR.project.domain.dashboard.dto.DashboardPageResponseDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
@@ -12,6 +13,7 @@ import whereQR.project.utils.response.Status;
 import whereQR.project.utils.MemberUtil;
 
 import java.util.UUID;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +27,23 @@ public class DashboardController {
         Member author = MemberUtil.getMember();
 
         UUID dashboardId = dashboardService.createDashboard(request, author);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(dashboardId)
+                .build();
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity updateDashboard(@RequestBody DashboardUpdateRequestDto request) {
+
+        Member currentMember = MemberUtil.getMember();
+        Dashboard dashboard = dashboardService.getDashboardById(request.getDashboardId());
+
+        if(!dashboard.isAuthor(currentMember)){
+            throw new BadRequestException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
+        }
+
+        UUID dashboardId = dashboardService.updateDashboard(request);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(dashboardId)
@@ -55,26 +74,9 @@ public class DashboardController {
                 .build();
     }
 
-
-    @PostMapping("/update")
-    public ResponseEntity updateDashboard(@RequestBody DashboardUpdateRequestDto request) {
-
-        Member currentMember = MemberUtil.getMember();
-        Dashboard dashboard = dashboardService.getDashboardById(request.getDashboardId());
-
-        if(!dashboard.isAuthor(currentMember)){
-            throw new BadRequestException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
-        }
-
-        UUID dashboardId = dashboardService.updateDashboard(request);
-        return ResponseEntity.builder()
-                .status(Status.SUCCESS)
-                .data(dashboardId)
-                .build();
-    }
-
-    @DeleteMapping("/delete/{dashboardId}")
-    public ResponseEntity deleteDashboard(@PathVariable UUID dashboardId) {
+    @PostMapping("/delete")
+    public ResponseEntity deleteDashboard(@RequestBody DashboardDeleteRequestDto request) {
+        UUID dashboardId = request.getDashboardId();
 
         Member currentMember = MemberUtil.getMember();
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);

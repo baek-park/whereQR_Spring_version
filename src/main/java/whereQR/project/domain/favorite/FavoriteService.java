@@ -1,18 +1,25 @@
 package whereQR.project.domain.favorite;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.domain.dashboard.Dashboard;
-import whereQR.project.domain.member.Member;
 import whereQR.project.domain.dashboard.DashboardRepository;
+import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
+import whereQR.project.domain.favorite.dto.FavoriteCountDto;
+import whereQR.project.domain.member.Member;
 import whereQR.project.domain.member.MemberRepository;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FavoriteService {
 
@@ -20,29 +27,63 @@ public class FavoriteService {
     private final DashboardRepository dashboardRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public UUID addFavorite(UUID memberId, UUID dashboardId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberId));
+
+    public UUID getFavoriteId(UUID dashboardId, Member member) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid dashboard ID: " + dashboardId));
+                .orElseThrow(() -> new EntityNotFoundException("Dashboard not found"));
 
-        Favorite favorite = new Favorite(dashboard, member);
-        favorite = favoriteRepository.save(favorite);
-        return favorite.getLikeId();
-    }
-
-    @Transactional(readOnly = true)
-    public Page<Favorite> getFavoritesByMember(UUID memberId, Pageable pageable) {
-        // FavoriteRepository에 custom query 메서드를 추가해야
-        return favoriteRepository.findAll(pageable); // 임시, 실제로는 멤버 기반 조회 필요
+        Optional<Favorite> favorite = favoriteRepository.findByDashboardAndMember(dashboard, member);
+        return favorite.map(Favorite::getId).orElse(null);
     }
 
     @Transactional
-    public void deleteFavorite(UUID likeId) {
-        if (!favoriteRepository.existsById(likeId)) {
-            throw new IllegalArgumentException("Favorite not found with ID: " + likeId);
-        }
-        favoriteRepository.deleteById(likeId);
+    public UUID createFavorite(UUID dashboardId, Member member) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId)
+                .orElseThrow(() -> new EntityNotFoundException("Dashboard not found"));
+
+        Favorite newFavorite = new Favorite(dashboard, member);
+        favoriteRepository.save(newFavorite);
+        return newFavorite.getId();
     }
+
+    @Transactional
+    public void deleteFavorite(UUID dashboardId, Member member) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId)
+                .orElseThrow(() -> new EntityNotFoundException("Dashboard not found"));
+
+        Favorite favorite = favoriteRepository.findByDashboardAndMember(dashboard, member)
+                .orElseThrow(() -> new EntityNotFoundException("Favorite not found"));
+
+        favoriteRepository.delete(favorite);
+    }
+
+
+    public FavoriteCountDto getFavoriteCountByDashboardId(UUID dashboardId) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId)
+                .orElseThrow(() -> new EntityNotFoundException("Dashboard not found"));
+        long count = favoriteRepository.countByDashboard(dashboard);
+        return new FavoriteCountDto(dashboardId, count);
+    }
+
+    public List<DashboardResponseDto> getFavoritesByMember(Member member) {
+        List<Favorite> favorites = favoriteRepository.findByMember(member);
+        return favorites.stream()
+                .map(favorite -> {
+                    Dashboard dashboard = favorite.getDashboard();
+                    DashboardResponseDto dto = new DashboardResponseDto(
+                            dashboard.getId(),
+                            dashboard.getTitle(),
+                            dashboard.getContent(),
+                            dashboard.getAuthor().getId().toString(),
+                            dashboard.getAuthor().getUsername(),
+                            dashboard.getLostedCity(),
+                            dashboard.getLostedDistrict(),
+                            dashboard.getLostedType(),
+                            dashboard.getCreatedAt()
+                    );
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

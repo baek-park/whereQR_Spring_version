@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import whereQR.project.domain.dashboard.dto.*;
+import whereQR.project.domain.favorite.Favorite;
+import whereQR.project.domain.favorite.FavoriteRepository;
 import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class DashboardService {
 
     private final DashboardRepository dashboardRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public Dashboard getDashboardById(UUID id) {
         return dashboardRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 대시보드가 존재하지 않습니다.", this.getClass().toString()));
@@ -60,7 +63,11 @@ public class DashboardService {
                         dashboard.getId(),
                         dashboard.getTitle(),
                         dashboard.getContent(),
-                        dashboard.getAuthor() != null ? dashboard.getAuthor().getUsername() : "Unknown", // 'username' 추가
+                        dashboard.getAuthor().getId().toString(),
+                        dashboard.getAuthor().getUsername(),
+                        dashboard.getLostedCity(),
+                        dashboard.getLostedDistrict(),
+                        dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 
@@ -83,7 +90,11 @@ public class DashboardService {
                         dashboard.getId(),
                         dashboard.getTitle(),
                         dashboard.getContent(),
-                        dashboard.getAuthor() != null ? dashboard.getAuthor().getUsername() : "Unknown", // 'username' 추가
+                        dashboard.getAuthor().getId().toString(),
+                        dashboard.getAuthor().getUsername(),
+                        dashboard.getLostedCity(),
+                        dashboard.getLostedDistrict(),
+                        dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 
@@ -103,8 +114,15 @@ public class DashboardService {
         return dashboard.getId();
     }
 
+    @Transactional
     public void deleteDashboard(UUID dashboardId) {
-        dashboardRepository.deleteById(dashboardId);
+        Dashboard dashboard = dashboardRepository.findById(dashboardId)
+                .orElseThrow(() -> new NotFoundException("해당하는 대시보드가 존재하지 않습니다.", this.getClass().toString()));
+
+        List<Favorite> favoritesLinkedToDashboard = favoriteRepository.findByDashboard(dashboard);
+        favoriteRepository.deleteAll(favoritesLinkedToDashboard);
+
+        dashboardRepository.delete(dashboard);
     }
 
 }
