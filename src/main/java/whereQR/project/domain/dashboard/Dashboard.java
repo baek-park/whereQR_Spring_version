@@ -1,12 +1,14 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.Getter;
+import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
 import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -79,7 +81,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 );
     }
 
-    public DashboardDetailResponseDto toDashboardDetailResponseDto(boolean isFavorite, long favoriteCount){
+    public DashboardDetailResponseDto toDashboardDetailResponseDto(boolean isFavorite, long favoriteCount, List<CommentInfoDto> comments){
         return new DashboardDetailResponseDto(
                 this.id,
                 this.title,
@@ -91,6 +93,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedType,
                 isFavorite,
                 favoriteCount,
+                comments,
                 this.createdAt
         );
     }

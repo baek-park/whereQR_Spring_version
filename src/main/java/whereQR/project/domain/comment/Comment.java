@@ -41,6 +41,7 @@ public class Comment extends EntityBase {
         this.dashboard = dashboard;
         this.parent = parent;
     }
+
     public enum CommentStatus {
         ACTIVE,
         DELETED,

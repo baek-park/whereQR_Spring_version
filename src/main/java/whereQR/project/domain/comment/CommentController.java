@@ -20,7 +20,7 @@ public class CommentController {
     private final CommentService commentService;
     private final DashboardService dashboardService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity createComment(@RequestBody CommentCreateRequestDto request) {
         UUID dashboardId = request.getDashboardId();
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);

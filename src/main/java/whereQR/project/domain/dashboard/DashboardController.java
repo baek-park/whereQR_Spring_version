@@ -1,6 +1,10 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import whereQR.project.domain.comment.Comment;
+import whereQR.project.domain.comment.CommentService;
+import whereQR.project.domain.comment.dto.CommentInfoDto;
+import whereQR.project.domain.comment.dto.CommentResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardDeleteRequestDto;
 import whereQR.project.domain.member.Member;
 import whereQR.project.domain.dashboard.dto.DashboardPageResponseDto;
@@ -14,6 +18,7 @@ import whereQR.project.utils.MemberUtil;
 import whereQR.project.domain.favorite.FavoriteService;
 import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -24,6 +29,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
     private final FavoriteService favoriteService;
+    private final CommentService commentService;
 
     @PostMapping("/create")
     public ResponseEntity createDashboard(@RequestBody DashboardCreateRequestDto request) {
@@ -80,7 +86,10 @@ public class DashboardController {
 
         long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
 
-        DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount);
+        List<CommentInfoDto> comments = commentService.getCommentsByDashboardId(dashboardId);
+
+
+        DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount, comments);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(responseDto)
