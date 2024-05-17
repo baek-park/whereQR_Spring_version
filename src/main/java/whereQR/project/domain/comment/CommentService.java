@@ -24,8 +24,13 @@ public class CommentService {
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid parent comment ID."));
+                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 부모 댓글 ID입니다."));
         }
+
+        if (parent != null && parent.getParent() != null) {
+            throw new IllegalArgumentException("댓글의 깊이는 2를 초과할 수 없습니다.");
+        }
+
         Comment comment = new Comment(request.getContent(), author, dashboard, parent);
         Comment savedComment = commentRepository.save(comment);
         return savedComment.getId();
