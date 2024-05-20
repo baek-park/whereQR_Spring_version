@@ -4,6 +4,7 @@ import lombok.Getter;
 import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
+import whereQR.project.domain.file.File;
 import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
 
@@ -33,6 +34,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Member author;
+
 
     // 기본 생성자
     public Dashboard() {
