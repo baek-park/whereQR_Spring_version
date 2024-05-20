@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import whereQR.project.domain.file.File;
 import whereQR.project.domain.qrcode.Qrcode;
 import whereQR.project.domain.member.dto.MemberDetailDto;
 import whereQR.project.jwt.MemberDetails;
@@ -43,6 +44,11 @@ public class Member {
 
     private boolean deleted = false;
 
+    @OneToOne(mappedBy = "profile",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private File profile = null;
+
     //생성자
     public Member(){
 
@@ -69,7 +75,8 @@ public class Member {
         return new MemberDetailDto(
                 this.username,
                 this.phoneNumber,
-                this.qrcodeList);
+                this.qrcodeList,
+                this.profile);
     }
 
 }

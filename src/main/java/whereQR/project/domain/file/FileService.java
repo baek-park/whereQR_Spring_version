@@ -13,6 +13,7 @@ import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.InternalException;
 import whereQR.project.properties.NcsProperties;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,10 +30,14 @@ public class FileService {
     private final NcsProperties ncsProperties;
     private final AmazonS3 amazonS3;
 
-    @Transactional
-    public List<FileResponseDto> uploadFile(Member member, String filePath, List<MultipartFile> files){
+    public File getFileById(UUID id){
+        return fileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당하는 File이 존재하지 않습니다.") );
+    }
 
-        List<FileResponseDto> fileResponseDtos = new ArrayList<>();
+    @Transactional
+    public List<File> uploadFile(Member member, String filePath, List<MultipartFile> files){
+
+        List<File> result = new ArrayList<>();
 
         for(MultipartFile multipartFile: files){
             String originalFileName = multipartFile.getOriginalFilename();
@@ -55,14 +60,13 @@ public class FileService {
                 uploadFileUrl = ncsProperties.getEndPoint() + "/" +  ncsProperties.getBucketName() + "/" + uploadFileName;
 
                 File file = new File(uploadFileUrl, member);
-                fileResponseDtos.add(new FileResponseDto(file.getId(), file.getUrl()));
-
+                result.add(file);
+                fileRepository.save(file);
             } catch (IOException e) {
                 throw new InternalException(e.getMessage(), this.getClass().toString());
             }
         }
-        return fileResponseDtos;
-
+        return result;
     }
 
     public String getFileName(String fileName) {

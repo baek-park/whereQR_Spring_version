@@ -2,6 +2,7 @@ package whereQR.project.domain.file;
 
 import lombok.Getter;
 import whereQR.project.domain.dashboard.Dashboard;
+import whereQR.project.domain.file.dto.FileResponseDto;
 import whereQR.project.domain.member.Member;
 import whereQR.project.utils.EntityBase;
 
@@ -20,7 +21,7 @@ public class File extends EntityBase {
     private Dashboard dashboard = null;
 
     @OneToOne
-    @JoinColumn(name = "profile_id",referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "profile_file_id",referencedColumnName = "id", unique = true)
     private Member profile = null;
 
     @OneToOne
@@ -34,5 +35,17 @@ public class File extends EntityBase {
 
     public File() {
 
+    }
+
+    public void updateProfile(Member member){
+        this.profile = member;
+    }
+
+    public void updateDashboard(Dashboard dashboard){
+        this.dashboard = dashboard;
+    }
+
+    public FileResponseDto toFileResponseDto(){
+        return new FileResponseDto(this.id, this.url);
     }
 }

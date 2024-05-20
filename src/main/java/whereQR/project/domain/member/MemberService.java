@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import whereQR.project.domain.file.File;
+import whereQR.project.domain.file.FileService;
+import whereQR.project.domain.file.dto.FileResponseDto;
 import whereQR.project.domain.member.dto.KakaoSignupDto;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
-
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +20,7 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FileService fileService;
 
     public Boolean existsMemberByKakaoIdAndRole( Long kakaoId, Role role ){
         return memberRepository.existsMemberByKakaoIdAndRole(kakaoId, role);
@@ -38,6 +43,13 @@ public class MemberService {
         Member member = new Member(signupDto.getKakaoId(),signupDto.getUsername(),signupDto.getPhoneNumber(), role);
         memberRepository.save(member);
         return member;
+    }
+
+    @Transactional
+    public FileResponseDto uploadProfile(Member member, UUID profileId){
+        File profile = fileService.getFileById(profileId);
+        profile.updateProfile(member);
+        return profile.toFileResponseDto();
     }
 
 }
