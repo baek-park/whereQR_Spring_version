@@ -15,4 +15,5 @@ public class NcsProperties {
     private String accessKey;
     private String secretKey;
     private String regionName;
+    private String bucketName;
 }

@@ -1,9 +1,5 @@
 package whereQR.project.domain.file;
-
-
-import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -17,7 +13,6 @@ import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.InternalException;
 import whereQR.project.properties.NcsProperties;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,7 +26,6 @@ import java.util.UUID;
 public class FileService {
 
     private final FileRepository fileRepository;
-    private final String bucketName = "whereqr";
     private final NcsProperties ncsProperties;
     private final AmazonS3 amazonS3;
 
@@ -54,11 +48,11 @@ public class FileService {
 
                 // S3에 폴더 및 파일 업로드
                 amazonS3.putObject(
-                        new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                        new PutObjectRequest(ncsProperties.getBucketName(), fileName, inputStream, objectMetadata)
                                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
                 // S3에 업로드한 폴더 및 파일 URL
-                uploadFileUrl = ncsProperties.getEndPoint() + bucketName + "/" + uploadFileName;
+                uploadFileUrl = ncsProperties.getEndPoint() + "/" +  ncsProperties.getBucketName() + "/" + uploadFileName;
 
                 File file = new File(uploadFileUrl, member);
                 fileResponseDtos.add(new FileResponseDto(file.getId(), file.getUrl()));
@@ -75,6 +69,5 @@ public class FileService {
         String ext = fileName.substring(fileName.indexOf(".") + 1);
         return UUID.randomUUID().toString() + "." + ext;
     }
-
 
 }
