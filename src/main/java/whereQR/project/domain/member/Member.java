@@ -3,6 +3,8 @@ package whereQR.project.domain.member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import whereQR.project.domain.qrcode.Qrcode;
 import whereQR.project.domain.member.dto.MemberDetailDto;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Entity
 @DynamicUpdate // 업데이트하고자 하는 필드만 업데이트하기 위해서 추가
 @Getter
+@SQLDelete(sql = "UPDATE message SET deleted = true WHERE id=?") // soft delete
+@Where(clause = "deleted=false")
 public class Member {
 
     @Id
@@ -36,6 +40,8 @@ public class Member {
 
     @Column(nullable = false)
     private Long kakaoId;
+
+    private boolean deleted = false;
 
     //생성자
     public Member(){

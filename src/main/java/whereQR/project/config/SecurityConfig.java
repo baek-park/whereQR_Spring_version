@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                     .antMatchers("/member/kakao/**").permitAll()
+                    .antMatchers("/file/**").permitAll()
                     .antMatchers("/qrcode/create").hasRole("ADMIN")
                     .antMatchers("/qrcode/update").hasRole("USER")
                     .antMatchers("/qrcode/register").hasRole("USER")
