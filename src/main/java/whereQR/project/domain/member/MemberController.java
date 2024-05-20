@@ -11,6 +11,7 @@ import whereQR.project.domain.member.dto.KakaoMemberResponseDto;
 import whereQR.project.domain.member.dto.KakaoSignupDto;
 import whereQR.project.domain.member.dto.MemberDetailDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.response.ResponseEntity;
@@ -182,5 +183,21 @@ public class MemberController {
                 .data(memberService.uploadProfile(currentMember, files.get(0).getId()))
                 .build();
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity deleteMember(@RequestParam UUID id){
+        Member currentMember = MemberUtil.getMember();
+
+        if(!currentMember.getId().equals(id)){
+            throw new ForbiddenException("삭제 권한이 존재하지 않습니다.", this.getClass().toString());
+        }
+
+        memberService.deleteMemberById(id);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(currentMember.getId())
+                .build();
+    }
+
 
 }
