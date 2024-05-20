@@ -52,4 +52,9 @@ public class MemberService {
         return profile.toFileResponseDto();
     }
 
+    @Transactional
+    public void deleteMemberById(UUID id){
+        memberRepository.deleteById(id);
+    }
+
 }

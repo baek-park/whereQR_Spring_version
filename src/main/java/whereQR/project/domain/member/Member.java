@@ -19,7 +19,7 @@ import java.util.UUID;
 @Entity
 @DynamicUpdate // 업데이트하고자 하는 필드만 업데이트하기 위해서 추가
 @Getter
-@SQLDelete(sql = "UPDATE message SET deleted = true WHERE id=?") // soft delete
+@SQLDelete(sql = "UPDATE member SET deleted = true WHERE id=?") // soft delete
 @Where(clause = "deleted=false")
 public class Member {
 
@@ -42,7 +42,8 @@ public class Member {
     @Column(nullable = false)
     private Long kakaoId;
 
-    private boolean deleted = false;
+    @Column(name = "deleted")
+    private Boolean deleted = Boolean.FALSE;
 
     @OneToOne(mappedBy = "profile",
             fetch = FetchType.LAZY,
