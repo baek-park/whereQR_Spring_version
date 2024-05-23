@@ -2,6 +2,7 @@ package whereQR.project.domain.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import whereQR.project.domain.comment.Comment;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,17 +12,20 @@ import java.util.UUID;
 public class CommentInfoDto {
     private final UUID id;
     private final String content;
-    private final String authorUsername;
+    private final String author;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime createdAt;
+    private Comment.CommentStatus status;
     private List<CommentResponseDto> childComments;
 
-    public CommentInfoDto(UUID id, String content, String authorUsername, LocalDateTime createdAt) {
+
+    public CommentInfoDto(UUID id, String content, String author, LocalDateTime createdAt, Comment.CommentStatus status) {
         this.id = id;
         this.content = content;
-        this.authorUsername = authorUsername;
+        this.author = author;
         this.createdAt = createdAt;
+        this.status = status;
     }
 
     public void setChildComments(List<CommentResponseDto> childComments) {

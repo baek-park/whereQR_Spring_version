@@ -25,21 +25,21 @@ public class FavoriteController {
         UUID dashboardId = favoriteRequest.getDashboardId();
         Member member = MemberUtil.getMember();
 
-        UUID likeId = favoriteService.getFavoriteId(dashboardId, member);
+        UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
 
-        boolean isLiked  = likeId == null;
+        boolean isfavorited  = favoriteId == null;
 
-        if (likeId != null) {
+        if (favoriteId != null) {
             favoriteService.deleteFavorite(dashboardId, member);
-            isLiked = false;
+            isfavorited = false;
         }
-        if (likeId == null) {
-            likeId = favoriteService.createFavorite(dashboardId, member);
-            isLiked = true;
+        if (favoriteId == null) {
+            favoriteId = favoriteService.createFavorite(dashboardId, member);
+            isfavorited = true;
         }
 
 
-        FavoriteResponseDto responseDto = new FavoriteResponseDto(likeId, isLiked);
+        FavoriteResponseDto responseDto = new FavoriteResponseDto(favoriteId, isfavorited);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
