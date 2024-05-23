@@ -7,16 +7,23 @@ import org.springframework.stereotype.Service;
 import whereQR.project.domain.dashboard.dto.*;
 import whereQR.project.domain.favorite.Favorite;
 import whereQR.project.domain.favorite.FavoriteRepository;
+import whereQR.project.domain.file.File;
+import whereQR.project.domain.file.FileRepository;
+import whereQR.project.domain.file.FileService;
 import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import whereQR.project.utils.PageInfoDto;
 
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.Specification;
 
 @Slf4j
 @Service
@@ -26,6 +33,7 @@ public class DashboardService {
 
     private final DashboardRepository dashboardRepository;
     private final FavoriteRepository favoriteRepository;
+    private final FileRepository fileRepository;
 
     public Dashboard getDashboardById(UUID id) {
         return dashboardRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 대시보드가 존재하지 않습니다.", this.getClass().toString()));
@@ -37,26 +45,34 @@ public class DashboardService {
                 request.getTitle(),
                 request.getContent(),
                 request.getLostedType(),
-                request.getLostedCity(),
                 request.getLostedDistrict(),
                 author
         );
+
+        List<File> dashboardImages = fileRepository.findImagesByIds(request.getImages());
+        log.info("here {}", dashboardImages);
+
+        for (File image : dashboardImages) {
+            dashboard.addImage(image);
+        }
+
         dashboard = dashboardRepository.save(dashboard);
         return dashboard.getId();
     }
-    public DashboardPageResponseDto getDashboards(int offset, int limit, String search) {
-
+    public DashboardPageResponseDto getDashboards(int offset, int limit, DashboardSearchCriteria criteria) {
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
-        Page<Dashboard> dashboardPage;
-        if (search == null || search.isEmpty()) {
-            dashboardPage = dashboardRepository.findAll(pageable);
-        } else {
-            log.info("search -> {}", search);
-            List<Dashboard> content = dashboardRepository.searchByKeyword(search, pageable);
-            Long totalCount = dashboardRepository.countByDashboards(content);
-            dashboardPage = new PageImpl<>(content, pageable, totalCount);
+        if (criteria.getEndDate() == null) {
+            criteria.setEndDate(LocalDateTime.now());
         }
+
+        Specification<Dashboard> spec = Specification
+                .where(DashboardSpecification.contentContains(criteria.getSearch()))
+                .and(DashboardSpecification.lostedDistrictEquals(criteria.getLostedDistrict()))
+                .and(DashboardSpecification.lostedTypeEquals(criteria.getLostedType()))
+                .and(DashboardSpecification.createdAtBetween(criteria.getStartDate(), criteria.getEndDate()));
+
+        Page<Dashboard> dashboardPage = dashboardRepository.findAll(spec, pageable);
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
                 .map(dashboard -> new DashboardResponseDto(
@@ -65,9 +81,9 @@ public class DashboardService {
                         dashboard.getContent(),
                         dashboard.getAuthor().getId().toString(),
                         dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedCity(),
                         dashboard.getLostedDistrict(),
                         dashboard.getLostedType(),
+                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 
@@ -92,9 +108,9 @@ public class DashboardService {
                         dashboard.getContent(),
                         dashboard.getAuthor().getId().toString(),
                         dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedCity(),
                         dashboard.getLostedDistrict(),
                         dashboard.getLostedType(),
+                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
 
@@ -108,9 +124,15 @@ public class DashboardService {
                 request.getTitle(),
                 request.getContent(),
                 request.getLostedType(),
-                request.getLostedCity(),
                 request.getLostedDistrict()
         );
+
+        List<File> dashboardImages = fileRepository.findImagesByIds(request.getImages());
+        dashboard.deleteImage();
+        for (File image : dashboardImages) {
+            dashboard.addImage(image);
+        }
+
         return dashboard.getId();
     }
 
