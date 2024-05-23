@@ -48,6 +48,10 @@ public class DashboardService {
     public DashboardPageResponseDto getDashboards(int offset, int limit, DashboardSearchCriteria criteria) {
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
+        if (criteria.getEndDate() == null) {
+            criteria.setEndDate(LocalDateTime.now());
+        }
+
         Specification<Dashboard> spec = Specification
                 .where(DashboardSpecification.contentContains(criteria.getSearch()))
                 .and(DashboardSpecification.lostedDistrictEquals(criteria.getLostedDistrict()))
