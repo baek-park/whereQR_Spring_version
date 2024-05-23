@@ -9,7 +9,11 @@ import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -35,6 +39,8 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Member author;
 
+    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<File> images = new ArrayList<>();
 
     // 기본 생성자
     public Dashboard() {
@@ -61,6 +67,15 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         // updatedAt은 EntityBase에 정의된 @LastModifiedDate 어노테이션이 자동으로 처리
     }
 
+    public void addImage(File image){
+        this.images.add(image);
+        image.updateDashboard(this);
+    }
+
+    public void deleteImage(){
+        this.images.clear();
+    }
+
     public Boolean isAuthor(Member member){
         if(author.getId().equals(member.getId())){
             return true;
@@ -79,6 +94,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedCity,
                 this.lostedDistrict,
                 this.lostedType,
+                this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
                 this.createdAt
                 );
     }
@@ -96,6 +112,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 isFavorite,
                 favoriteCount,
                 comments,
+                this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
                 this.createdAt
         );
     }

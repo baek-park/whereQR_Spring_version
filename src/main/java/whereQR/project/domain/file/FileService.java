@@ -1,4 +1,5 @@
 package whereQR.project.domain.file;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -68,6 +69,19 @@ public class FileService {
         }
         return result;
     }
+
+//    @Transactional
+//    public void deleteFile(File file){
+//        try {
+//            amazonS3.deleteObject(ncsProperties.getBucketName(), objectName);
+//            System.out.format("Object %s has been deleted.\n", objectName);
+//        } catch (AmazonS3Exception e) {
+//            e.printStackTrace();
+//        } catch(SdkClientException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public String getFileName(String fileName) {
         String ext = fileName.substring(fileName.indexOf(".") + 1);

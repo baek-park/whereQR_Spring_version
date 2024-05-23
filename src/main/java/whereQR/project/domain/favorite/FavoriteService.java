@@ -79,6 +79,7 @@ public class FavoriteService {
                             dashboard.getLostedCity(),
                             dashboard.getLostedDistrict(),
                             dashboard.getLostedType(),
+                            dashboard.toDashboardResponseDto().getImages(),
                             dashboard.getCreatedAt()
                     );
                     return dto;
