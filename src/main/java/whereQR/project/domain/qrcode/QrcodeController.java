@@ -22,8 +22,11 @@ public class QrcodeController {
 
     private final QrcodeService qrcodeService;
     @PostMapping("/create")
-    public Qrcode make() throws WriterException {
-        return qrcodeService.createQrcode();
+    public void make() throws WriterException {
+
+        for(int i=0; i<150; i++){
+            qrcodeService.createQrcode();
+        }
     }
 
     @PostMapping("/update")
