@@ -78,6 +78,7 @@ public class FavoriteService {
                             dashboard.getAuthor().getUsername(),
                             dashboard.getLostedDistrict(),
                             dashboard.getLostedType(),
+                            dashboard.toDashboardResponseDto().getImages(),
                             dashboard.getCreatedAt()
                     );
                     return dto;
