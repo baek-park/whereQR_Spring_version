@@ -18,7 +18,6 @@ public class DashboardResponseDto {
     private String author_id;
 
     private String authorName;
-    private String lostedCity;
     private String lostedDistrict;
     private String lostedType;
     private List<FileResponseDto> images;

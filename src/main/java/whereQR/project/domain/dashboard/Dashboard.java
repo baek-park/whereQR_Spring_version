@@ -29,9 +29,6 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     @Column(nullable = false, length = 20)
     private String lostedType;
 
-    @Column(nullable = false, length = 20)
-    private String lostedCity;
-
     @Column(length = 20)
     private String lostedDistrict;
 
@@ -48,23 +45,20 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     }
 
     // 모든 필드를 포함한 생성자(생성 시간과 수정 시간 제외)
-    public Dashboard(String title, String content, String lostedType, String lostedCity, String lostedDistrict, Member author) {
-        super(); // EntityBase의 생성자 호출
+    public Dashboard(String title, String content, String lostedType, String lostedDistrict, Member author) {
+        super();
         this.title = title;
         this.content = content;
         this.lostedType = lostedType;
-        this.lostedCity = lostedCity;
         this.lostedDistrict = lostedDistrict;
         this.author = author;
     }
 
-    public void update(String title, String content, String lostedType, String lostedCity, String lostedDistrict) {
+    public void update(String title, String content, String lostedType, String lostedDistrict) {
         this.title = title;
         this.content = content;
         this.lostedType = lostedType;
-        this.lostedCity = lostedCity;
         this.lostedDistrict = lostedDistrict;
-        // updatedAt은 EntityBase에 정의된 @LastModifiedDate 어노테이션이 자동으로 처리
     }
 
     public void addImage(File image){
@@ -84,6 +78,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         }
     }
 
+
     public DashboardResponseDto toDashboardResponseDto(){
         return new DashboardResponseDto(
                 this.id,
@@ -91,7 +86,6 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.content,
                 this.author.getId().toString(),
                 this.author.getUsername(),
-                this.lostedCity,
                 this.lostedDistrict,
                 this.lostedType,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
@@ -106,7 +100,6 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.content,
                 this.author.getId().toString(),
                 this.author.getUsername(),
-                this.lostedCity,
                 this.lostedDistrict,
                 this.lostedType,
                 isFavorite,

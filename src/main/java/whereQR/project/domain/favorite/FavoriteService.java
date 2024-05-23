@@ -76,7 +76,6 @@ public class FavoriteService {
                             dashboard.getContent(),
                             dashboard.getAuthor().getId().toString(),
                             dashboard.getAuthor().getUsername(),
-                            dashboard.getLostedCity(),
                             dashboard.getLostedDistrict(),
                             dashboard.getLostedType(),
                             dashboard.toDashboardResponseDto().getImages(),
