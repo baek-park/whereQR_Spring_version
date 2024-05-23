@@ -10,6 +10,5 @@ public class DashboardUpdateRequestDto {
     private String title;
     private String content;
     private String lostedType;
-    private String lostedCity;
     private String lostedDistrict;
 }

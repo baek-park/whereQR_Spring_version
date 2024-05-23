@@ -18,7 +18,6 @@ public class DashboardDetailResponseDto {
     private String content;
     private String author_id;
     private String authorName;
-    private String lostedCity;
     private String lostedDistrict;
     private String lostedType;
     private boolean isFavorite;

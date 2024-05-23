@@ -37,7 +37,6 @@ public class DashboardService {
                 request.getTitle(),
                 request.getContent(),
                 request.getLostedType(),
-                request.getLostedCity(),
                 request.getLostedDistrict(),
                 author
         );
@@ -65,7 +64,6 @@ public class DashboardService {
                         dashboard.getContent(),
                         dashboard.getAuthor().getId().toString(),
                         dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedCity(),
                         dashboard.getLostedDistrict(),
                         dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
@@ -92,7 +90,6 @@ public class DashboardService {
                         dashboard.getContent(),
                         dashboard.getAuthor().getId().toString(),
                         dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedCity(),
                         dashboard.getLostedDistrict(),
                         dashboard.getLostedType(),
                         dashboard.getCreatedAt()))
@@ -108,7 +105,6 @@ public class DashboardService {
                 request.getTitle(),
                 request.getContent(),
                 request.getLostedType(),
-                request.getLostedCity(),
                 request.getLostedDistrict()
         );
         return dashboard.getId();
