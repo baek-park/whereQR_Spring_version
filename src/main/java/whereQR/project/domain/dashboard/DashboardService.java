@@ -17,6 +17,8 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.Specification;
 
 @Slf4j
 @Service
@@ -43,19 +45,16 @@ public class DashboardService {
         dashboard = dashboardRepository.save(dashboard);
         return dashboard.getId();
     }
-    public DashboardPageResponseDto getDashboards(int offset, int limit, String search) {
-
+    public DashboardPageResponseDto getDashboards(int offset, int limit, DashboardSearchCriteria criteria) {
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
-        Page<Dashboard> dashboardPage;
-        if (search == null || search.isEmpty()) {
-            dashboardPage = dashboardRepository.findAll(pageable);
-        } else {
-            log.info("search -> {}", search);
-            List<Dashboard> content = dashboardRepository.searchByKeyword(search, pageable);
-            Long totalCount = dashboardRepository.countByDashboards(content);
-            dashboardPage = new PageImpl<>(content, pageable, totalCount);
-        }
+        Specification<Dashboard> spec = Specification
+                .where(DashboardSpecification.contentContains(criteria.getSearch()))
+                .and(DashboardSpecification.lostedDistrictEquals(criteria.getLostedDistrict()))
+                .and(DashboardSpecification.lostedTypeEquals(criteria.getLostedType()))
+                .and(DashboardSpecification.createdAtBetween(criteria.getStartDate(), criteria.getEndDate()));
+
+        Page<Dashboard> dashboardPage = dashboardRepository.findAll(spec, pageable);
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
                 .map(dashboard -> new DashboardResponseDto(
