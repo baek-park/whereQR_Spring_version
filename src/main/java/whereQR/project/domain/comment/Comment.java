@@ -41,6 +41,21 @@ public class Comment extends EntityBase {
         this.dashboard = dashboard;
         this.parent = parent;
     }
+    public Boolean isAuthor(Member member){
+        if(author.getId().equals(member.getId())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void delete() {
+        this.status = CommentStatus.DELETED;
+    }
+
+    public void update(String content) {
+        this.content = content;
+        this.status = CommentStatus.UPDATED;
+    }
 
     public enum CommentStatus {
         ACTIVE,
