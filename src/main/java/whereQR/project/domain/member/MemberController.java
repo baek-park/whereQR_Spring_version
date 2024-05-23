@@ -3,16 +3,24 @@ package whereQR.project.domain.member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import whereQR.project.domain.file.File;
+import whereQR.project.domain.file.FileService;
+import whereQR.project.domain.file.dto.FileResponseDto;
 import whereQR.project.domain.member.dto.KakaoMemberResponseDto;
 import whereQR.project.domain.member.dto.KakaoSignupDto;
 import whereQR.project.domain.member.dto.MemberDetailDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.jwt.TokenInfo;
 import whereQR.project.utils.MemberUtil;
 import whereQR.project.utils.response.ResponseEntity;
 import whereQR.project.utils.response.Status;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +32,7 @@ public class MemberController {
     private final MemberService memberService;
     private final KakaoAuthService kakaoAuthService;
     private final AuthService authService;
+    private final FileService fileService;
 
     @GetMapping("/kakao/token")
     public ResponseEntity kakaoToken(@RequestParam String code){
@@ -159,4 +168,36 @@ public class MemberController {
                 .data(currentMember.getId())
                 .build();
     }
+
+    @PostMapping("/profile")
+    public ResponseEntity updateProfile( @RequestParam(value = "profile", required = false) MultipartFile profile){
+
+        Member currentMember = MemberUtil.getMember();
+
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(profile);
+        List<File> files = fileService.uploadFile(currentMember, "/profile", list);
+        
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(memberService.uploadProfile(currentMember, files.get(0).getId()))
+                .build();
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity deleteMember(@RequestParam UUID id){
+        Member currentMember = MemberUtil.getMember();
+
+        if(!currentMember.getId().equals(id)){
+            throw new ForbiddenException("삭제 권한이 존재하지 않습니다.", this.getClass().toString());
+        }
+
+        memberService.deleteMemberById(id);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(currentMember.getId())
+                .build();
+    }
+
+
 }

@@ -1,17 +1,20 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
-import whereQR.project.domain.dashboard.dto.DashboardDeleteRequestDto;
+import org.springframework.format.annotation.DateTimeFormat;
+import whereQR.project.domain.comment.CommentService;
+import whereQR.project.domain.comment.dto.CommentInfoDto;
+import whereQR.project.domain.dashboard.dto.*;
 import whereQR.project.domain.member.Member;
-import whereQR.project.domain.dashboard.dto.DashboardPageResponseDto;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.utils.response.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import whereQR.project.domain.dashboard.dto.DashboardCreateRequestDto;
-import whereQR.project.domain.dashboard.dto.DashboardUpdateRequestDto;
 import whereQR.project.utils.response.Status;
 import whereQR.project.utils.MemberUtil;
+import whereQR.project.domain.favorite.FavoriteService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -21,6 +24,8 @@ import java.util.UUID;
 public class DashboardController {
 
     private final DashboardService dashboardService;
+    private final FavoriteService favoriteService;
+    private final CommentService commentService;
 
     @PostMapping("/create")
     public ResponseEntity createDashboard(@RequestBody DashboardCreateRequestDto request) {
@@ -54,23 +59,35 @@ public class DashboardController {
     public ResponseEntity getDashboards(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
-            @RequestParam(value = "search", required = false) String search) {
+            @RequestBody DashboardSearchCriteria criteria) {
 
-        DashboardPageResponseDto pageResponseDto = dashboardService.getDashboards(offset, limit, search);
+        DashboardPageResponseDto pageResponseDto = dashboardService.getDashboards(offset, limit, criteria);
 
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(pageResponseDto)
                 .build();
     }
-
     @GetMapping("/detail")
     public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
+        Member member = MemberUtil.getMember();
+        boolean isFavorite = false;
 
+        if (member != null) {
+            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
+            isFavorite = favoriteId != null;
+        }
+
+        long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
+
+        List<CommentInfoDto> comments = commentService.getCommentsByDashboardId(dashboardId);
+
+
+        DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount, comments);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
-                .data(dashboard.toDashboardResponseDto())
+                .data(responseDto)
                 .build();
     }
 
