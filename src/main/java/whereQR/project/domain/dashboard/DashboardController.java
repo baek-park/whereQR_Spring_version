@@ -59,8 +59,13 @@ public class DashboardController {
     public ResponseEntity getDashboards(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
-            @RequestBody DashboardSearchCriteria criteria) {
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "lostedDistrict", required = false) String lostedDistrict,
+            @RequestParam(value = "lostedType", required = false) String lostedType,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
+        DashboardSearchCriteria criteria = new DashboardSearchCriteria(search, lostedDistrict, lostedType, startDate, endDate);
         DashboardPageResponseDto pageResponseDto = dashboardService.getDashboards(offset, limit, criteria);
 
         return ResponseEntity.builder()
