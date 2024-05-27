@@ -32,7 +32,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     @Column(length = 20)
     private String lostedDistrict;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Member author;
 
