@@ -1,16 +1,15 @@
 package whereQR.project.domain.dashboard;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import whereQR.project.domain.dashboard.dto.DashboardSearchCriteria;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -21,6 +20,17 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
     private final JPAQueryFactory queryFactory;
     private QDashboard dashboard = QDashboard.dashboard;
 
+    @Override
+    public List<Dashboard> findDashboardsByPaginationAndSearch(DashboardSearchCriteria condition, Pageable pageable){
+        BooleanBuilder builder = getBooleanBuilder(condition);
+        return queryFactory
+                .selectFrom(dashboard)
+                .where(builder)
+                .orderBy(dashboard.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
     @Override
     public List<Dashboard> searchByKeyword(String keyword, Pageable pageable) {
         return queryFactory
@@ -50,5 +60,43 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
                 .from(dashboard)
                 .where(dashboard.in(dashboards))
                 .fetchOne();
+    }
+
+    private BooleanBuilder getBooleanBuilder(DashboardSearchCriteria condition){
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if(condition.hasCondition() == Boolean.FALSE){
+            return builder;
+        }
+
+        // title or content
+        if (condition.getSearch() != null) {
+            log.info("search -> {}", condition.getSearch());
+            builder.and(dashboard.title.contains(condition.getSearch()).or(dashboard.content.contains(condition.getSearch())));
+        }
+
+        // district
+        if(condition.getLostedDistrict() != null){
+            log.info("district -> {}", condition.getLostedDistrict());
+            builder.and(dashboard.lostedDistrict.eq(condition.getLostedDistrict()));
+        }
+
+        // type
+        if(condition.getLostedType() != null){
+            log.info("getLostedType -> {}", condition.getLostedType());
+            builder.and(dashboard.lostedType.eq(condition.getLostedType()));
+        }
+
+        if(condition.getStartDate() != null){
+            log.info("getStartDate -> {}", condition.getStartDate());
+            builder.and(dashboard.createdAt.goe(condition.getStartDate()));
+        }
+
+        if(condition.getEndDate() != null){
+            log.info("getEndDate -> {}", condition.getLostedType());
+            builder.and(dashboard.createdAt.loe(condition.getEndDate()));
+        }
+
+        return builder;
     }
 }
