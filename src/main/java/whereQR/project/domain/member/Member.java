@@ -53,9 +53,6 @@ public class Member {
     @Column(nullable = false)
     private Long kakaoId;
 
-    @Column(name = "deleted")
-    private Boolean deleted = Boolean.FALSE;
-
     @OneToOne(mappedBy = "profile",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
