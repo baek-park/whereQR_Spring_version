@@ -1,12 +1,15 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import whereQR.project.domain.comment.CommentService;
 import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.*;
 import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.jwt.MemberDetails;
 import whereQR.project.utils.response.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.utils.response.Status;
@@ -17,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dashboard")
@@ -77,14 +80,25 @@ public class DashboardController {
     public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
 
+        Member currentMember = null;
+        try {
+            currentMember = MemberUtil.getMember();
+        } catch (Exception e) {
+            ;
+        }
+
         boolean isFavorite = false;
+        if (currentMember != null) {
+            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, currentMember);
+            isFavorite = favoriteId != null;
+        }
 
         long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
 
-        List<CommentInfoDto> comments = commentService.getCommentsByDashboardId(dashboardId);
-
+        List<CommentInfoDto> comments = commentService.getCommentsByDashboardIdAndMember(dashboardId, currentMember);
 
         DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount, comments);
+
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(responseDto)

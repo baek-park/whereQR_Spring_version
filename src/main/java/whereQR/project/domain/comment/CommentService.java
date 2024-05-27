@@ -37,12 +37,11 @@ public class CommentService {
         Comment savedComment = commentRepository.save(comment);
         return savedComment.getId();
     }
-    public List<CommentInfoDto> getCommentsByDashboardId(UUID dashboardId) {
-        Member currentMember = MemberUtil.getMember();
+    public List<CommentInfoDto> getCommentsByDashboardIdAndMember(UUID dashboardId, Member member) {
         List<Comment> comments = commentRepository.findByDashboardIdAndParentIsNull(dashboardId);
         return comments.stream()
                 .map(comment -> {
-                    boolean isAuthor = comment.getAuthor().equalId(currentMember);
+                    boolean isAuthor = member != null && comment.isAuthor(member);
                     CommentInfoDto commentInfoDto = new CommentInfoDto(
                             comment.getId(),
                             comment.getContent(),
@@ -51,19 +50,18 @@ public class CommentService {
                             comment.getCreatedAt(),
                             comment.getStatus()
                     );
-                    List<CommentResponseDto> childComments = getCommentsByParentId(comment.getId());
+                    List<CommentResponseDto> childComments = getCommentsByParentIdAndMember(comment.getId(), member);
                     commentInfoDto.setChildComments(childComments);
                     return commentInfoDto;
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<CommentResponseDto> getCommentsByParentId(UUID parentId) {
-        Member currentMember = MemberUtil.getMember();
+    public List<CommentResponseDto> getCommentsByParentIdAndMember(UUID parentId, Member member) {
         List<Comment> comments = commentRepository.findByParentId(parentId);
         return comments.stream()
                 .map(comment -> {
-                    boolean isAuthor = comment.getAuthor().equalId(currentMember);
+                    boolean isAuthor = member != null && comment.isAuthor(member);
                     CommentResponseDto commentResponseDto = new CommentResponseDto(
                             comment.getId(),
                             comment.getContent(),
