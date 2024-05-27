@@ -12,8 +12,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @AttributeOverride(name = "id", column = @Column(name = "comment_id", columnDefinition = "BINARY(16)"))
-@SQLDelete(sql = "UPDATE member SET deleted = true WHERE id=?") // soft delete
-@Where(clause = "deleted=false")
 public class Comment extends EntityBase {
 
     @Column(nullable = false, length = 1000)
