@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import whereQR.project.domain.dashboard.dto.DashboardSearchCriteria;
+import whereQR.project.domain.file.QFile;
 
 
 import java.util.List;
@@ -22,13 +23,19 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
 
     @Override
     public List<Dashboard> findDashboardsByPaginationAndSearch(DashboardSearchCriteria condition, Pageable pageable){
+
+        // Lazy Fetching n+1 problem fix
+        QFile file = QFile.file;
         BooleanBuilder builder = getBooleanBuilder(condition);
+
         return queryFactory
                 .selectFrom(dashboard)
+                .leftJoin(dashboard.images, file)
                 .where(builder)
                 .orderBy(dashboard.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .fetchJoin()
                 .fetch();
     }
     @Override
