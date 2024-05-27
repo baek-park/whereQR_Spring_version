@@ -66,13 +66,11 @@ public class DashboardService {
             criteria.setEndDate(LocalDateTime.now());
         }
 
-        Specification<Dashboard> spec = Specification
-                .where(DashboardSpecification.contentContains(criteria.getSearch()))
-                .and(DashboardSpecification.lostedDistrictEquals(criteria.getLostedDistrict()))
-                .and(DashboardSpecification.lostedTypeEquals(criteria.getLostedType()))
-                .and(DashboardSpecification.createdAtBetween(criteria.getStartDate(), criteria.getEndDate()));
+        List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndSearch(criteria, pageable);
+        Long totalCount = dashboardRepository.countByDashboards(content);
+        Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
-        Page<Dashboard> dashboardPage = dashboardRepository.findAll(spec, pageable);
+        PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
                 .map(dashboard -> new DashboardResponseDto(
@@ -86,8 +84,6 @@ public class DashboardService {
                         dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
                         dashboard.getCreatedAt()))
                 .collect(Collectors.toList());
-
-        PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
     }

@@ -1,6 +1,8 @@
 package whereQR.project.domain.comment;
 
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.member.Member;
 import whereQR.project.utils.EntityBase;
@@ -10,6 +12,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @AttributeOverride(name = "id", column = @Column(name = "comment_id", columnDefinition = "BINARY(16)"))
+@SQLDelete(sql = "UPDATE member SET deleted = true WHERE id=?") // soft delete
+@Where(clause = "deleted=false")
 public class Comment extends EntityBase {
 
     @Column(nullable = false, length = 1000)
