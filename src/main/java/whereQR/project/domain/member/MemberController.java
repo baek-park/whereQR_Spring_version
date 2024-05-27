@@ -192,7 +192,7 @@ public class MemberController {
             throw new ForbiddenException("삭제 권한이 존재하지 않습니다.", this.getClass().toString());
         }
 
-        memberService.deleteMemberById(id);
+        memberService.deleteMemberById(currentMember);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(currentMember.getId())

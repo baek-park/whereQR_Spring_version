@@ -53,8 +53,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMemberById(UUID id){
-        memberRepository.deleteById(id);
+    public void deleteMemberById(Member member){
+        memberRepository.deleteById(member.getId());
     }
 
 }
