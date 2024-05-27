@@ -1,6 +1,7 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.Getter;
+import whereQR.project.domain.comment.Comment;
 import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
@@ -36,8 +37,11 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Member author;
 
-    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<File> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     // 기본 생성자
     public Dashboard() {
