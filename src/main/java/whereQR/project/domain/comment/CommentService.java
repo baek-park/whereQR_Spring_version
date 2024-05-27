@@ -38,13 +38,16 @@ public class CommentService {
         return savedComment.getId();
     }
     public List<CommentInfoDto> getCommentsByDashboardId(UUID dashboardId) {
+        Member currentMember = MemberUtil.getMember();
         List<Comment> comments = commentRepository.findByDashboardIdAndParentIsNull(dashboardId);
         return comments.stream()
                 .map(comment -> {
+                    boolean isAuthor = comment.getAuthor().equalId(currentMember);
                     CommentInfoDto commentInfoDto = new CommentInfoDto(
                             comment.getId(),
                             comment.getContent(),
                             comment.getAuthor().getUsername(),
+                            isAuthor,
                             comment.getCreatedAt(),
                             comment.getStatus()
                     );
@@ -56,15 +59,21 @@ public class CommentService {
     }
 
     public List<CommentResponseDto> getCommentsByParentId(UUID parentId) {
+        Member currentMember = MemberUtil.getMember();
         List<Comment> comments = commentRepository.findByParentId(parentId);
         return comments.stream()
-                .map(comment -> new CommentResponseDto(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getAuthor().getUsername(),
-                        comment.getCreatedAt(),
-                        comment.getStatus()
-                ))
+                .map(comment -> {
+                    boolean isAuthor = comment.getAuthor().equalId(currentMember);
+                    CommentResponseDto commentResponseDto = new CommentResponseDto(
+                            comment.getId(),
+                            comment.getContent(),
+                            comment.getAuthor().getUsername(),
+                            isAuthor,
+                            comment.getCreatedAt(),
+                            comment.getStatus()
+                    );
+                    return commentResponseDto;
+                })
                 .collect(Collectors.toList());
     }
 

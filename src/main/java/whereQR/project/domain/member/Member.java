@@ -63,6 +63,8 @@ public class Member {
         this.role = role;
     }
 
+
+
     public String updateToken(String refreshToken){
         this.refreshToken = refreshToken;
         return this.refreshToken;
@@ -70,6 +72,10 @@ public class Member {
 
     public MemberDetails toMemberDetails(){
         return new MemberDetails(this, new SimpleGrantedAuthority(this.role.getName()));
+    }
+
+    public boolean equalId(Member currentMember) {
+        return this.id.equals(currentMember.id);
     }
 
     public MemberDetailDto toMemberDetailDto(){
