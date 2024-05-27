@@ -67,7 +67,7 @@ public class DashboardService {
         }
 
         List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndSearch(criteria, pageable);
-        Long totalCount = dashboardRepository.countByDashboards(content);
+        Long totalCount = dashboardRepository.countByDashboardsCondition(criteria);
         Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());

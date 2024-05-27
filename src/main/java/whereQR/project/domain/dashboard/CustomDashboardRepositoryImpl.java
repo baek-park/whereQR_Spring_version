@@ -61,6 +61,16 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
 
     }
 
+    @Override
+    public Long countByDashboardsCondition(DashboardSearchCriteria condition) {
+        BooleanBuilder builder = getBooleanBuilder(condition);
+
+        return queryFactory
+                .select(dashboard.count())
+                .from(dashboard)
+                .where(builder)
+                .fetchOne();
+    }
     public Long countByDashboards(List<Dashboard> dashboards){
         return queryFactory
                 .select(dashboard.count())

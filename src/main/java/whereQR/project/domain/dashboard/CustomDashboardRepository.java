@@ -14,4 +14,5 @@ public interface CustomDashboardRepository {
     List<Dashboard> searchByKeyword(String keyword, Pageable pageable);
     List<Dashboard> findDashboardsByPaginationAndMemberId(UUID memberId, Pageable pageable);
     Long countByDashboards(List<Dashboard> dashboards);
+    Long countByDashboardsCondition(DashboardSearchCriteria criteria);
 }
