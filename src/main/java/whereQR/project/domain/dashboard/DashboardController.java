@@ -76,18 +76,11 @@ public class DashboardController {
     @GetMapping("/detail")
     public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
-        Member member = MemberUtil.getMember();
         boolean isFavorite = false;
-
-        if (member != null) {
-            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
-            isFavorite = favoriteId != null;
-        }
 
         long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
 
         List<CommentInfoDto> comments = commentService.getCommentsByDashboardId(dashboardId);
-
 
         DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount, comments);
         return ResponseEntity.builder()
