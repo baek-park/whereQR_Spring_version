@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.file.File;
 import whereQR.project.domain.qrcode.Qrcode;
 import whereQR.project.domain.member.dto.MemberDetailDto;
@@ -49,6 +50,11 @@ public class Member {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private File profile = null;
+
+    @OneToMany(mappedBy = "author",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Dashboard> dashboards = new ArrayList<>();
 
     //생성자
     public Member(){
