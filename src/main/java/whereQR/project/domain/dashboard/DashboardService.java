@@ -74,7 +74,6 @@ public class DashboardService {
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
                 .map(dashboard -> dashboard.toDashboardResponseDto())
                 .collect(Collectors.toList());
-
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
     }
 
@@ -88,7 +87,7 @@ public class DashboardService {
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> dashboard.toDashboardResponseDto())
+                .map(dashboard -> dashboard.toDashboardResponseDto()) // this now includes favorite and comment counts
                 .collect(Collectors.toList());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
@@ -134,7 +133,7 @@ public class DashboardService {
             PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
             List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                    .map(dashboard -> dashboard.toDashboardResponseDto())
+                    .map(dashboard -> dashboard.toDashboardResponseDto()) // this now includes favorite and comment counts
                     .collect(Collectors.toList());
 
             return new DashboardPageResponseDto(dashboardDtos, pageInfo);
