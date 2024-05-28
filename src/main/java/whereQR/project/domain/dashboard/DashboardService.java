@@ -143,4 +143,29 @@ public class DashboardService {
         dashboardRepository.delete(dashboard);
     }
 
+    public DashboardPageResponseDto getFavoriteDashboardsByByMember(int offset, int limit,Member member){
+            Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
+
+            List<Dashboard> content = dashboardRepository.findFavoriteDashboardsByPaginationAndMemberId(member.getId(), pageable);
+            Long totalCount = dashboardRepository.countByFavoriteDashboardByMemberId(member.getId());
+            Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
+
+            PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
+
+            List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
+                    .map(dashboard -> new DashboardResponseDto(
+                            dashboard.getId(),
+                            dashboard.getTitle(),
+                            dashboard.getContent(),
+                            dashboard.getAuthor().getId().toString(),
+                            dashboard.getAuthor().getUsername(),
+                            dashboard.getLostedDistrict(),
+                            dashboard.getLostedType(),
+                            dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
+                            dashboard.getCreatedAt()))
+                    .collect(Collectors.toList());
+
+            return new DashboardPageResponseDto(dashboardDtos, pageInfo);
+    }
+
 }

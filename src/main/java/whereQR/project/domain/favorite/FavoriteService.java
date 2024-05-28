@@ -65,25 +65,4 @@ public class FavoriteService {
         return new FavoriteCountDto(dashboardId, count);
     }
 
-    public List<DashboardResponseDto> getFavoritesByMember(Member member) {
-        List<Favorite> favorites = favoriteRepository.findByMember(member);
-        return favorites.stream()
-                .map(favorite -> {
-                    Dashboard dashboard = favorite.getDashboard();
-                    DashboardResponseDto dto = new DashboardResponseDto(
-                            dashboard.getId(),
-                            dashboard.getTitle(),
-                            dashboard.getContent(),
-                            dashboard.getAuthor().getId().toString(),
-                            dashboard.getAuthor().getUsername(),
-                            dashboard.getLostedDistrict(),
-                            dashboard.getLostedType(),
-                            dashboard.toDashboardResponseDto().getImages(),
-                            dashboard.getCreatedAt()
-                    );
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
-
 }

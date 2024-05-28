@@ -5,6 +5,7 @@ import whereQR.project.domain.comment.Comment;
 import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.DashboardDetailResponseDto;
 import whereQR.project.domain.dashboard.dto.DashboardResponseDto;
+import whereQR.project.domain.favorite.Favorite;
 import whereQR.project.domain.file.File;
 import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
@@ -42,6 +43,9 @@ public class Dashboard extends EntityBase { // EntityBase 상속
 
     @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dashboard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Favorite> favorites = new ArrayList<>();
 
     // 기본 생성자
     public Dashboard() {

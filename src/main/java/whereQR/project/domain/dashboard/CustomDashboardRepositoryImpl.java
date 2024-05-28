@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import whereQR.project.domain.dashboard.dto.DashboardSearchCriteria;
+import whereQR.project.domain.favorite.QFavorite;
 import whereQR.project.domain.file.QFile;
+import whereQR.project.domain.member.Member;
 
 
 import java.util.List;
@@ -58,6 +60,21 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
     }
 
     @Override
+    public List<Dashboard> findFavoriteDashboardsByPaginationAndMemberId(UUID memberId, Pageable pageable){
+
+        QFavorite favorite = QFavorite.favorite;
+
+        return queryFactory
+                .selectFrom(dashboard)
+                .leftJoin(dashboard.favorites, favorite)
+                .where(favorite.member.id.eq(memberId))
+                .orderBy(dashboard.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    @Override
     public Long countByDashboardsCondition(DashboardSearchCriteria condition) {
         BooleanBuilder builder = getBooleanBuilder(condition);
 
@@ -73,6 +90,19 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
                 .from(dashboard)
                 .where(dashboard.in(dashboards))
                 .fetchOne();
+    }
+
+    public Long countByFavoriteDashboardByMemberId(UUID memberId){
+        QFavorite favorite = QFavorite.favorite;
+
+        return queryFactory
+                .select(dashboard.count())
+                .from(dashboard)
+                .leftJoin(dashboard.favorites, favorite)
+                .where(favorite.member.id.eq(memberId))
+                .orderBy(dashboard.createdAt.desc())
+                .fetchOne();
+
     }
 
     private BooleanBuilder getBooleanBuilder(DashboardSearchCriteria condition){

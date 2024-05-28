@@ -47,16 +47,4 @@ public class FavoriteController {
                 .build();
     }
 
-
-
-    @GetMapping("/member")
-    public ResponseEntity getFavoritesByMemberId() {
-        Member member = MemberUtil.getMember();
-        List<DashboardResponseDto> dashboards = favoriteService.getFavoritesByMember(member);
-        return ResponseEntity.builder()
-                .status(Status.SUCCESS)
-                .data(dashboards)
-                .build();
-    }
-
 }

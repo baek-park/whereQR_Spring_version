@@ -135,4 +135,18 @@ public class DashboardController {
                 .build();
     }
 
+    @GetMapping("/my/favorite")
+    public ResponseEntity myDashboardsByFavorite( @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                                  @RequestParam(value = "limit", defaultValue = "10") int limit){
+
+        Member member = MemberUtil.getMember();
+
+        DashboardPageResponseDto dashboards = dashboardService.getFavoriteDashboardsByByMember(offset, limit, member);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(dashboards)
+                .build();
+
+    }
+
 }
