@@ -50,7 +50,6 @@ public class DashboardService {
         );
 
         List<File> dashboardImages = fileRepository.findImagesByIds(request.getImages());
-        log.info("here {}", dashboardImages);
 
         for (File image : dashboardImages) {
             dashboard.addImage(image);
@@ -73,16 +72,7 @@ public class DashboardService {
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> new DashboardResponseDto(
-                        dashboard.getId(),
-                        dashboard.getTitle(),
-                        dashboard.getContent(),
-                        dashboard.getAuthor().getId().toString(),
-                        dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedDistrict(),
-                        dashboard.getLostedType(),
-                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
-                        dashboard.getCreatedAt()))
+                .map(dashboard -> dashboard.toDashboardResponseDto())
                 .collect(Collectors.toList());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
@@ -98,16 +88,7 @@ public class DashboardService {
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> new DashboardResponseDto(
-                        dashboard.getId(),
-                        dashboard.getTitle(),
-                        dashboard.getContent(),
-                        dashboard.getAuthor().getId().toString(),
-                        dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedDistrict(),
-                        dashboard.getLostedType(),
-                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
-                        dashboard.getCreatedAt()))
+                .map(dashboard -> dashboard.toDashboardResponseDto())
                 .collect(Collectors.toList());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
@@ -153,16 +134,7 @@ public class DashboardService {
             PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
             List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                    .map(dashboard -> new DashboardResponseDto(
-                            dashboard.getId(),
-                            dashboard.getTitle(),
-                            dashboard.getContent(),
-                            dashboard.getAuthor().getId().toString(),
-                            dashboard.getAuthor().getUsername(),
-                            dashboard.getLostedDistrict(),
-                            dashboard.getLostedType(),
-                            dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
-                            dashboard.getCreatedAt()))
+                    .map(dashboard -> dashboard.toDashboardResponseDto())
                     .collect(Collectors.toList());
 
             return new DashboardPageResponseDto(dashboardDtos, pageInfo);
