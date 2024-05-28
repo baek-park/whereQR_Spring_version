@@ -30,7 +30,7 @@ public class Member {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String username;
 
     @Column(nullable = false)
@@ -50,8 +50,11 @@ public class Member {
     @Column(unique = true)
     private String refreshToken;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long kakaoId;
+
+    @Column(nullable = true, length = 100)
+    private String email;
 
     @OneToOne(mappedBy = "profile",
             cascade = CascadeType.ALL,
@@ -108,9 +111,25 @@ public class Member {
         this.role = role;
     }
 
+    public Member(String email, String username, String phoneNumber, Role role) {
+        this.id = UUID.randomUUID();
+        this.email = email;
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
+
     public String updateToken(String refreshToken){
         this.refreshToken = refreshToken;
         return this.refreshToken;
+    }
+
+    public void linkKakao(Long kakaoId){
+        this.kakaoId = kakaoId;
+    }
+
+    public void linkEmail(String email){
+        this.email = email;
     }
 
     public MemberDetails toMemberDetails(){
