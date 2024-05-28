@@ -86,7 +86,13 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         }
     }
 
+    public long getFavoriteCount() {
+        return this.favorites.size();
+    }
 
+    public long getCommentCount() {
+        return this.comments.size();
+    }
     public DashboardResponseDto toDashboardResponseDto(){
         return new DashboardResponseDto(
                 this.id,
@@ -97,8 +103,10 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedDistrict,
                 this.lostedType,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
-                this.createdAt
-                );
+                this.createdAt,
+                this.getFavoriteCount(),
+                this.getCommentCount()
+        );
     }
 
     public DashboardDetailResponseDto toDashboardDetailResponseDto(boolean isFavorite, long favoriteCount, List<CommentInfoDto> comments){
