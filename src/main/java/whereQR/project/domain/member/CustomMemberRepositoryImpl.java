@@ -24,6 +24,30 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository{
     }
 
     @Override
+    public Boolean existsMemberByPhoneNumberAndRole(String phoneNumber, Role role) {
+        return queryFactory
+                .selectFrom(member)
+                .where(member.phoneNumber.eq(phoneNumber).and(member.role.eq(role)))
+                .fetchFirst() !=null;
+    }
+
+    @Override
+    public Boolean existsMemberByEmailAndRole(String email, Role role) {
+        return queryFactory
+                .selectFrom(member)
+                .where(member.email.eq(email).and(member.role.eq(role))) // to eamil
+                .fetchFirst() !=null;
+    }
+
+    @Override
+    public Optional<Member> findMemberByPhoneNumberAndRole(String phoneNumber, Role role) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(member)
+                .where(member.phoneNumber.eq(phoneNumber).and(member.role.eq(role)))
+                .fetchFirst());
+    }
+
+    @Override
     public Optional<Member> findMemberByKakaoIdAndRole(Long kakaoId, Role role){
         return Optional.ofNullable(queryFactory
                 .selectFrom(member)
@@ -36,6 +60,14 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository{
         return Optional.ofNullable(queryFactory
                 .selectFrom(member)
                 .where(member.refreshToken.eq(refreshToken))
+                .fetchFirst());
+    }
+
+    @Override
+    public Optional<Member> findMemberByEmailAndRole(String email, Role role) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(member)
+                .where(member.email.eq(email).and(member.role.eq(role)))
                 .fetchFirst());
     }
 }
