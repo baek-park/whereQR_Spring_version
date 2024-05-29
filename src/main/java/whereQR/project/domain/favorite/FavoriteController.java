@@ -25,6 +25,14 @@ public class FavoriteController {
         UUID dashboardId = favoriteRequest.getDashboardId();
         Member member = MemberUtil.getMember();
 
+        if (member == null) {
+            String message = "로그인이 필요한 서비스입니다.";
+            return ResponseEntity.builder()
+                    .status(Status.FAILED)
+                    .data(message)
+                    .build();
+        }
+
         UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
 
         boolean isfavorited  = favoriteId == null;
