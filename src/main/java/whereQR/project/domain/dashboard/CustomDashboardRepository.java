@@ -18,5 +18,7 @@ public interface CustomDashboardRepository {
     Long countByDashboards(List<Dashboard> dashboards);
     Long countByDashboardsCondition(DashboardSearchCriteria criteria);
 
+    Long countByDashboardsByMemberId(UUID memberId);
+
     Long countByFavoriteDashboardByMemberId(UUID memberId);
 }
