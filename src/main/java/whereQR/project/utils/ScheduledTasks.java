@@ -20,6 +20,7 @@ public class ScheduledTasks {
     private final FileService fileService;
     private final AmazonS3 amazonS3;
     private final NcsProperties ncsProperties;
+
     @Scheduled(cron = "0 0 6 * * *") // 매일 6시에 동작
     public void deleteNotUseFileFromStorage(){
 
