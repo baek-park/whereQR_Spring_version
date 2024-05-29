@@ -112,6 +112,7 @@ public class MemberController {
                     .build();
         }
 
+        log.info("username -> {}", signupDto.getUsername());
         Member member = memberService.kakaoSignUp(signupDto, Role.USER);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
