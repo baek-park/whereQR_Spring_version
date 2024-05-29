@@ -11,10 +11,7 @@ import whereQR.project.utils.EntityBase;
 import whereQR.project.domain.member.Member;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -110,6 +107,12 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     }
 
     public DashboardDetailResponseDto toDashboardDetailResponseDto(boolean isFavorite, long favoriteCount, List<CommentInfoDto> comments){
+        comments.sort(Comparator.comparing(comment -> comment.getCreatedAt()));
+
+        for (CommentInfoDto comment : comments) {
+            comment.getChildComments().sort(Comparator.comparing(childComment -> childComment.getCreatedAt()));
+        }
+
         return new DashboardDetailResponseDto(
                 this.id,
                 this.title,
