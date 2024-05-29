@@ -11,16 +11,16 @@ import javax.validation.constraints.Size;
 public class MemberEmailSignupDto {
 
     @NotEmpty(message = "이름 입력은 필수 입니다.")
-    @Size(max = 30, message = "30 자리를 넘어선 안 됩니다.")
+    @Size(max = 10, message = "이름은 10자리를 넘어선 안 됩니다.")
     private String username;
 
     @NotEmpty(message = "이메일 입력은 필수 입니다.")
     @Email(message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
-    @Pattern(regexp = "regexp=\"(?=.*[0-9])(?=.*[a-z])(?=.*\\\\W)(?=\\\\S+$).{8,12}", message = "비밀번호는 0-9 중 최소 1개, a-z에서 최소 1개를 포함해 8자리 이상 12자리 미만이여야합니다.")
+    @Pattern(regexp = "regexp=^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호는 8글자~20자, 소문자 1개, 숫자 1개, 특수문자 1개 필수입니다.")
     @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
-    @Size(max = 12, message = "비밀번호는 최대 12자까지 입니다.")
+    @Size(max = 20, message = "비밀번호는 최대 20자까지 입니다.")
     private String password;
 
     private String phoneNumber;
