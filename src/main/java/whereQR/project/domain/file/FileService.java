@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -70,22 +72,23 @@ public class FileService {
         return result;
     }
 
-//    @Transactional
-//    public void deleteFile(File file){
-//        try {
-//            amazonS3.deleteObject(ncsProperties.getBucketName(), objectName);
-//            System.out.format("Object %s has been deleted.\n", objectName);
-//        } catch (AmazonS3Exception e) {
-//            e.printStackTrace();
-//        } catch(SdkClientException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
     public String getFileName(String fileName) {
         String ext = fileName.substring(fileName.indexOf(".") + 1);
         return UUID.randomUUID().toString() + "." + ext;
     }
 
+
+    public List<String> getDeleteFilesFromStorage(){
+        List<String> objectNames = new ArrayList<>();
+        fileRepository.findDeleteFilesFromStorage().forEach(it -> {
+            try {
+                String[] splitUrl = it.split("/");
+                log.info(splitUrl[splitUrl.length - 1]);
+                objectNames.add(splitUrl[splitUrl.length - 1]);
+            } catch (Exception e) {
+                objectNames.add(it);
+            }
+        });
+        return objectNames;
+    }
 }

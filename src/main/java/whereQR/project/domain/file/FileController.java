@@ -2,6 +2,7 @@ package whereQR.project.domain.file;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,20 +39,5 @@ public class FileController {
                 .build();
     }
 
-//    @PostMapping("/delete")
-//    public ResponseEntity deleteFile(@RequestParam UUID id) {
-//        Member currentMember = MemberUtil.getMember();
-//
-//        File file = fileService.getFileById(id);
-//        if (file.getUploader() != currentMember) {
-//            throw new ForbiddenException("접근 권한이 존재하지 않습니다.", this.getClass().toString());
-//        }
-//
-//        fileService.deleteFile(file);
-//        return ResponseEntity.builder().
-//                status(Status.SUCCESS)
-//                .data(id)
-//                .build()
-//    }
 
 }

@@ -6,4 +6,7 @@ import java.util.UUID;
 public interface CustomFileRepository{
 
     List<File> findImagesByIds(List<UUID> images);
+
+
+    List<String> findDeleteFilesFromStorage();
 }
