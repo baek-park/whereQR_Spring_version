@@ -142,4 +142,13 @@ public class CustomDashboardRepositoryImpl implements CustomDashboardRepository 
 
         return builder;
     }
+    @Override
+    public Long countByDashboardsByMemberId(UUID memberId) {
+        return queryFactory
+                .select(dashboard.count())
+                .from(dashboard)
+                .where(dashboard.author.id.eq(memberId))
+                .fetchOne();
+    }
+
 }

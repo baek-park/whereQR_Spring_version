@@ -80,11 +80,10 @@ public class DashboardService {
     public DashboardPageResponseDto getDashboardsByMemberId(int offset, int limit, UUID memberId){
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
-        DashboardSearchCriteria criteria = new DashboardSearchCriteria(memberId);
+
+        Long totalCount = dashboardRepository.countByDashboardsByMemberId(memberId);
 
         List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndMemberId(memberId, pageable);
-
-        Long totalCount = dashboardRepository.countByDashboardsCondition(criteria);
 
         Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
