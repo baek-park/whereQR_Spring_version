@@ -142,6 +142,7 @@ public class Member {
 
     public MemberDetailDto toMemberDetailDto(){
         return new MemberDetailDto(
+                this.id,
                 this.username,
                 this.phoneNumber,
                 this.qrcodeList,
