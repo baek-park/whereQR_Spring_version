@@ -28,7 +28,6 @@ public class ScheduledTasks {
         objectName.forEach(it ->{
             try {
                 amazonS3.deleteObject(ncsProperties.getBucketName(), it);
-                System.out.format("Object %s has been deleted.\n", it);
             } catch (AmazonS3Exception e) {
                 log.error("file 삭제 에러 {}", e);
             } catch (SdkClientException e) {
