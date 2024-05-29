@@ -2,11 +2,14 @@ package whereQR.project.domain.member.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 public class KakaoSignupDto {
 
     private Long kakaoId;
     private String username;
+
     private String phoneNumber;
 
     public void KakaoSignupDto(KakaoSignupDto signupDto){
@@ -15,20 +18,4 @@ public class KakaoSignupDto {
         this.phoneNumber = signupDto.phoneNumber;
     }
 
-    public boolean validationPhoneNumber(){
-        String PhoneNumber = this.phoneNumber;
-        if(PhoneNumber.length() != 11){
-            return false;
-        }
-        for(char c : phoneNumber.toCharArray()){
-            if(!Character.isDigit(c)){
-                return false;
-            }
-        }
-        String firstThreeDigits = phoneNumber.substring(0, 3);
-        if (!(firstThreeDigits.equals("010") || firstThreeDigits.equals("011"))) {
-            return false;
-        }
-        return true;
-    }
 }

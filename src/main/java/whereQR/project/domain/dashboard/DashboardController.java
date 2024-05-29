@@ -1,12 +1,15 @@
 package whereQR.project.domain.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import whereQR.project.domain.comment.CommentService;
 import whereQR.project.domain.comment.dto.CommentInfoDto;
 import whereQR.project.domain.dashboard.dto.*;
 import whereQR.project.domain.member.Member;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
+import whereQR.project.jwt.MemberDetails;
 import whereQR.project.utils.response.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whereQR.project.utils.response.Status;
@@ -17,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dashboard")
@@ -59,8 +62,13 @@ public class DashboardController {
     public ResponseEntity getDashboards(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
-            @RequestBody DashboardSearchCriteria criteria) {
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "lostedDistrict", required = false) String lostedDistrict,
+            @RequestParam(value = "lostedType", required = false) String lostedType,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
+        DashboardSearchCriteria criteria = new DashboardSearchCriteria(search, lostedDistrict, lostedType, startDate, endDate);
         DashboardPageResponseDto pageResponseDto = dashboardService.getDashboards(offset, limit, criteria);
 
         return ResponseEntity.builder()
@@ -71,20 +79,26 @@ public class DashboardController {
     @GetMapping("/detail")
     public ResponseEntity getDashboard(@RequestParam UUID dashboardId) {
         Dashboard dashboard = dashboardService.getDashboardById(dashboardId);
-        Member member = MemberUtil.getMember();
-        boolean isFavorite = false;
 
-        if (member != null) {
-            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, member);
+        Member currentMember = null;
+        try {
+            currentMember = MemberUtil.getMember();
+        } catch (Exception e) {
+            ;
+        }
+
+        boolean isFavorite = false;
+        if (currentMember != null) {
+            UUID favoriteId = favoriteService.getFavoriteId(dashboardId, currentMember);
             isFavorite = favoriteId != null;
         }
 
         long favoriteCount = favoriteService.getFavoriteCountByDashboardId(dashboardId).getCount();
 
-        List<CommentInfoDto> comments = commentService.getCommentsByDashboardId(dashboardId);
-
+        List<CommentInfoDto> comments = commentService.getCommentsByDashboardIdAndMember(dashboardId, currentMember);
 
         DashboardDetailResponseDto responseDto = dashboard.toDashboardDetailResponseDto(isFavorite, favoriteCount, comments);
+
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(responseDto)
@@ -119,6 +133,20 @@ public class DashboardController {
                 .status(Status.SUCCESS)
                 .data(pageResponseDto)
                 .build();
+    }
+
+    @GetMapping("/my/favorite")
+    public ResponseEntity myDashboardsByFavorite( @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                                  @RequestParam(value = "limit", defaultValue = "10") int limit){
+
+        Member member = MemberUtil.getMember();
+
+        DashboardPageResponseDto dashboards = dashboardService.getFavoriteDashboardsByByMember(offset, limit, member);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(dashboards)
+                .build();
+
     }
 
 }

@@ -50,7 +50,6 @@ public class DashboardService {
         );
 
         List<File> dashboardImages = fileRepository.findImagesByIds(request.getImages());
-        log.info("here {}", dashboardImages);
 
         for (File image : dashboardImages) {
             dashboard.addImage(image);
@@ -66,52 +65,32 @@ public class DashboardService {
             criteria.setEndDate(LocalDateTime.now());
         }
 
-        Specification<Dashboard> spec = Specification
-                .where(DashboardSpecification.contentContains(criteria.getSearch()))
-                .and(DashboardSpecification.lostedDistrictEquals(criteria.getLostedDistrict()))
-                .and(DashboardSpecification.lostedTypeEquals(criteria.getLostedType()))
-                .and(DashboardSpecification.createdAtBetween(criteria.getStartDate(), criteria.getEndDate()));
-
-        Page<Dashboard> dashboardPage = dashboardRepository.findAll(spec, pageable);
-
-        List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> new DashboardResponseDto(
-                        dashboard.getId(),
-                        dashboard.getTitle(),
-                        dashboard.getContent(),
-                        dashboard.getAuthor().getId().toString(),
-                        dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedDistrict(),
-                        dashboard.getLostedType(),
-                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
-                        dashboard.getCreatedAt()))
-                .collect(Collectors.toList());
+        List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndSearch(criteria, pageable);
+        Long totalCount = dashboardRepository.countByDashboardsCondition(criteria);
+        Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
+        List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
+                .map(dashboard -> dashboard.toDashboardResponseDto())
+                .collect(Collectors.toList());
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
     }
 
     public DashboardPageResponseDto getDashboardsByMemberId(int offset, int limit, UUID memberId){
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
+
+        Long totalCount = dashboardRepository.countByDashboardsByMemberId(memberId);
+
         List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndMemberId(memberId, pageable);
-        Long totalCount = dashboardRepository.countByDashboards(content);
+
         Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> new DashboardResponseDto(
-                        dashboard.getId(),
-                        dashboard.getTitle(),
-                        dashboard.getContent(),
-                        dashboard.getAuthor().getId().toString(),
-                        dashboard.getAuthor().getUsername(),
-                        dashboard.getLostedDistrict(),
-                        dashboard.getLostedType(),
-                        dashboard.getImages().stream().map(it -> it.toFileResponseDto()).collect(Collectors.toList()),
-                        dashboard.getCreatedAt()))
+                .map(dashboard -> dashboard.toDashboardResponseDto())
                 .collect(Collectors.toList());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
@@ -145,6 +124,22 @@ public class DashboardService {
         favoriteRepository.deleteAll(favoritesLinkedToDashboard);
 
         dashboardRepository.delete(dashboard);
+    }
+
+    public DashboardPageResponseDto getFavoriteDashboardsByByMember(int offset, int limit,Member member){
+            Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
+
+            List<Dashboard> content = dashboardRepository.findFavoriteDashboardsByPaginationAndMemberId(member.getId(), pageable);
+            Long totalCount = dashboardRepository.countByFavoriteDashboardByMemberId(member.getId());
+            Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
+
+            PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
+
+            List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
+                    .map(dashboard -> dashboard.toDashboardResponseDto()) // this now includes favorite and comment counts
+                    .collect(Collectors.toList());
+
+            return new DashboardPageResponseDto(dashboardDtos, pageInfo);
     }
 
 }

@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import whereQR.project.domain.file.File;
 import whereQR.project.domain.file.FileService;
-import whereQR.project.domain.file.dto.FileResponseDto;
-import whereQR.project.domain.member.dto.KakaoMemberResponseDto;
-import whereQR.project.domain.member.dto.KakaoSignupDto;
-import whereQR.project.domain.member.dto.MemberDetailDto;
+import whereQR.project.domain.member.dto.*;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
 import whereQR.project.jwt.TokenInfo;
@@ -18,9 +15,9 @@ import whereQR.project.utils.response.ResponseEntity;
 import whereQR.project.utils.response.Status;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -53,9 +50,24 @@ public class MemberController {
                 .build();
     }
 
-    @PostMapping("/kakao/login")
-    public ResponseEntity loginUser(@RequestParam Long kakaoId,HttpServletResponse response ){
+    @PostMapping("/login/kakao")
+    public ResponseEntity loginUserByKakao(@RequestParam Long kakaoId,HttpServletResponse response ){
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
+        TokenInfo tokenInfo = authService.updateToken(member);
+        authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
+        authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
+
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(tokenInfo)
+                .build();
+    }
+
+    @PostMapping("/login/email")
+    public ResponseEntity loginUserByEmail(@RequestBody MemberEmailLoginDto loginDto  , HttpServletResponse response ){
+        Member member = memberService.getMemberByEmailAndRole(loginDto.getEmail(),Role.USER);
+        memberService.validatePassword(loginDto.getPassword(), member.getPasswordHash());
+
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
         authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
@@ -80,36 +92,80 @@ public class MemberController {
                 .build();
     }
 
-    @PostMapping("/create")
-    public ResponseEntity createUser(@RequestBody KakaoSignupDto signupDto){
+    @PostMapping("/create/kakao")
+    public ResponseEntity createUserByKakao(@Valid @RequestBody KakaoSignupDto signupDto){
 
-        if(!signupDto.validationPhoneNumber()){
-            throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
-        }
-
-        if( memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.USER) == Boolean.TRUE){
+        if(memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.USER) == Boolean.TRUE){
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        Member member = memberService.signUp(signupDto, Role.USER);
+        Boolean isExistByPhoneNumber = memberService.existsMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.USER);
+        if(isExistByPhoneNumber){
+            if(memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.USER) == Boolean.TRUE){
+                throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
+            }
+            Member existMember = memberService.getMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.USER);
+            Member member = memberService.linkKakao(existMember, signupDto.getKakaoId());
+            return ResponseEntity.builder()
+                    .status(Status.SUCCESS)
+                    .data(member.getId())
+                    .build();
+        }
+
+        Member member = memberService.kakaoSignUp(signupDto, Role.USER);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(member.getId())
                 .build();
     }
 
-    @PostMapping("/create/admin")
-    public ResponseEntity createAdmin(@RequestBody KakaoSignupDto signupDto){
+    @PostMapping("/create/email")
+    public ResponseEntity createUserByEmail(@Valid @RequestBody MemberEmailSignupDto signupDto){
 
-        if(!signupDto.validationPhoneNumber()){
-            throw new BadRequestException("전화번호가 유효하지 않습니다.",this.getClass().toString());
-        }
-
-        if( memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.ADMIN) == Boolean.TRUE){
+        if(memberService.existsMemberByEmailAndRole(signupDto.getEmail(), Role.USER) == Boolean.TRUE){
             throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
         }
 
-        Member member = memberService.signUp(signupDto, Role.ADMIN);
+        // 만약에 전화번호가 이미 존재한다면? 그 전화번호를 가지는 member의 email가 존재하지 않는다면 만들기. 존재한다면 이미 존재한다고 전송
+        Boolean isExistByPhoneNumber = memberService.existsMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.USER);
+        if(isExistByPhoneNumber){
+            if(memberService.existsMemberByEmailAndRole(signupDto.getEmail(), Role.USER) == Boolean.TRUE){
+                throw new BadRequestException("이미 존재하는 회원입니다.",this.getClass().toString());
+            }
+
+            Member existMember = memberService.getMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.USER);
+            Member member = memberService.linkEmail(existMember, signupDto.getEmail() );
+            return ResponseEntity.builder()
+                    .status(Status.SUCCESS)
+                    .data(member.getId())
+                    .build();
+        }
+
+
+        Member member = memberService.emailSignUp(signupDto, Role.USER);
+        return ResponseEntity.builder()
+                .status(Status.SUCCESS)
+                .data(member.getId())
+                .build();
+    }
+
+    @PostMapping("/create/admin/kakao")
+    public ResponseEntity createAdmin(@Valid @RequestBody KakaoSignupDto signupDto) {
+
+        Boolean isExistByPhoneNumber = memberService.existsMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.ADMIN);
+        if (isExistByPhoneNumber) {
+            if (memberService.existsMemberByKakaoIdAndRole(signupDto.getKakaoId(), Role.ADMIN) == Boolean.TRUE) {
+                throw new BadRequestException("이미 존재하는 회원입니다.", this.getClass().toString());
+            }
+            Member existMember = memberService.getMemberByPhoneNumberAndRole(signupDto.getPhoneNumber(), Role.ADMIN);
+            Member member = memberService.linkKakao(existMember, signupDto.getKakaoId());
+            return ResponseEntity.builder()
+                    .status(Status.SUCCESS)
+                    .data(member.getId())
+                    .build();
+        }
+
+        Member member = memberService.kakaoSignUp(signupDto, Role.ADMIN);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(member.getId())
@@ -192,7 +248,7 @@ public class MemberController {
             throw new ForbiddenException("삭제 권한이 존재하지 않습니다.", this.getClass().toString());
         }
 
-        memberService.deleteMemberById(id);
+        memberService.deleteMemberById(currentMember);
         return ResponseEntity.builder()
                 .status(Status.SUCCESS)
                 .data(currentMember.getId())
