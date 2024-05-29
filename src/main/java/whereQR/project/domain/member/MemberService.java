@@ -86,7 +86,7 @@ public class MemberService {
     @Transactional
     public FileResponseDto uploadProfile(Member member, UUID profileId){
         File profile = fileService.getFileById(profileId);
-        profile.updateProfile(member);
+        member.updateProfile(profile, member);
         return profile.toFileResponseDto();
     }
 

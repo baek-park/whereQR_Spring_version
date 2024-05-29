@@ -133,6 +133,11 @@ public class Member {
         return this.refreshToken;
     }
 
+    public void updateProfile(File file, Member member){
+        this.profile = file;
+        member.profile = file;
+    }
+
     public void linkKakao(Long kakaoId){
         this.kakaoId = kakaoId;
     }
