@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import whereQR.project.domain.file.File;
 import whereQR.project.domain.file.FileService;
-import whereQR.project.domain.file.dto.FileResponseDto;
 import whereQR.project.domain.member.dto.*;
 import whereQR.project.exception.CustomExceptions.BadRequestException;
 import whereQR.project.exception.CustomExceptions.ForbiddenException;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -68,6 +66,8 @@ public class MemberController {
     @PostMapping("/login/email")
     public ResponseEntity loginUserByEmail(@RequestBody MemberEmailLoginDto loginDto  , HttpServletResponse response ){
         Member member = memberService.getMemberByEmailAndRole(loginDto.getEmail(),Role.USER);
+        memberService.validatePassword(loginDto.getPassword(), member.getPasswordHash());
+
         TokenInfo tokenInfo = authService.updateToken(member);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
         authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);

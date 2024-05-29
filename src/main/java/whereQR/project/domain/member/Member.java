@@ -3,9 +3,6 @@ package whereQR.project.domain.member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SourceType;
-import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import whereQR.project.domain.chatroom.Chatroom;
 import whereQR.project.domain.comment.Comment;
@@ -55,6 +52,9 @@ public class Member {
 
     @Column(nullable = true, length = 100)
     private String email;
+
+    @Column
+    private String passwordHash;
 
     @OneToOne(mappedBy = "profile",
             cascade = CascadeType.ALL,
@@ -116,6 +116,15 @@ public class Member {
         this.email = email;
         this.username = username;
         this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
+
+    public Member(String email, String username, String phoneNumber, String passwordHash, Role role) {
+        this.id = UUID.randomUUID();
+        this.email = email;
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.passwordHash = passwordHash;
         this.role = role;
     }
 

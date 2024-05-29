@@ -18,7 +18,7 @@ public class MemberEmailSignupDto {
     @Email(message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
-    @Pattern(regexp = "regexp=^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호는 8글자~20자, 소문자 1개, 숫자 1개, 특수문자 1개 필수입니다.")
+//    @Pattern(regexp = "regexp=^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "비밀번호는 8글자~20자, 소문자 1개, 숫자 1개, 특수문자 1개 필수입니다.")
     @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
     @Size(max = 20, message = "비밀번호는 최대 20자까지 입니다.")
     private String password;
