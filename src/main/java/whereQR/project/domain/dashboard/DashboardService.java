@@ -80,14 +80,18 @@ public class DashboardService {
     public DashboardPageResponseDto getDashboardsByMemberId(int offset, int limit, UUID memberId){
         Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by("createdAt").descending());
 
+        DashboardSearchCriteria criteria = new DashboardSearchCriteria(memberId);
+
         List<Dashboard> content = dashboardRepository.findDashboardsByPaginationAndMemberId(memberId, pageable);
-        Long totalCount = dashboardRepository.countByDashboards(content);
+
+        Long totalCount = dashboardRepository.countByDashboardsCondition(criteria);
+
         Page<Dashboard> dashboardPage = new PageImpl<>(content, pageable, totalCount);
 
         PageInfoDto pageInfo = new PageInfoDto(dashboardPage.getTotalElements(), dashboardPage.hasNext());
 
         List<DashboardResponseDto> dashboardDtos = dashboardPage.getContent().stream()
-                .map(dashboard -> dashboard.toDashboardResponseDto()) // this now includes favorite and comment counts
+                .map(dashboard -> dashboard.toDashboardResponseDto())
                 .collect(Collectors.toList());
 
         return new DashboardPageResponseDto(dashboardDtos, pageInfo);
