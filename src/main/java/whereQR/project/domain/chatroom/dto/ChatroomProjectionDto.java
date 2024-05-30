@@ -23,7 +23,7 @@ public class ChatroomProjectionDto {
         this.starter = starter;
         this.participant = participant;
         this.notReadMessageCount = notReadMessageCount;
-        this.lastDate = lastDate.plusHours(9);
+        this.lastDate = lastDate;
         this.lastContent = lastContent;
     }
 
