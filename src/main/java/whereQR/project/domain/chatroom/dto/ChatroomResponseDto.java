@@ -23,7 +23,7 @@ public class ChatroomResponseDto {
         this.id = id.toString();
         this.opponentUsername = opponent.getUsername();
         this.notReadMessageCount = notReadMessageCount;
-        this.lastDate = lastDate;
+        this.lastDate = lastDate.plusHours(9);
         this.lastContent = lastContent;
     }
 

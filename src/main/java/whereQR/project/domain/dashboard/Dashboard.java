@@ -100,7 +100,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedDistrict,
                 this.lostedType,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
-                this.createdAt,
+                this.createdAt.plusHours(9),
                 this.getFavoriteCount(),
                 this.getCommentCount()
         );
@@ -112,7 +112,6 @@ public class Dashboard extends EntityBase { // EntityBase 상속
         for (CommentInfoDto comment : comments) {
             comment.getChildComments().sort(Comparator.comparing(childComment -> childComment.getCreatedAt()));
         }
-
         return new DashboardDetailResponseDto(
                 this.id,
                 this.title,
@@ -125,7 +124,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 favoriteCount,
                 comments,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
-                this.createdAt
+                this.createdAt.plusHours(9)
         );
     }
 }
