@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Data
 public class ChatroomProjectionDto {
+
     private UUID id;
     private Member starter;
 
@@ -22,16 +23,16 @@ public class ChatroomProjectionDto {
         this.starter = starter;
         this.participant = participant;
         this.notReadMessageCount = notReadMessageCount;
-        this.lastDate = lastDate;
+        this.lastDate = lastDate.plusHours(9);
         this.lastContent = lastContent;
     }
 
     public ChatroomResponseDto toChatroomResponseDto(UUID memberId){
 
         if(memberId.equals(this.starter.getId())){
-            return new ChatroomResponseDto(this.id,this.participant, this.notReadMessageCount, this.lastDate, this.lastContent);
+            return new ChatroomResponseDto(this.id,this.participant, this.notReadMessageCount, this.lastDate.plusHours(9), this.lastContent);
         }else{
-            return new ChatroomResponseDto(this.id, this.starter, this.notReadMessageCount, this.lastDate, this.lastContent);
+            return new ChatroomResponseDto(this.id, this.starter, this.notReadMessageCount, this.lastDate.plusHours(9), this.lastContent);
         }
 
     }
