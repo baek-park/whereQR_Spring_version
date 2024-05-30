@@ -1,6 +1,8 @@
 package whereQR.project.domain.comment;
 
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import whereQR.project.domain.dashboard.Dashboard;
 import whereQR.project.domain.member.Member;
 import whereQR.project.utils.EntityBase;
