@@ -88,7 +88,8 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     }
 
     public long getCommentCount() {
-        return this.comments.size();
+        return this.comments.stream().filter(comment ->
+            comment.getStatus() != Comment.CommentStatus.DELETED).count();
     }
     public DashboardResponseDto toDashboardResponseDto(){
         return new DashboardResponseDto(
