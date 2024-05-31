@@ -30,7 +30,7 @@ public class ChatroomProjectionDto {
     public ChatroomResponseDto toChatroomResponseDto(UUID memberId){
 
         if(memberId.equals(this.starter.getId())){
-            return new ChatroomResponseDto(this.id,this.participant, this.notReadMessageCount, this.lastDate.plusHours(9), this.lastContent);
+            return new ChatroomResponseDto(this.id,this.participant, this.notReadMessageCount, this.lastDate != null ? this.lastDate.plusHours(9) : null, this.lastContent);
         }else{
             return new ChatroomResponseDto(this.id, this.starter, this.notReadMessageCount, this.lastDate.plusHours(9), this.lastContent);
         }
