@@ -48,7 +48,7 @@ public class CustomChatroomRepositoryImpl implements CustomChatroomRepository{
                                 ExpressionUtils.as(
                                         JPAExpressions.select(message.count())
                                                 .from(message)
-                                                .where(message.chatRoom.id.eq(chatroom.id), message.isRead.isFalse(), message.receiver.eq(member)),
+                                                .where(message.chatRoom.id.eq(chatroom.id), message.isRead.eq(Boolean.FALSE), message.receiver.id.eq(user.getId())),
                                         "notReadMessageCount"),
                                 ExpressionUtils.as(
                                         JPAExpressions.select(message.updatedAt.max())
