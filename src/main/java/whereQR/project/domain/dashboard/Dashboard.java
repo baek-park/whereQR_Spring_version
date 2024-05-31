@@ -88,7 +88,8 @@ public class Dashboard extends EntityBase { // EntityBase 상속
     }
 
     public long getCommentCount() {
-        return this.comments.size();
+        return this.comments.stream().filter(comment ->
+            comment.getStatus() != Comment.CommentStatus.DELETED).count();
     }
     public DashboardResponseDto toDashboardResponseDto(){
         return new DashboardResponseDto(
@@ -100,7 +101,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 this.lostedDistrict,
                 this.lostedType,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
-                this.createdAt.plusHours(9),
+                this.createdAt,
                 this.getFavoriteCount(),
                 this.getCommentCount()
         );
@@ -124,7 +125,7 @@ public class Dashboard extends EntityBase { // EntityBase 상속
                 favoriteCount,
                 comments,
                 this.images.stream().map(File::toFileResponseDto).collect(Collectors.toList()),
-                this.createdAt.plusHours(9)
+                this.createdAt
         );
     }
 }

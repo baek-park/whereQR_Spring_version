@@ -27,7 +27,7 @@ public class CommentResponseDto {
         this.content = content;
         this.author = author;
         this.isAuthor = isAuthor;
-        this.createdAt = createdAt.plusHours(9);
+        this.createdAt = createdAt;
         this.status = status;
     }
 }
