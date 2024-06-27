@@ -52,8 +52,11 @@ public class MemberController {
 
     @PostMapping("/login/kakao")
     public ResponseEntity loginUserByKakao(@RequestParam Long kakaoId,HttpServletResponse response ){
+        System.out.println("kakaoId -> " + kakaoId);
         Member member = memberService.getMemberByKakaoIdAndRole(kakaoId,Role.USER);
+        System.out.println("member -> " + member);
         TokenInfo tokenInfo = authService.updateToken(member);
+        System.out.println("tokenInfo -> " + tokenInfo);
         authService.updateRefreshToken(member, tokenInfo.getRefreshToken() );
         authService.refreshTokenToCookie(tokenInfo.getRefreshToken(), response);
 
